@@ -1,0 +1,9 @@
+{
+  "name": "Copy of Noah Medical EMR",
+  "description": "A comprehensive telemedicine EMR application for patient management, medical measurements, and system operations with customizable themes.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "prompt": ""
+}
