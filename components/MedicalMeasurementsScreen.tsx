@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ArrowLeft, MonitorDot, AirVent, Activity, HeartPulse, ScanEye, Radio, Fingerprint, Thermometer, TestTubeDiagonal, PersonStanding, Stethoscope } from 'lucide-react';
 import { BaseScreenProps, ThemeKey } from '../types';
@@ -12,7 +11,7 @@ interface DeviceTileProps {
   gradient: string;
   borderColor: string;
   theme: BaseScreenProps['theme'];
-  currentThemeKey: ThemeKey;
+  currentThemeKey: string; // Change from ThemeKey to string
 }
 
 const DeviceTile: React.FC<DeviceTileProps> = ({ icon, label, onClick, gradient, borderColor, theme, currentThemeKey }) => (
@@ -25,7 +24,17 @@ const DeviceTile: React.FC<DeviceTileProps> = ({ icon, label, onClick, gradient,
   </div>
 );
 
-const MedicalMeasurementsScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, setShowThemeSelector, isMidnightTheme, currentThemeKey }) => {
+interface MedicalMeasurementsScreenProps extends BaseScreenProps {
+  setShowThemeSelector?: (show: boolean) => void;
+}
+
+const MedicalMeasurementsScreen: React.FC<MedicalMeasurementsScreenProps> = ({ 
+  theme, 
+  setCurrentScreen, 
+  setShowThemeSelector, 
+  isMidnightTheme, 
+  currentThemeKey 
+}) => {
   const iconSize = "w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-16 lg:h-16";
   const devices = [
     { icon: <MonitorDot className={`${iconSize} mx-auto text-blue-600`} />, label: 'Patient Monitor', gradient: 'from-blue-50 to-blue-100', borderColor: 'border-blue-200', screen: undefined /* TODO */ },
@@ -47,8 +56,7 @@ const MedicalMeasurementsScreen: React.FC<BaseScreenProps> = ({ theme, setCurren
         theme={theme} 
         title="NOAH - Medical Devices" 
         onBack={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
-        showThemeButton={true}
-        onShowThemeSelector={() => setShowThemeSelector(true)}
+        showThemeButton={false}
         isMidnightTheme={isMidnightTheme}
       />
 

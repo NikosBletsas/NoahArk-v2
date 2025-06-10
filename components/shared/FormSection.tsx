@@ -41,14 +41,12 @@ const FormSection: React.FC<FormSectionProps> = ({ title, theme, children, isSub
   if (isInnerSection) {
     return (
       <div className={`${theme.card} backdrop-blur-lg rounded-lg sm:rounded-xl shadow-lg border border-white/20 overflow-hidden`}> 
-        {/* Retaining card for inner sections to match visual of screenshots where each colored bar has a card like container */}
         {titleElement}
         {contentElement}
       </div>
     );
   }
 
-  // Default: Full section with its own card
   return (
     <div className={`${theme.card} backdrop-blur-lg rounded-lg sm:rounded-xl shadow-lg border border-white/20 overflow-hidden`}>
       {titleElement}

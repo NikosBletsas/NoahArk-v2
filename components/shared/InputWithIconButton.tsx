@@ -5,17 +5,17 @@ import { Theme, ThemeKey } from '../../types';
 interface InputWithIconButtonProps {
   label: string;
   id: string;
-  theme: Theme;
-  currentThemeKey: ThemeKey;
+  type?: string;
+  theme: any; // or your specific theme type
+  currentThemeKey: string; // Changed from ThemeKey to string
+  placeholder?: string;
+  value?: string;
+  defaultValue?: string; // Add this line
+  isReadOnly?: boolean;
   icon: React.ReactNode;
   onIconClick: () => void;
-  buttonTitle?: string;
-  type?: string;
-  value?: string;
-  defaultValue?: string;
-  placeholder?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  isReadOnly?: boolean;
+  buttonTitle: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; // Add this line
 }
 
 const InputWithIconButton: React.FC<InputWithIconButtonProps> = ({
@@ -56,7 +56,6 @@ const InputWithIconButton: React.FC<InputWithIconButtonProps> = ({
           className={`absolute right-0 top-0 h-full px-2.5 sm:px-3 md:px-3.5 lg:px-4 flex items-center justify-center ${theme.textSecondary} hover:opacity-75 transition-opacity rounded-r-md sm:rounded-r-lg focus:outline-none`}
           aria-label={buttonTitle || 'Input action'}
         >
-          {/* Icon size typically handled by its definition, or cloneElement if needed */}
           {icon} 
         </button>
       </div>

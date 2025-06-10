@@ -42,7 +42,6 @@ const SettingsScreen: React.FC<BaseScreenProps> = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const sidebarAccentBg = `bg-gradient-to-b ${theme.accent}`;
-  // Fixed: Always use white text on sidebar since accent background is always dark
   const sidebarTextColor = 'text-white';
   
   const sidebarContent = (isMobile?: boolean) => (

@@ -5,7 +5,7 @@ export const THEME_KEYS = ['noah','black',] as const;
 
 export const THEMES: Record<ThemeKey, Theme> = {  noah: {
     name: 'NOAH Official',
-    background: 'from-slate-100 via-gray-50 to-white', // Clean light background like the screenshot
+    background: 'from-slate-100 via-gray-50 to-white', 
     primary: 'from-[#4cbfd4] to-[#2a797f]', 
     accent: 'from-slate-700 via-slate-800 to-slate-900', 
     card: 'bg-white/90 backdrop-blur-md border border-gray-200/50', 

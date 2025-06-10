@@ -68,17 +68,17 @@ const EndoscopeScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, s
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${theme.background} flex flex-col`}>
-      <AppHeader 
-        theme={theme} 
-        title="Horus Endoscope" 
-        onBack={() => {
-          stopCamera();
-          setCurrentScreen(SCREEN_NAMES.MEASUREMENTS);
-        }}
-        showThemeButton={true}
-        onShowThemeSelector={() => setShowThemeSelector(true)}
-        isMidnightTheme={isMidnightTheme}
-      />
+    <AppHeader 
+      theme={theme} 
+      title="Horus Endoscope" 
+      onBack={() => {
+        stopCamera();
+        setCurrentScreen(SCREEN_NAMES.MEASUREMENTS);
+      }}
+      showThemeButton={!!setShowThemeSelector} // Only show if function exists
+      onShowThemeSelector={setShowThemeSelector ? () => setShowThemeSelector(true) : undefined}
+      isMidnightTheme={isMidnightTheme}
+    />
 
       <div className="p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 flex-grow">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 h-full">

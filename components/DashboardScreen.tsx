@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Import useState and useEffect
+import React, { useState, useEffect } from 'react';
 import { Search, Heart, Settings, Camera, User, FileText, RefreshCw, Monitor as DeviceMonitor, Activity, BriefcaseMedical, ClipboardPlus, HardDrive, ScanLine, Video, Pill, Brain } from 'lucide-react';
 import { BaseScreenProps, ThemeKey } from '../types';
 import { SCREEN_NAMES } from '../constants';
@@ -21,12 +21,17 @@ const DashboardTile: React.FC<DashboardTileProps> = ({ icon, label, onClick, the
   </div>
 );
 
-
-const DashboardScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, setShowThemeSelector, isMidnightTheme, currentThemeKey }) => {
-  // State to hold the current time
+const DashboardScreen: React.FC<BaseScreenProps> = ({ 
+  theme, 
+  setCurrentScreen, 
+  isMidnightTheme, 
+  currentThemeKey,
+  onThemeChange 
+}) => {
+  //hold the current time
   const [currentTime, setCurrentTime] = useState('');
 
-  // useEffect hook to update the time every second
+  //update the time every second
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -36,15 +41,12 @@ const DashboardScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, s
       setCurrentTime(`${hours}:${minutes}:${seconds}`);
     };
 
-    // Call updateTime immediately to set the initial time
     updateTime();
 
-    // Set up an interval to update the time every second
     const intervalId = setInterval(updateTime, 1000);
-
-    // Clear the interval when the component unmounts
+    
     return () => clearInterval(intervalId);
-  }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
+  }, []);
 
   const iconSize = "w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-16 lg:h-16";
   const tiles = [
@@ -65,14 +67,6 @@ const DashboardScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, s
   
   return (
     <div className={`min-h-screen bg-gradient-to-br ${theme.background} relative flex flex-col pb-16 sm:pb-20 md:pb-24 lg:pb-28 xl:pb-32`}>
-      <button
-        onClick={() => setShowThemeSelector(true)}
-        className={`absolute top-3 right-3 sm:top-4 sm:right-4 p-2 sm:p-3 md:p-3.5 ${theme.card} backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-lg border border-white/20 hover:scale-105 transition-all duration-200 z-20`}
-        title="Change Theme"
-      >
-        <div className={`w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 bg-gradient-to-r ${theme.primary} rounded-md sm:rounded-lg`}></div>
-      </button>
-
       <div className={`${theme.card} backdrop-blur-lg border-b border-white/20 p-3 sm:p-4 md:p-5 lg:p-6 z-10`}>
         <div className="flex items-center justify-between max-w-7xl mx-auto">
             <div className="w-40 h-24 sm:w-44 sm:h-26 md:w-48 md:h-28 flex items-center justify-center">
@@ -85,7 +79,7 @@ const DashboardScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, s
                 className="w-full h-full object-contain max-w-40 max-h-24 sm:max-w-44 sm:max-h-26 md:max-w-48 md:max-h-28" 
               />
             </div>
-          <div className={`text-xs sm:text-sm md:text-base lg:text-lg ${theme.textPrimary} font-semibold text-center flex-1`}>
+          <div className={`text-xs sm:text-sm md:text-base lg:text-lg ${theme.textPrimary} font-semibold text-center flex-1 pr-16 sm:pr-20 md:pr-16`}>
             Telemedicine EMR System
           </div>
         </div>

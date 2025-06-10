@@ -46,7 +46,6 @@ const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({
     }
   };
 
-  // Νέα function για το επιπλέον Submit button
   const handleSubmitToDashboard = () => {
     console.log("Submitting diagnosis data early...");
     setCurrentScreen(SCREEN_NAMES.DASHBOARD);
@@ -73,7 +72,6 @@ const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({
     }
   };
 
-  // Ελέγχουμε αν είμαστε στο τελευταίο step
   const isLastStep = currentStepIndex === DIAGNOSIS_STEPS_CONFIG.length - 1;
 
   const sidebarBg = isMidnightTheme || currentThemeKey === 'black' ? 'bg-slate-800' : 'bg-slate-700';

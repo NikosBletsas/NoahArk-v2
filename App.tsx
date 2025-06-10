@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { THEMES, SCREEN_NAMES, THEME_KEYS } from './constants';
 import { ThemeKey, ScreenName, Theme } from './types';
-import ThemeSelector from './components/ThemeSelector';
+import ThemeToggle from './components/ThemeToggle';
 import LoginScreen from './components/LoginScreen';
 import DashboardScreen from './components/DashboardScreen';
 import PatientSearchScreen from './components/PatientSearchScreen';
@@ -23,20 +23,32 @@ import ConnectivityTestScreen from './components/ConnectivityTestScreen';
 const App: React.FC = () => {
   // State for the currently displayed screen
   const [currentScreen, setCurrentScreen] = useState<ScreenName>(SCREEN_NAMES.LOGIN);
-  // State for the currently selected theme key
-  const [currentThemeKey, setCurrentThemeKey] = useState<ThemeKey>(THEME_KEYS[0]);
-  // State for ThemeSelector modal visibility
-  const [showThemeSelector, setShowThemeSelector] = useState(false);
+  
+  // Initialize with 'noah' theme (light mode) by default
+  const [currentThemeKey, setCurrentThemeKey] = useState<ThemeKey>('noah');
+  
   // State for ConnectionStatus modal visibility
   const [showConnectionStatus, setShowConnectionStatus] = useState(false);
+  
   // State for ConnectivityTest modal visibility
   const [showConnectivityTest, setShowConnectivityTest] = useState(false);
 
-
   // Get the full theme object based on the current key
   const theme: Theme = THEMES[currentThemeKey];
-  // Helper boolean for dark themes (Midnight or Deep Black)
-  const isMidnightTheme = currentThemeKey === 'midnight' || currentThemeKey === 'black';
+  
+  // Helper boolean for dark themes (only checking for 'black' now since we're limiting to light/dark)
+  const isMidnightTheme = currentThemeKey === 'black';
+
+  /**
+   * Handles theme changes - restricted to light ('noah') and dark ('black') modes
+   * @param themeKey - The theme key to switch to
+   */
+  const handleThemeChange = (themeKey: string) => {
+    // Ensure only light/dark themes are used
+    if (themeKey === 'noah' || themeKey === 'black') {
+      setCurrentThemeKey(themeKey as ThemeKey);
+    }
+  };
 
   /**
    * Handles setting the current screen and ensures modals are closed
@@ -67,9 +79,9 @@ const App: React.FC = () => {
     const commonScreenProps = { 
         theme, 
         setCurrentScreen: handleSetCurrentScreen, 
-        setShowThemeSelector, 
         isMidnightTheme, 
-        currentThemeKey,
+        currentThemeKey: currentThemeKey as string,
+        onThemeChange: handleThemeChange,
         setShowConnectionStatus: shouldPassModalSetters ? setShowConnectionStatus : undefined,
         setShowConnectivityTest: shouldPassModalSetters ? setShowConnectivityTest : undefined,
       };
@@ -84,7 +96,6 @@ const App: React.FC = () => {
       case SCREEN_NAMES.MEASUREMENTS:
         return <MedicalMeasurementsScreen {...commonScreenProps} />;
       case SCREEN_NAMES.SYSTEM_OPERATIONS:
-        // SystemOperationsScreen is modal-like but managed as a main screen for now
         return <SystemOperationsScreen {...commonScreenProps} />;
       case SCREEN_NAMES.SPIROMETER:
         return <SpirometerScreen {...commonScreenProps} />;
@@ -98,35 +109,26 @@ const App: React.FC = () => {
         return <EmergencyCaseDiagnosisScreen {...commonScreenProps} />;
       case SCREEN_NAMES.DEVICE_CONFIGURATION:
         return <DeviceConfigurationScreen {...commonScreenProps} />;
-      // Note: ConnectionStatus and ConnectivityTest are modals, rendered conditionally below,
-      // not as primary screens via this switch statement.
       default:
-        // Fallback to LoginScreen if an unknown screen name is encountered
         return <LoginScreen {...commonScreenProps} />;
     }
   };
 
   return (
-    // Global font is applied via index.html <style> tag.
-    // Root div for the application.
-    <div>
+    <div className={`relative min-h-screen bg-gradient-to-br ${theme.background}`}>
+      
+      {/* Global Theme Toggle - With proper spacing and z-index */}
+      <ThemeToggle
+        currentThemeKey={currentThemeKey}
+        onThemeChange={handleThemeChange}
+        className="fixed top-4 right-4 z-[60]"
+        disabled={false}
+      />
+
+      {/* Main screen content - no extra padding, screens handle their own spacing */}
       {renderScreen()}
 
-      {/* Theme Selector Modal */}
-      {showThemeSelector && (
-        <ThemeSelector
-          themes={THEMES}
-          currentThemeKey={currentThemeKey}
-          onThemeSelect={(key) => {
-            setCurrentThemeKey(key);
-            setShowThemeSelector(false);
-          }}
-          onClose={() => setShowThemeSelector(false)}
-          isMidnightTheme={isMidnightTheme} // Used for modal's own text styling
-        />
-      )}
-
-      {/* Connection Status Modal (conditionally rendered if its state is true) */}
+      {/* Connection Status Modal */}
       {showConnectionStatus && (
         <ConnectionStatusScreen
           theme={theme}
@@ -134,11 +136,11 @@ const App: React.FC = () => {
           currentThemeKey={currentThemeKey}
           setCurrentScreen={handleSetCurrentScreen} 
           onClose={() => setShowConnectionStatus(false)}
-          setShowConnectivityTest={setShowConnectivityTest} // Allow opening one modal from another
+          setShowConnectivityTest={setShowConnectivityTest}
         />
       )}
 
-      {/* Connectivity Test Modal (conditionally rendered if its state is true) */}
+      {/* Connectivity Test Modal */}
       {showConnectivityTest && (
         <ConnectivityTestScreen
           theme={theme}
@@ -146,7 +148,7 @@ const App: React.FC = () => {
           currentThemeKey={currentThemeKey}
           setCurrentScreen={handleSetCurrentScreen}
           onClose={() => setShowConnectivityTest(false)}
-          setShowConnectionStatus={setShowConnectionStatus} // Allow opening one modal from another
+          setShowConnectionStatus={setShowConnectionStatus}
         />
       )}
     </div>

@@ -51,7 +51,7 @@ const SystemOperationsScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentSc
             label="Reset" 
             gradient="from-blue-50 to-blue-100" 
             borderColor="border-blue-200"
-            textColor="text-blue-700" // Changed from text-blue-600
+            textColor="text-blue-700" 
             theme={theme}
           />
           <OperationButton 
@@ -59,7 +59,7 @@ const SystemOperationsScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentSc
             label="Restart" 
             gradient="from-green-50 to-green-100" 
             borderColor="border-green-200"
-            textColor="text-green-700" // Changed from text-green-600
+            textColor="text-green-700"
             theme={theme}
           />
           <OperationButton 
@@ -67,7 +67,7 @@ const SystemOperationsScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentSc
             label="Shutdown" 
             gradient="from-red-50 to-red-100" 
             borderColor="border-red-200"
-            textColor="text-red-700" // Changed from text-red-600
+            textColor="text-red-700"
             theme={theme}
           />
         </div>

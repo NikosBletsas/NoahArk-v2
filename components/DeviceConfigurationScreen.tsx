@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Activity, Save, ArrowLeft, Settings as SettingsIcon, Wifi, TestTubeDiagonal, HardDrive, Search, Zap } from 'lucide-react';
 import { BaseScreenProps } from '../types';
@@ -22,7 +21,13 @@ const DeviceManufacturerRow: React.FC<{label: string; idPrefix: string; theme: B
     </div>
 );
 
-const DeviceConfigurationScreen: React.FC<BaseScreenProps> = ({ 
+interface DeviceConfigurationScreenProps extends BaseScreenProps {
+  setShowThemeSelector?: (show: boolean) => void;
+  setShowConnectionStatus?: (show: boolean) => void;
+  setShowConnectivityTest?: (show: boolean) => void;
+}
+
+const DeviceConfigurationScreen: React.FC<DeviceConfigurationScreenProps> = ({ 
   theme, 
   setCurrentScreen, 
   setShowThemeSelector, 

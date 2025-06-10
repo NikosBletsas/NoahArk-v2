@@ -1,4 +1,3 @@
-
 import { THEME_KEYS, SCREEN_NAMES, DIAGNOSIS_STEP_KEYS } from './constants';
 import React from 'react';
 
@@ -27,22 +26,21 @@ export type ScreenName = typeof SCREEN_NAMES[keyof typeof SCREEN_NAMES];
 export type DiagnosisStepKey = typeof DIAGNOSIS_STEP_KEYS[number];
 
 export interface AppHeaderProps {
-  theme: Theme;
+  theme: any;
   title: string;
-  onBack?: () => void;
+  onBack: () => void;
   showThemeButton?: boolean;
   onShowThemeSelector?: () => void;
   isMidnightTheme: boolean;
-  currentThemeKey?: ThemeKey; // ✅ Πρόσθεσε αυτή τη γραμμή
 }
 
 export interface BaseScreenProps {
-  theme: Theme;
-  setCurrentScreen: (screen: ScreenName) => void;
-  setShowThemeSelector: (show: boolean) => void;
-  isMidnightTheme: boolean; 
-  onThemeChange?: (themeKey: ThemeKey) => void;
-  currentThemeKey: ThemeKey;
+  theme: any;
+  setCurrentScreen: (screen: ScreenName) => void; // Changed from string to ScreenName
+  isMidnightTheme: boolean;
+  currentThemeKey: string;
+  setShowThemeSelector?: (show: boolean) => void;
+  onThemeChange?: (themeKey: string) => void;
   setShowConnectionStatus?: (show: boolean) => void;
   setShowConnectivityTest?: (show: boolean) => void;
 }
@@ -57,7 +55,6 @@ export interface ModalScreenProps {
   setShowConnectivityTest?: (show: boolean) => void; 
 }
 
-
 export interface DiagnosisStep {
   key: DiagnosisStepKey;
   label: string;
@@ -67,10 +64,5 @@ export interface DiagnosisStep {
 export interface DiagnosisFormStepProps {
   theme: Theme;
   isMidnightTheme: boolean;
-}
-
-export interface DiagnosisFormStepProps {
-  theme: Theme;
-  isMidnightTheme: boolean;
-  onFormChange?: () => void; // ΠΡΟΣΘΕΣΕ ΑΥΤΗ ΤΗ ΓΡΑΜΜΗ
+  onFormChange?: () => void;
 }

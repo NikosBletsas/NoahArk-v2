@@ -14,7 +14,7 @@ const SpirometerScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, 
         title="Respirometer Data" 
         onBack={() => setCurrentScreen(SCREEN_NAMES.MEASUREMENTS)}
         showThemeButton={true}
-        onShowThemeSelector={() => setShowThemeSelector(true)}
+        onShowThemeSelector={() => setShowThemeSelector?.(true)}
         isMidnightTheme={isMidnightTheme}
       />
 

@@ -5,7 +5,7 @@ import { BaseScreenProps } from '../types';
 import { SCREEN_NAMES } from '../constants';
 import AppHeader from './shared/AppHeader';
 
-const AssignEmergencyScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, setShowThemeSelector, isMidnightTheme }) => {
+const AssignEmergencyScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, isMidnightTheme }) => {
   const [dateTimeValue, setDateTimeValue] = useState(() => {
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -30,7 +30,6 @@ const AssignEmergencyScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScr
         title="NOAH - Assign Emergency" 
         onBack={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
         showThemeButton={true}
-        onShowThemeSelector={() => setShowThemeSelector(true)}
         isMidnightTheme={isMidnightTheme}
       />
 

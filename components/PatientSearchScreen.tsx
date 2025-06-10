@@ -31,7 +31,7 @@ const PatientSearchScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScree
         title="NOAH - Patient Search"
         onBack={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
         showThemeButton={true}
-        onShowThemeSelector={() => setShowThemeSelector(true)}
+        onShowThemeSelector={() => setShowThemeSelector?.(true)}
         isMidnightTheme={isMidnightTheme}
       />
 
