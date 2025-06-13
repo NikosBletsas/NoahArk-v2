@@ -1,18 +1,9 @@
 import React from 'react';
 import { ArrowLeft, MonitorDot, AirVent, Activity, HeartPulse, ScanEye, Radio, Fingerprint, Thermometer, TestTubeDiagonal, PersonStanding, Stethoscope } from 'lucide-react';
-import { BaseScreenProps, ThemeKey } from '../types';
+import { BaseScreenProps, DeviceTileProps } from '../types';
 import { SCREEN_NAMES } from '../constants';
 import AppHeader from './shared/AppHeader';
 
-interface DeviceTileProps {
-  icon: React.ReactNode;
-  label: string;
-  onClick?: () => void;
-  gradient: string;
-  borderColor: string;
-  theme: BaseScreenProps['theme'];
-  currentThemeKey: string; // Change from ThemeKey to string
-}
 
 const DeviceTile: React.FC<DeviceTileProps> = ({ icon, label, onClick, gradient, borderColor, theme, currentThemeKey }) => (
   <div
@@ -54,7 +45,7 @@ const MedicalMeasurementsScreen: React.FC<MedicalMeasurementsScreenProps> = ({
     <div className={`min-h-screen bg-gradient-to-br ${theme.background} flex flex-col`}>
       <AppHeader 
         theme={theme} 
-        title="NOAH - Medical Devices" 
+        title="Medical Devices" 
         onBack={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
         showThemeButton={false}
         isMidnightTheme={isMidnightTheme}

@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import { Activity, Save, RefreshCw, Monitor as DeviceMonitor, Settings as SettingsIcon, Eye, EyeOff, FolderOpen, Copy, CheckCircle, Menu as MenuIcon, X } from 'lucide-react';
-import { BaseScreenProps } from '../types';
+import { BaseScreenProps, SidebarNavItemProps } from '../types';
 import { SCREEN_NAMES } from '../constants';
 import FormSection from './shared/FormSection';
 import InputWithIconButton from './shared/InputWithIconButton';
 import { LabelledInput } from './shared/FormControls';
 
-interface SidebarNavItemProps {
-  icon: React.ReactNode;
-  label: string;
-  isActive?: boolean;
-  onClick?: () => void;
-  theme: BaseScreenProps['theme'];
-}
+
 
 const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ icon, label, isActive, onClick, theme }) => {
   const activeBg = isActive ? `bg-gradient-to-r ${theme.primary}` : '';
@@ -118,19 +112,28 @@ const SettingsScreen: React.FC<BaseScreenProps> = ({
 
       {/* Main Content Area */}
       <main className="flex-1 w-full md:ml-72 p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 overflow-y-auto">
-        {/* Mobile Header */}
+        {/* Mobile Header - Καθαρό χωρίς παλιό theme selector */}
         <div className="md:hidden flex items-center justify-between mb-4">
-          <button onClick={() => setIsMobileMenuOpen(true)} className={`p-2 rounded-md ${theme.card} ${theme.textPrimary} shadow`}>
+          <button 
+            onClick={() => setIsMobileMenuOpen(true)} 
+            className={`p-2 rounded-md ${theme.card} ${theme.textPrimary} shadow flex-shrink-0`}
+          >
             <MenuIcon size={24} />
           </button>
-          <button
-            onClick={() => setShowThemeSelector && setShowThemeSelector(true)}
-            className={`p-2 ${theme.card} backdrop-blur-lg rounded-xl shadow-lg border border-white/20 hover:scale-105`}
-            title="Change Theme"
-          >
-            <div className={`w-5 h-5 bg-gradient-to-r ${theme.primary} rounded-md`}></div>
-          </button>
+          
+          <div className="flex-1"></div>
+          
+          {setShowThemeSelector && (
+            <button
+              onClick={() => setShowThemeSelector(true)}
+              className={`p-2 ${theme.card} backdrop-blur-lg rounded-xl shadow-lg border border-white/20 hover:scale-105 flex-shrink-0`}
+              title="Change Theme"
+            >
+              <div className={`w-5 h-5 bg-gradient-to-r ${theme.primary} rounded-md`}></div>
+            </button>
+          )}
         </div>
+
          {/* Desktop Theme Button in content area */}
          <div className="hidden md:flex justify-end mb-4 lg:mb-6">
             {setShowThemeSelector && (

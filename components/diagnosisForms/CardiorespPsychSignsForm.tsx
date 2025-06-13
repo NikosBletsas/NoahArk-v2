@@ -1,5 +1,5 @@
 import React from 'react';
-import { DiagnosisFormStepProps } from '../../types';
+import { DiagnosisFormStepProps, InlineCheckboxGroupProps } from '../../types';
 import FormSection from '../shared/FormSection';
 
 const CheckboxItem: React.FC<{ label: string; id: string; theme: any; onFormChange?: () => void }> = ({ 
@@ -15,14 +15,6 @@ const CheckboxItem: React.FC<{ label: string; id: string; theme: any; onFormChan
     <span className={`${theme.textPrimary} text-xs sm:text-sm md:text-base group-hover:${theme.textSecondary}`}>{label}</span>
   </label>
 );
-
-interface InlineCheckboxGroupProps {
-  groupLabel: string;
-  options: string[];
-  idPrefix: string;
-  theme: any;
-  onFormChange?: () => void;
-}
 
 const InlineCheckboxGroup: React.FC<InlineCheckboxGroupProps> = ({ 
   groupLabel, options, idPrefix, theme, onFormChange 

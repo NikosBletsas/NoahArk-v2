@@ -1,22 +1,7 @@
 
 import React from 'react';
-import { Theme, ThemeKey } from '../../types';
+import { InputWithIconButtonProps } from '../../types';
 
-interface InputWithIconButtonProps {
-  label: string;
-  id: string;
-  type?: string;
-  theme: any; // or your specific theme type
-  currentThemeKey: string; // Changed from ThemeKey to string
-  placeholder?: string;
-  value?: string;
-  defaultValue?: string; // Add this line
-  isReadOnly?: boolean;
-  icon: React.ReactNode;
-  onIconClick: () => void;
-  buttonTitle: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; // Add this line
-}
 
 const InputWithIconButton: React.FC<InputWithIconButtonProps> = ({
   label,

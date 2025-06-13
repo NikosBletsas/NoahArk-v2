@@ -27,7 +27,7 @@ const AssignEmergencyScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScr
     <div className={`min-h-screen bg-gradient-to-br ${theme.background} flex flex-col`}>
       <AppHeader 
         theme={theme} 
-        title="NOAH - Assign Emergency" 
+        title="Assign Emergency" 
         onBack={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
         showThemeButton={true}
         isMidnightTheme={isMidnightTheme}

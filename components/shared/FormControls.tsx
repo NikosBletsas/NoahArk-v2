@@ -1,17 +1,8 @@
 
 import React from 'react';
-import { Theme } from '../../types';
+import { FormControlProps } from '../../types';
 
-export interface FormControlProps {
-  label: string;
-  id: string;
-  theme: Theme;
-  value?: string;
-  defaultValue?: string;
-  placeholder?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
-  isReadOnly?: boolean;
-}
+
 
 export interface LabelledInputProps extends FormControlProps {
   type?: string;

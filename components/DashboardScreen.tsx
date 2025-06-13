@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Heart, Settings, Camera, User, FileText, RefreshCw, Monitor as DeviceMonitor, Activity, BriefcaseMedical, ClipboardPlus, HardDrive, ScanLine, Video, Pill, Brain } from 'lucide-react';
-import { BaseScreenProps, ThemeKey } from '../types';
+import { BaseScreenProps, DashboardTileProps } from '../types';
 import { SCREEN_NAMES } from '../constants';
 
-interface DashboardTileProps {
-  icon: React.ReactNode;
-  label: string;
-  onClick?: () => void;
-  theme: BaseScreenProps['theme'];
-  isMidnightTheme: boolean;
-}
+
 
 const DashboardTile: React.FC<DashboardTileProps> = ({ icon, label, onClick, theme, isMidnightTheme }) => (
   <div
@@ -52,7 +46,6 @@ const DashboardScreen: React.FC<BaseScreenProps> = ({
   const tiles = [
     { icon: <Search className={`${iconSize} mx-auto ${theme.icon}`} />, label: 'Search Patient', screen: SCREEN_NAMES.PATIENT_SEARCH },
     { icon: <Heart className={`${iconSize} mx-auto text-red-500`} />, label: 'Medical Measurements', screen: SCREEN_NAMES.MEASUREMENTS },
-    { icon: <ClipboardPlus className={`${iconSize} mx-auto text-lime-600`} />, label: 'Emergency Diagnosis', screen: SCREEN_NAMES.EMERGENCY_CASE_DIAGNOSIS },
     { icon: <BriefcaseMedical className={`${iconSize} mx-auto text-pink-600`} />, label: 'Assign Emergency', screen: SCREEN_NAMES.ASSIGN_EMERGENCY },
     { icon: <HardDrive className={`${iconSize} mx-auto text-yellow-600`} />, label: 'Device Setup', screen: SCREEN_NAMES.DEVICE_CONFIGURATION },
     { icon: <ScanLine className={`${iconSize} mx-auto text-sky-600`} />, label: 'Scan Documents', screen: undefined /* TODO */ },

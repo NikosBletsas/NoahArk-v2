@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
-import { Activity, Monitor, Wifi, ShieldCheck, Eye, EyeOff, Loader } from 'lucide-react'; 
-import { BaseScreenProps } from '../types';
+import {  Wifi, ShieldCheck, Eye, EyeOff, Loader } from 'lucide-react'; 
+import { BaseScreenProps, IconButtonProps } from '../types';
 import { SCREEN_NAMES } from '../constants';
 
-interface IconButtonProps {
-  icon: React.ReactElement<{ className?: string }>;
-  label: string;
-  onClick?: () => void;
-  theme: BaseScreenProps['theme'];
-  bgColorClass: string;
-  iconColorClass?: string;
-  disabled?: boolean;
-}
+
 
 const IconButton: React.FC<IconButtonProps> = ({ 
   icon, 

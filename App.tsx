@@ -21,30 +21,19 @@ import ConnectivityTestScreen from './components/ConnectivityTestScreen';
  * Manages the current screen, theme, and global modals.
  */
 const App: React.FC = () => {
-  // State for the currently displayed screen
   const [currentScreen, setCurrentScreen] = useState<ScreenName>(SCREEN_NAMES.LOGIN);
-  
-  // Initialize with 'noah' theme (light mode) by default
   const [currentThemeKey, setCurrentThemeKey] = useState<ThemeKey>('noah');
-  
-  // State for ConnectionStatus modal visibility
   const [showConnectionStatus, setShowConnectionStatus] = useState(false);
-  
-  // State for ConnectivityTest modal visibility
   const [showConnectivityTest, setShowConnectivityTest] = useState(false);
-
-  // Get the full theme object based on the current key
   const theme: Theme = THEMES[currentThemeKey];
-  
-  // Helper boolean for dark themes (only checking for 'black' now since we're limiting to light/dark)
   const isMidnightTheme = currentThemeKey === 'black';
 
   /**
    * Handles theme changes - restricted to light ('noah') and dark ('black') modes
-   * @param themeKey - The theme key to switch to
+   * @param themeKey 
    */
   const handleThemeChange = (themeKey: string) => {
-    // Ensure only light/dark themes are used
+    
     if (themeKey === 'noah' || themeKey === 'black') {
       setCurrentThemeKey(themeKey as ThemeKey);
     }
@@ -53,11 +42,10 @@ const App: React.FC = () => {
   /**
    * Handles setting the current screen and ensures modals are closed
    * when transitioning between main screens.
-   * @param screen - The name of the screen to navigate to.
+   * @param screen 
    */
   const handleSetCurrentScreen = (screen: ScreenName) => {
-    // Hide modals when changing main screen to prevent them from persisting incorrectly,
-    // unless the target screen is one that might trigger them (like Device Configuration or Login)
+    
     if (screen !== SCREEN_NAMES.DEVICE_CONFIGURATION && screen !== SCREEN_NAMES.LOGIN) {
         setShowConnectionStatus(false);
         setShowConnectivityTest(false);
@@ -65,17 +53,12 @@ const App: React.FC = () => {
     setCurrentScreen(screen);
   };
 
-  /**
-   * Renders the currently active screen based on `currentScreen` state.
-   * Passes down necessary props to each screen.
-   */
   const renderScreen = () => {
-    // Determine if modal setters should be passed to the current screen
+   
     const shouldPassModalSetters = 
       currentScreen === SCREEN_NAMES.DEVICE_CONFIGURATION ||
       currentScreen === SCREEN_NAMES.LOGIN;
 
-    // Common props passed to all main screens
     const commonScreenProps = { 
         theme, 
         setCurrentScreen: handleSetCurrentScreen, 

@@ -5,7 +5,7 @@ import { SCREEN_NAMES } from '../constants';
 import FormSection from './shared/FormSection';
 import { LabelledInput, LabelledSelect } from './shared/FormControls';
 
-const DeviceManufacturerRow: React.FC<{label: string; idPrefix: string; theme: BaseScreenProps['theme']}> = ({label, idPrefix, theme}) => (
+const DeviceManufacturerRow: React.FC<{label: string; idPrefix: string; theme: BaseScreenProps['theme']; isMidnightTheme?: boolean}> = ({label, idPrefix, theme, isMidnightTheme}) => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-5 lg:gap-6 items-end">
         <LabelledSelect label={`${label} Brand`} id={`${idPrefix}-brand`} theme={theme}>
             <option value="">Select Brand</option>
@@ -15,8 +15,8 @@ const DeviceManufacturerRow: React.FC<{label: string; idPrefix: string; theme: B
             <option value="other">Other</option>
         </LabelledSelect>
         <label htmlFor={`${idPrefix}-exists`} className="flex items-center space-x-2 sm:space-x-2.5 md:space-x-3 cursor-pointer mt-2 md:mt-0 md:mb-1.5 sm:md:mb-2.5 lg:mb-3">
-            <input type="checkbox" id={`${idPrefix}-exists`} className={`form-checkbox h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 rounded ${theme.inputBorder} text-blue-500 focus:ring-blue-500`} />
-            <span className={`${theme.textPrimary} text-xs sm:text-sm md:text-base lg:text-lg`}>{label} Device Exists</span>
+            <input type="checkbox" id={`${idPrefix}-exists`} className={`form-checkbox h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 rounded border focus:ring-blue-500 ${isMidnightTheme ? 'border-gray-700 bg-gray-800 text-blue-400' : 'border-gray-300 bg-white text-blue-500'}`} />
+            <span className={`text-xs sm:text-sm md:text-base lg:text-lg ${isMidnightTheme ? 'text-gray-100' : 'text-gray-900'}`}>{label} Device Exists</span>
         </label>
     </div>
 );
@@ -83,8 +83,8 @@ const DeviceConfigurationScreen: React.FC<DeviceConfigurationScreenProps> = ({
               <LabelledInput label="Local Port" id="hms-local-port" placeholder="e.g., 8080" theme={theme} />
             </div>
             <label htmlFor="hms-device-exists" className="flex items-center space-x-2 sm:space-x-2.5 md:space-x-3 cursor-pointer mb-4 sm:mb-6 md:mb-7 lg:mb-8">
-                <input type="checkbox" id="hms-device-exists" className={`form-checkbox h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 rounded ${theme.inputBorder} text-blue-500 focus:ring-blue-500`} />
-                <span className={`${theme.textPrimary} text-xs sm:text-sm md:text-base lg:text-lg`}>HMS Device Exists</span>
+                <input type="checkbox" id="hms-device-exists" className={`form-checkbox h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 rounded border focus:ring-blue-500 ${isMidnightTheme ? 'border-gray-700 bg-gray-800 text-blue-400' : 'border-gray-300 bg-white text-blue-500'}`} />
+                <span className={`text-xs sm:text-sm md:text-base lg:text-lg ${isMidnightTheme ? 'text-gray-100' : 'text-gray-900'}`}>HMS Device Exists</span>
             </label>
 
             <FormSection title="HMS Oximeter" theme={theme} isSubSection>
@@ -103,8 +103,8 @@ const DeviceConfigurationScreen: React.FC<DeviceConfigurationScreenProps> = ({
                     </LabelledSelect>
                 </div>
                  <label htmlFor="hms-oximeter-exists" className="flex items-center space-x-2 sm:space-x-2.5 md:space-x-3 cursor-pointer my-3 sm:my-4 md:my-5 lg:my-6">
-                    <input type="checkbox" id="hms-oximeter-exists" className={`form-checkbox h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 rounded ${theme.inputBorder} text-blue-500 focus:ring-blue-500`} />
-                    <span className={`${theme.textPrimary} text-xs sm:text-sm md:text-base lg:text-lg`}>Oximeter Device Exists</span>
+                    <input type="checkbox" id="hms-oximeter-exists" className={`form-checkbox h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 rounded border focus:ring-blue-500 ${isMidnightTheme ? 'border-gray-700 bg-gray-800 text-blue-400' : 'border-gray-300 bg-white text-blue-500'}`} />
+                    <span className={`text-xs sm:text-sm md:text-base lg:text-lg ${isMidnightTheme ? 'text-gray-100' : 'text-gray-900'}`}>Oximeter Device Exists</span>
                 </label>
                 <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:space-x-3 mt-3 sm:mt-4 md:mt-5 lg:mt-6">
                     <button className={`${baseButtonStyles} w-full sm:flex-1 bg-blue-500 hover:bg-blue-600 text-white focus:ring-blue-500`}>
@@ -123,7 +123,7 @@ const DeviceConfigurationScreen: React.FC<DeviceConfigurationScreenProps> = ({
           <FormSection title="Device Manufacturer" theme={theme}>
             <div className="space-y-4 sm:space-y-6 md:space-y-7 lg:space-y-8">
               {deviceManufacturers.map(device => (
-                <DeviceManufacturerRow key={device.idPrefix} label={device.label} idPrefix={device.idPrefix} theme={theme} />
+                <DeviceManufacturerRow key={device.idPrefix} label={device.label} idPrefix={device.idPrefix} theme={theme} isMidnightTheme={isMidnightTheme} />
               ))}
             </div>
           </FormSection>
@@ -162,14 +162,14 @@ const DeviceConfigurationScreen: React.FC<DeviceConfigurationScreenProps> = ({
           </button>
           <button
             onClick={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
-            className={`${baseButtonStyles} border ${theme.buttonSecondaryBorder} ${theme.buttonSecondaryText} ${theme.buttonSecondaryHoverBg} focus:ring-gray-400`}
+            className={`${baseButtonStyles} ${isMidnightTheme ? 'border-gray-600 text-white bg-gray-700 hover:bg-gray-600' : 'border-gray-700 text-gray-900 bg-white hover:bg-gray-50'} focus:ring-gray-400`}
           >
             <ArrowLeft size={16} className="md:size-5 lg:size-6" />
             <span>Return</span>
           </button>
           <button
             onClick={() => setCurrentScreen(SCREEN_NAMES.SETTINGS)}
-            className={`${baseButtonStyles} border ${theme.buttonSecondaryBorder} ${theme.buttonSecondaryText} ${theme.buttonSecondaryHoverBg} focus:ring-gray-400`}
+            className={`${baseButtonStyles} ${isMidnightTheme ? 'border-gray-600 text-white bg-gray-700 hover:bg-gray-600' : 'border-gray-700 text-gray-900 bg-white hover:bg-gray-50'} focus:ring-gray-400`}
           >
             <SettingsIcon size={16} className="md:size-5 lg:size-6" />
             <span>Advanced</span>

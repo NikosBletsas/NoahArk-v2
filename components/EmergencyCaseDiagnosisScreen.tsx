@@ -46,6 +46,13 @@ const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({
     }
   };
 
+  const handlePrevious = () => {
+    if (currentStepIndex > 0) {
+      setCurrentStepIndex(currentStepIndex - 1);
+      setIsCurrentFormModified(false);
+    }
+  };
+
   const handleSubmitToDashboard = () => {
     console.log("Submitting diagnosis data early...");
     setCurrentScreen(SCREEN_NAMES.DASHBOARD);
@@ -73,6 +80,7 @@ const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({
   };
 
   const isLastStep = currentStepIndex === DIAGNOSIS_STEPS_CONFIG.length - 1;
+  const isFirstStep = currentStepIndex === 0;
 
   const sidebarBg = isMidnightTheme || currentThemeKey === 'black' ? 'bg-slate-800' : 'bg-slate-700';
   const sidebarItemTextColor = theme.textOnAccent; 
@@ -163,77 +171,93 @@ const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({
       </div>
 
       <main className="flex-1 md:ml-72 lg:ml-80 flex flex-col overflow-hidden">
-        <div className={`md:hidden sticky top-0 ${theme.card} backdrop-blur-lg p-2.5 sm:p-3 flex items-center justify-between border-b ${isMidnightTheme || currentThemeKey === 'black' ? 'border-gray-700/60' : 'border-white/20'} z-10`}>
-          <button 
-            onClick={() => setIsMobileMenuOpen(true)} 
-            className={`p-1.5 sm:p-2 rounded-md hover:bg-black/10 ${isMidnightTheme || currentThemeKey === 'black' ? 'text-white' : 'text-slate-700'}`}
-            aria-label="Open menu"
-          >
-            <Menu size={22} className="w-[22px] h-[22px] sm:w-6 sm:h-6" />
-          </button>
-          <h2 className={`text-sm sm:text-base font-semibold ${theme.textPrimary} truncate mx-2`}>{currentStepConfig.label}</h2>
+        {/* Fixed Mobile Header */}
+        <div className={`md:hidden sticky top-0 ${theme.card} backdrop-blur-lg border-b ${isMidnightTheme || currentThemeKey === 'black' ? 'border-gray-700/60' : 'border-white/20'} z-10`}>
+          <div className="p-2.5 sm:p-3 flex items-center justify-between">
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)} 
+              className={`p-1.5 sm:p-2 rounded-md hover:bg-black/10 ${isMidnightTheme || currentThemeKey === 'black' ? 'text-white' : 'text-slate-700'} flex-shrink-0`}
+              aria-label="Open menu"
+            >
+              <Menu size={22} className="w-[22px] h-[22px] sm:w-6 sm:h-6" />
+            </button>
+            
+            {/* Mobile Title - with proper truncation */}
+            <div className="flex-1 mx-2 min-w-0">
+              <h2 className={`text-sm sm:text-base font-semibold ${theme.textPrimary} truncate text-center`}>
+                {currentStepConfig.label}
+              </h2>
+            </div>
+
+            {/* Theme Toggle */}
             {setShowThemeSelector && (
-                 <button
-                    onClick={() => setShowThemeSelector(true)}
-                    className={`p-1.5 sm:p-2 ${theme.card} backdrop-blur-lg rounded-lg sm:rounded-xl shadow-md border border-white/10 hover:scale-105`}
-                    title="Change Theme"
-                  >
-                  <div className={`w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-r ${theme.primary} rounded-sm sm:rounded-md`}></div>
-                </button>
+              <button
+                onClick={() => setShowThemeSelector(true)}
+                className={`p-1.5 sm:p-2 ${theme.card} backdrop-blur-lg rounded-lg sm:rounded-xl shadow-md border border-white/10 hover:scale-105 flex-shrink-0`}
+                title="Change Theme"
+              >
+                <div className={`w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-r ${theme.primary} rounded-sm sm:rounded-md`}></div>
+              </button>
             )}
+          </div>
         </div>
         
-        <div className="p-3 sm:p-4 md:p-6 lg:p-8 flex-grow overflow-y-auto">
-            <div className="hidden md:flex justify-between items-center mb-4 lg:mb-6">
-                {/* Progress Bar */}
-                <div className="flex-1 max-w-2xl mr-6">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className={`text-xs sm:text-sm font-medium ${theme.textSecondary}`}>
-                            Page {currentStepIndex + 1} of {DIAGNOSIS_STEPS_CONFIG.length}
-                        </span>
-                    </div>
-                    <div className={`w-full h-2 ${isMidnightTheme || currentThemeKey === 'black' ? 'bg-gray-700' : 'bg-white/20'} rounded-full overflow-hidden backdrop-blur-sm`}>
-                        <div 
-                            className={`h-full bg-gradient-to-r ${theme.primary} transition-all duration-500 ease-out rounded-full relative overflow-hidden`}
-                            style={{ width: `${((currentStepIndex + 1) / DIAGNOSIS_STEPS_CONFIG.length) * 100}%` }}
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 flex flex-col flex-grow min-h-0">
+            {/* Fixed Progress and Theme Section */}
+            <div className="flex-shrink-0">
+                <div className="hidden md:flex justify-between items-center mb-4 lg:mb-6">
+                    {/* Progress Bar */}
+                    <div className="flex-1 max-w-2xl mr-6">
+                        <div className="flex items-center justify-between mb-2">
+                            <span className={`text-xs sm:text-sm font-medium ${theme.textSecondary}`}>
+                                Page {currentStepIndex + 1} of {DIAGNOSIS_STEPS_CONFIG.length}
+                            </span>
+                        </div>
+                        <div className={`w-full h-2 ${isMidnightTheme || currentThemeKey === 'black' ? 'bg-gray-700' : 'bg-white/20'} rounded-full overflow-hidden backdrop-blur-sm`}>
+                            <div 
+                                className={`h-full bg-gradient-to-r ${theme.primary} transition-all duration-500 ease-out rounded-full relative overflow-hidden`}
+                                style={{ width: `${((currentStepIndex + 1) / DIAGNOSIS_STEPS_CONFIG.length) * 100}%` }}
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+                            </div>
+                        </div>
+                        <div className="mt-1">
+                            <span className={`text-xs ${theme.textSecondary} font-medium`}>
+                                {currentStepConfig.label}
+                            </span>
                         </div>
                     </div>
-                    <div className="mt-1">
-                        <span className={`text-xs ${theme.textSecondary} font-medium`}>
-                            {currentStepConfig.label}
+
+                    {setShowThemeSelector && (
+                        <button
+                            onClick={() => setShowThemeSelector(true)}
+                            className={`p-3 md:p-3.5 lg:p-4 ${theme.card} backdrop-blur-lg rounded-2xl shadow-lg border border-white/20 hover:scale-105 transition-all duration-200 flex-shrink-0`}
+                            title="Change Theme"
+                        >
+                            <div className={`w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 bg-gradient-to-r ${theme.primary} rounded-lg`}></div>
+                        </button>
+                    )}
+                </div>
+
+                {/* Mobile Progress Bar */}
+                <div className="md:hidden mb-4">
+                    <div className="flex items-center justify-between mb-2">
+                        <span className={`text-xs font-medium ${theme.textSecondary}`}>
+                            Page {currentStepIndex + 1}/{DIAGNOSIS_STEPS_CONFIG.length}
                         </span>
                     </div>
-                </div>
-
-                {setShowThemeSelector && (
-                    <button
-                        onClick={() => setShowThemeSelector(true)}
-                        className={`p-3 md:p-3.5 lg:p-4 ${theme.card} backdrop-blur-lg rounded-2xl shadow-lg border border-white/20 hover:scale-105 transition-all duration-200 flex-shrink-0`}
-                        title="Change Theme"
-                    >
-                        <div className={`w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 bg-gradient-to-r ${theme.primary} rounded-lg`}></div>
-                    </button>
-                )}
-            </div>
-
-            {/* Mobile Progress Bar */}
-            <div className="md:hidden mb-4">
-                <div className="flex items-center justify-between mb-2">
-                    <span className={`text-xs font-medium ${theme.textSecondary}`}>
-                        Page {currentStepIndex + 1}/{DIAGNOSIS_STEPS_CONFIG.length}
-                    </span>
-                </div>
-                <div className={`w-full h-1.5 ${isMidnightTheme || currentThemeKey === 'black' ? 'bg-gray-700' : 'bg-white/20'} rounded-full overflow-hidden`}>
-                    <div 
-                        className={`h-full bg-gradient-to-r ${theme.primary} transition-all duration-500 ease-out rounded-full`}
-                        style={{ width: `${((currentStepIndex + 1) / DIAGNOSIS_STEPS_CONFIG.length) * 100}%` }}
-                    ></div>
+                    <div className={`w-full h-1.5 ${isMidnightTheme || currentThemeKey === 'black' ? 'bg-gray-700' : 'bg-white/20'} rounded-full overflow-hidden`}>
+                        <div 
+                            className={`h-full bg-gradient-to-r ${theme.primary} transition-all duration-500 ease-out rounded-full`}
+                            style={{ width: `${((currentStepIndex + 1) / DIAGNOSIS_STEPS_CONFIG.length) * 100}%` }}
+                        ></div>
+                    </div>
                 </div>
             </div>
-            <div className={`${theme.card} backdrop-blur-lg rounded-xl shadow-2xl border border-white/20 flex flex-col h-full`}>
-                <div className={`bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} p-2.5 sm:p-3 md:p-3.5 lg:p-4 rounded-t-lg sm:rounded-t-xl flex items-center justify-between`}>
+
+            {/* Form Container - Fixed Height with Scrolling */}
+            <div className={`${theme.card} backdrop-blur-lg rounded-xl shadow-2xl border border-white/20 flex flex-col flex-grow min-h-0`}>
+                <div className={`bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} p-2.5 sm:p-3 md:p-3.5 lg:p-4 rounded-t-lg sm:rounded-t-xl flex items-center justify-between flex-shrink-0`}>
                     <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold">{currentStepConfig.label}</h2>
                     
                     <ClearButton
@@ -246,7 +270,7 @@ const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({
                       size="xs"
                     />
                 </div>
-                <div className="p-3 sm:p-4 md:p-5 lg:p-6 flex-grow overflow-y-auto">
+                <div className="p-3 sm:p-4 md:p-5 lg:p-6 flex-grow overflow-y-auto min-h-0">
                     <CurrentFormStep 
                       key={formStepRenderKey} 
                       theme={theme} 
@@ -258,51 +282,72 @@ const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({
         </div>
         
         <div className={`bg-gradient-to-r ${theme.accent} p-3 sm:p-4 md:p-5 lg:p-6 sticky bottom-0 z-10 border-t ${isMidnightTheme || currentThemeKey === 'black' ? 'border-gray-600/50' : 'border-white/20'} backdrop-blur-lg`}>
-          <div className="max-w-4xl mx-auto flex justify-end items-center space-x-2 sm:space-x-3 md:space-x-4">
-            <button
-              onClick={handleCancel}
-              className={`group relative px-3 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-md sm:rounded-lg font-medium transition-all duration-300 text-xs sm:text-sm md:text-base lg:text-lg overflow-hidden ${secondaryButtonStyling} hover:scale-105 hover:shadow-md active:scale-95 transform`}
-            >
-              <span className="relative z-10">Cancel</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-            </button>
-            
-            {!isLastStep && (
+          <div className="max-w-4xl mx-auto flex justify-between items-center">
+            {/* Left side - Cancel button */}
+            <div className="flex">
               <button
-                onClick={handleSubmitToDashboard}
-                className={`group relative px-3 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-md sm:rounded-lg font-medium bg-gradient-to-r ${theme.primary} ${theme.textOnAccent} transition-all duration-300 text-xs sm:text-sm md:text-base lg:text-lg overflow-hidden hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10 active:scale-95 transform border border-white/20 opacity-90 hover:opacity-100`}
-                title="Submit and go to Dashboard"
+                onClick={handleCancel}
+                className={`group relative px-3 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-md sm:rounded-lg font-medium transition-all duration-300 text-xs sm:text-sm md:text-base lg:text-lg overflow-hidden ${secondaryButtonStyling} hover:scale-105 hover:shadow-md active:scale-95 transform`}
+              >
+                <span className="relative z-10">Cancel</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+              </button>
+            </div>
+
+            {/* Right side - Navigation and action buttons */}
+            <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
+              {!isFirstStep && (
+                <button
+                  onClick={handlePrevious}
+                  className={`group relative px-3 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-md sm:rounded-lg font-medium transition-all duration-300 text-xs sm:text-sm md:text-base lg:text-lg overflow-hidden ${secondaryButtonStyling} hover:scale-105 hover:shadow-md active:scale-95 transform`}
+                >
+                  <span className="relative z-10 flex items-center space-x-2">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span>Back</span>
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                </button>
+              )}
+              
+              <button
+                onClick={handleNext}
+                className={`group relative px-3 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-md sm:rounded-lg font-medium bg-gradient-to-r ${theme.primary} ${theme.textOnAccent} transition-all duration-300 text-xs sm:text-sm md:text-base lg:text-lg overflow-hidden hover:scale-105 hover:shadow-lg hover:shadow-blue-500/15 active:scale-95 transform shadow-md`}
               >
                 <span className="relative z-10 flex items-center space-x-2">
-                  <span>Submit</span>
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
+                  <span>{isLastStep ? 'Submit' : 'Next'}</span>
+                  {!isLastStep && (
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  )}
+                  {isLastStep && (
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md sm:rounded-lg"></div>
               </button>
-            )}
-            
-            <button
-              onClick={handleNext}
-              className={`group relative px-3 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-md sm:rounded-lg font-medium bg-gradient-to-r ${theme.primary} ${theme.textOnAccent} transition-all duration-300 text-xs sm:text-sm md:text-base lg:text-lg overflow-hidden hover:scale-105 hover:shadow-lg hover:shadow-blue-500/15 active:scale-95 transform shadow-md`}
-            >
-              <span className="relative z-10 flex items-center space-x-2">
-                <span>{isLastStep ? 'Submit' : 'Next'}</span>
-                {!isLastStep && (
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                )}
-                {isLastStep && (
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                )}
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-              <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md sm:rounded-lg"></div>
-            </button>
+
+              {!isLastStep && (
+                <button
+                  onClick={handleSubmitToDashboard}
+                  className={`group relative px-3 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-md sm:rounded-lg font-medium bg-gradient-to-r ${theme.primary} ${theme.textOnAccent} transition-all duration-300 text-xs sm:text-sm md:text-base lg:text-lg overflow-hidden hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10 active:scale-95 transform border border-white/20 opacity-90 hover:opacity-100`}
+                  title="Submit and go to Dashboard"
+                >
+                  <span className="relative z-10 flex items-center space-x-2">
+                    <span>Submit</span>
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </main>

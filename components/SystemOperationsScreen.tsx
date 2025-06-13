@@ -1,18 +1,10 @@
 
 import React from 'react';
 import { X, RotateCcw, RefreshCw, Power } from 'lucide-react';
-import { BaseScreenProps } from '../types';
+import { BaseScreenProps, OperationButtonProps } from '../types';
 import { SCREEN_NAMES } from '../constants';
 
-interface OperationButtonProps {
-  icon: React.ReactElement<{ className?: string }>; 
-  label: string;
-  gradient: string;
-  borderColor: string;
-  textColor: string;
-  onClick?: () => void;
-  theme: BaseScreenProps['theme']; 
-}
+
 
 const OperationButton: React.FC<OperationButtonProps> = ({ icon, label, gradient, borderColor, textColor, onClick, theme }) => (
   <div

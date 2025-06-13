@@ -1,14 +1,7 @@
 
 import React from 'react';
-import { Theme } from '../../types';
+import { FormSectionProps } from '../../types';
 
-interface FormSectionProps {
-  title: string;
-  theme: Theme;
-  children: React.ReactNode;
-  isSubSection?: boolean;
-  isInnerSection?: boolean; // New prop
-}
 
 const FormSection: React.FC<FormSectionProps> = ({ title, theme, children, isSubSection, isInnerSection }) => {
   

@@ -1,23 +1,7 @@
 import React, { useState } from 'react';
 import { RotateCcw } from 'lucide-react';
+import {ClearWarningModalProps, ClearButtonProps} from '../../types';
 
-interface ClearButtonProps {
-  theme: any; 
-  isMidnightTheme?: boolean;
-  isVisible: boolean;
-  sectionName: string;
-  onClear: () => void;
-  position?: 'header' | 'floating';
-  size?: 'xs' | 'sm' | 'md';
-}
-
-interface ClearWarningModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  sectionName: string;
-  theme: any;
-}
 
 const ClearWarningModal: React.FC<ClearWarningModalProps> = ({ 
   isOpen, 

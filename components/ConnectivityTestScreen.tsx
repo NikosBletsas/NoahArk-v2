@@ -1,14 +1,10 @@
 
 import React, { useState } from 'react';
 import { Activity, Wifi, UploadCloud, TestTubeDiagonal, X, ArrowLeft, Server, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import { ModalScreenProps } from '../types';
+import { ModalScreenProps,  TestItem } from '../types';
 import { SCREEN_NAMES } from '../constants';
 
-interface TestItem {
-  id: string;
-  name: string;
-  status: 'pending' | 'testing' | 'success' | 'failed';
-}
+
 
 const initialTestItems: TestItem[] = [
   { id: 'emr_api', name: 'Connectivity to EMR API', status: 'pending' },

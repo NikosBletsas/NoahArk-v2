@@ -9,11 +9,6 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  define: {
-    // Expose API_KEY from the Node environment running Vite to the client-side code.
-    // Ensure process.env.API_KEY is set in your shell or CI environment.
-    'process.env.API_KEY': JSON.stringify(process.env.API_KEY || ''),
-  },
   server: {
     port: 3000,
     open: true,
