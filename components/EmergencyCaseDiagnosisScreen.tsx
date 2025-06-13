@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Activity, Menu, X, Trash2, RotateCcw } from 'lucide-react'; 
-import { BaseScreenProps, DiagnosisStep, DiagnosisStepKey } from '../types';
-import { SCREEN_NAMES, DIAGNOSIS_STEP_KEYS } from '../constants';
+import { Menu, X} from 'lucide-react'; 
+import { BaseScreenProps, DiagnosisStep } from '../types';
+import { SCREEN_NAMES } from '../constants';
 
 import PatientInfoForm from './diagnosisForms/PatientInfoForm';
 import HistoryTraumaVitalsSkinForm from './diagnosisForms/HistoryTraumaVitalsSkinForm';
@@ -82,7 +82,7 @@ const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({
   const isLastStep = currentStepIndex === DIAGNOSIS_STEPS_CONFIG.length - 1;
   const isFirstStep = currentStepIndex === 0;
 
-  const sidebarBg = isMidnightTheme || currentThemeKey === 'black' ? 'bg-slate-800' : 'bg-slate-700';
+  const sidebarBg = `bg-gradient-to-b ${theme.accent}`;
   const sidebarItemTextColor = theme.textOnAccent; 
   const sidebarHoverTextColor = 'hover:text-white'; 
   const activeItemBackgroundClass = `bg-gradient-to-r ${theme.primary}`;
@@ -281,8 +281,9 @@ const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({
             </div>
         </div>
         
+        {/* Footer */}
         <div className={`bg-gradient-to-r ${theme.accent} p-3 sm:p-4 md:p-5 lg:p-6 sticky bottom-0 z-10 border-t ${isMidnightTheme || currentThemeKey === 'black' ? 'border-gray-600/50' : 'border-white/20'} backdrop-blur-lg`}>
-          <div className="max-w-4xl mx-auto flex justify-between items-center">
+          <div className="flex justify-between items-center w-full">
             {/* Left side - Cancel button */}
             <div className="flex">
               <button

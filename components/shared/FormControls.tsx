@@ -1,8 +1,5 @@
-
 import React from 'react';
 import { FormControlProps } from '../../types';
-
-
 
 export interface LabelledInputProps extends FormControlProps {
   type?: string;

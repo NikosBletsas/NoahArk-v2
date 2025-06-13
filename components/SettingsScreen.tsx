@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
-import { Activity, Save, RefreshCw, Monitor as DeviceMonitor, Settings as SettingsIcon, Eye, EyeOff, FolderOpen, Copy, CheckCircle, Menu as MenuIcon, X } from 'lucide-react';
+import { Activity, Save, RefreshCw, Monitor as DeviceMonitor, SlidersHorizontal as AdvancedSettingsIcon, Eye, EyeOff, FolderOpen, Copy, CheckCircle, Menu as MenuIcon, X } from 'lucide-react';
 import { BaseScreenProps, SidebarNavItemProps } from '../types';
 import { SCREEN_NAMES } from '../constants';
 import FormSection from './shared/FormSection';
 import InputWithIconButton from './shared/InputWithIconButton';
 import { LabelledInput } from './shared/FormControls';
 
-
-
 const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ icon, label, isActive, onClick, theme }) => {
   const activeBg = isActive ? `bg-gradient-to-r ${theme.primary}` : '';
-  const activeText = isActive ? 'text-white' : 'text-white'; // Always white text on dark sidebar
-  const hoverBg = isActive ? '' : 'hover:bg-white/10'; // Always white/10 for good contrast
-
+  const activeText = isActive ? 'text-white' : 'text-white'; 
+  const hoverBg = isActive ? '' : 'hover:bg-white/10';
   return (
     <button
       onClick={onClick}
@@ -28,7 +25,6 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ icon, label, isActive, 
 const SettingsScreen: React.FC<BaseScreenProps> = ({ 
     theme, 
     setCurrentScreen, 
-    isMidnightTheme, 
     currentThemeKey, 
     setShowThemeSelector
 }) => {
@@ -58,7 +54,7 @@ const SettingsScreen: React.FC<BaseScreenProps> = ({
         <SidebarNavItem icon={<RefreshCw size={18} className="sm:size-5 md:size-6 lg:size-7" />} label="Restart" theme={theme} onClick={() => console.log("Restart clicked")} />
         <SidebarNavItem icon={<DeviceMonitor size={18} className="sm:size-5 md:size-6 lg:size-7" />} label="Devices" theme={theme} onClick={() => console.log("Devices clicked")} />
         <SidebarNavItem 
-          icon={<SettingsIcon size={18} className="sm:size-5 md:size-6 lg:size-7" />} 
+          icon={<AdvancedSettingsIcon size={18} className="sm:size-5 md:size-6 lg:size-7" />} 
           label="Advanced" 
           theme={theme} 
           onClick={() => {

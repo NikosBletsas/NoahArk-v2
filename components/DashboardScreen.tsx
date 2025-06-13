@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Heart, Settings, Camera, User, FileText, RefreshCw, Monitor as DeviceMonitor, Activity, BriefcaseMedical, ClipboardPlus, HardDrive, ScanLine, Video, Pill, Brain } from 'lucide-react';
+import { Search, Heart, Settings, Camera, User, FileText, RefreshCw, Monitor as DeviceMonitor, SlidersHorizontal as AdvancedSettingsIcon, BriefcaseMedical, HardDrive, ScanLine, Video, Pill, Brain } from 'lucide-react';
 import { BaseScreenProps, DashboardTileProps } from '../types';
 import { SCREEN_NAMES } from '../constants';
-
-
 
 const DashboardTile: React.FC<DashboardTileProps> = ({ icon, label, onClick, theme, isMidnightTheme }) => (
   <div
@@ -131,7 +129,7 @@ const DashboardScreen: React.FC<BaseScreenProps> = ({
             onClick={() => setCurrentScreen(SCREEN_NAMES.SETTINGS)}
             className={`flex flex-col items-center ${theme.textOnAccent} hover:opacity-80 transition-opacity px-1 py-1 sm:px-2 md:px-3`}
           >
-            <Settings className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 mb-0.5" />
+            <AdvancedSettingsIcon className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 mb-0.5" />
             <span className="text-xs md:text-sm lg:text-base block">Advanced</span>
           </button>
         </div>

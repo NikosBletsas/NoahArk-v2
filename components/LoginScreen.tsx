@@ -186,11 +186,15 @@ const LoginScreen: React.FC<BaseScreenProps> = ({
           <span className="text-xs sm:text-sm">POWERED BY</span>
           <div className="h-8 sm:h-10 flex items-center justify-center">
             <img 
-              src='assets/TMA Logo Horizontal RGB.svg'
+              src={currentThemeKey === 'black'
+                ? "assets/TMA Logo Horizontal white.svg"
+                : "assets/TMA Logo Horizontal RGB.svg"
+              }
               alt="TMA Logo" 
               className="h-6 sm:h-8 w-auto object-contain max-w-32 sm:max-w-40" 
             />
           </div>
+          <p className="text-xs md:text-sm lg:text-base mt-1">Telemedicine EMR <span className='text-blue-600'>Version 1.7.2.0</span></p>
         </div>
       </div>
     </div>
