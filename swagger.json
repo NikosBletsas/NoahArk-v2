@@ -1,0 +1,628 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "NoAH API",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/Configuration/GetConfiguration": {
+      "get": {
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "Returns object of current configuration.",
+        "responses": {
+          "200": {
+            "description": "OK with entire configuration."
+          }
+        }
+      }
+    },
+    "/api/Configuration/SetConfiguration": {
+      "post": {
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "Stores object of user - modified configuration.",
+        "responses": {
+          "200": {
+            "description": "OK if save is successful."
+          },
+          "501": {
+            "description": "NOT INITIALIZED if the application has not been initialized."
+          },
+          "503": {
+            "description": "UNKNOWN ERROR for any other error during save of configuration."
+          }
+        }
+      }
+    },
+    "/api/LoginAPI/Init": {
+      "get": {
+        "tags": [
+          "LoginAPI"
+        ],
+        "summary": "Instantiates a new user session, reads configuration settings, and creates necessary directories.",
+        "responses": {
+          "200": {
+            "description": "OK if successful"
+          },
+          "401": {
+            "description": "NOT LICENSED if key is wrong / not found"
+          },
+          "503": {
+            "description": "NO CONNECTIVITY if no connectivity to EMR API"
+          }
+        }
+      }
+    },
+    "/api/LoginAPI/Login": {
+      "get": {
+        "tags": [
+          "LoginAPI"
+        ],
+        "summary": "Performs login.",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK if login is successful."
+          },
+          "501": {
+            "description": "NOT INITIALIZED if the application has not been initialized."
+          },
+          "400": {
+            "description": "WRONG CREDENTIALS if the username or password is incorrect."
+          },
+          "503": {
+            "description": "UNKNOWN ERROR for any other error during login."
+          }
+        }
+      }
+    },
+    "/api/LoginAPI/LoginOffline": {
+      "get": {
+        "tags": [
+          "LoginAPI"
+        ],
+        "summary": "Performs offline login by setting appropriate flags.",
+        "responses": {
+          "200": {
+            "description": "OK if login is successful."
+          }
+        }
+      }
+    },
+    "/api/Main/Init": {
+      "get": {
+        "tags": [
+          "Main"
+        ],
+        "summary": "Initializes the application by checking user login status, starting timers, and fetching recovered session - if present.",
+        "responses": {
+          "200": {
+            "description": "OK (void) or OK (List of sessions data)"
+          }
+        }
+      }
+    },
+    "/api/Main/SetRecoverySession": {
+      "get": {
+        "tags": [
+          "Main"
+        ],
+        "summary": "Set a recovery session chosen by the user among a list of saved sessions.",
+        "parameters": [
+          {
+            "name": "sessionID",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK if successful"
+          },
+          "501": {
+            "description": "NOT LOGGED IN"
+          },
+          "503": {
+            "description": "\"UNKNOWN ERROR\""
+          }
+        }
+      }
+    },
+    "/api/Main/GetBatteryStatus": {
+      "get": {
+        "tags": [
+          "Main"
+        ],
+        "summary": "get battery status",
+        "responses": {
+          "200": {
+            "description": "Battery data if ok: \t\r\n            {\r\n             \"isACOnline\": true,\r\n            \"batteryPercentage\": 0,\r\n            \"batteryLifeRemaining\": null,\r\n            \"batteryFullLifeTime\": null,\r\n            \"status\": 128,\r\n            \"isBatteryPresent\": false,\r\n            \"isCharging\": false,\r\n            \"isCritical\": false,\r\n            \"isLow\": false,\r\n            \"isHigh\": false,\r\n            \"statusDescription\": \"No Battery\"\r\n            }"
+          },
+          "501": {
+            "description": "NOT LOGGED IN"
+          }
+        }
+      }
+    },
+    "/api/Main/AddMoreFiles": {
+      "get": {
+        "tags": [
+          "Main"
+        ],
+        "summary": "Add more files to the recovery session",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK if successful"
+          },
+          "501": {
+            "description": "NOT LOGGED IN"
+          },
+          "503": {
+            "description": "\"UNKNOWN ERROR\""
+          }
+        }
+      }
+    },
+    "/api/Main/NewEmergencyCase": {
+      "post": {
+        "tags": [
+          "Main"
+        ],
+        "summary": "Submits a new emergency case to the server.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NEmergencyCase"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NEmergencyCase"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NEmergencyCase"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK if successful"
+          },
+          "501": {
+            "description": "NOT LOGGED IN"
+          }
+        }
+      }
+    },
+    "/api/Main/GetEfimeries": {
+      "get": {
+        "tags": [
+          "Main"
+        ],
+        "summary": "Gets doctors's availabilities for emergency consultations.",
+        "responses": {
+          "200": {
+            "description": "OK with list of time slots if successful"
+          },
+          "501": {
+            "description": "NOT LOGGED IN"
+          }
+        }
+      }
+    },
+    "/api/Main/ScanDocument": {
+      "get": {
+        "tags": [
+          "Main"
+        ],
+        "summary": "Scan a single page document using the scanner.",
+        "responses": {
+          "200": {
+            "description": "OK with the file path if successful"
+          },
+          "501": {
+            "description": "NOT LOGGED IN"
+          }
+        }
+      }
+    },
+    "/api/Main/SearchPatient": {
+      "post": {
+        "tags": [
+          "Main"
+        ],
+        "summary": "Allows user to search for a patient using first name and / or last name",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NPatient"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NPatient"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NPatient"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK with the file path if successful"
+          },
+          "501": {
+            "description": "NOT LOGGED IN"
+          }
+        }
+      }
+    },
+    "/api/Main/AddPatient": {
+      "post": {
+        "tags": [
+          "Main"
+        ],
+        "summary": "Allows user to search for a patient using first name and / or last name",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NPatient"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NPatient"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NPatient"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK with entire patient including his new ID"
+          },
+          "501": {
+            "description": "NOT LOGGED IN"
+          },
+          "502": {
+            "description": "Obligatory fields not completed or patient already exists"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "NEmergencyCase": {
+        "type": "object",
+        "properties": {
+          "patientId": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "surname": {
+            "type": "string",
+            "nullable": true
+          },
+          "otherIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "fathersName": {
+            "type": "string",
+            "nullable": true
+          },
+          "erAge": {
+            "type": "string",
+            "nullable": true
+          },
+          "erProselefsi": {
+            "type": "string",
+            "nullable": true
+          },
+          "erOros": {
+            "type": "string",
+            "nullable": true
+          },
+          "erAllo": {
+            "type": "string",
+            "nullable": true
+          },
+          "histSymptom": {
+            "type": "string",
+            "nullable": true
+          },
+          "histSmoker": {
+            "type": "string",
+            "nullable": true
+          },
+          "histAlergic": {
+            "type": "string",
+            "nullable": true
+          },
+          "histLoimodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "trauma": {
+            "type": "string",
+            "nullable": true
+          },
+          "vitalTime": {
+            "type": "string",
+            "nullable": true
+          },
+          "vitalPulses": {
+            "type": "string",
+            "nullable": true
+          },
+          "vitalAP": {
+            "type": "string",
+            "nullable": true
+          },
+          "vitalInhale": {
+            "type": "string",
+            "nullable": true
+          },
+          "vitalSpo2": {
+            "type": "string",
+            "nullable": true
+          },
+          "vitalT": {
+            "type": "string",
+            "nullable": true
+          },
+          "derma": {
+            "type": "string",
+            "nullable": true
+          },
+          "erComments": {
+            "type": "string",
+            "nullable": true
+          },
+          "genikiSimeiologia": {
+            "type": "string",
+            "nullable": true
+          },
+          "genOther": {
+            "type": "string",
+            "nullable": true
+          },
+          "xeirourgikiSimeiologia": {
+            "type": "string",
+            "nullable": true
+          },
+          "neurologikiSimeiologia": {
+            "type": "string",
+            "nullable": true
+          },
+          "neuroParesi": {
+            "type": "string",
+            "nullable": true
+          },
+          "neuroHmipligia": {
+            "type": "string",
+            "nullable": true
+          },
+          "neuroSergApoleiaSineidisis": {
+            "type": "string",
+            "nullable": true
+          },
+          "neuroSergAnoiktoiOfthalmoi": {
+            "type": "string",
+            "nullable": true
+          },
+          "neuroSergKalyteriProforikiApantisi": {
+            "type": "string",
+            "nullable": true
+          },
+          "neuroSergKalyteriKinitikiApantisi": {
+            "type": "string",
+            "nullable": true
+          },
+          "neuroSergKoresMegethosDeksi": {
+            "type": "string",
+            "nullable": true
+          },
+          "neuroSergKoresMegethosAristero": {
+            "type": "string",
+            "nullable": true
+          },
+          "neuroSergKoresAntidrasiDeksi": {
+            "type": "string",
+            "nullable": true
+          },
+          "neuroSergKoresAntidrasiAristero": {
+            "type": "string",
+            "nullable": true
+          },
+          "neuroSergSynoloVathmwn": {
+            "type": "string",
+            "nullable": true
+          },
+          "cardioThorakikoAlgos": {
+            "type": "string",
+            "nullable": true
+          },
+          "cardioXaraktiras": {
+            "type": "string",
+            "nullable": true
+          },
+          "cardioEnarxi": {
+            "type": "string",
+            "nullable": true
+          },
+          "cardioDiarkeia": {
+            "type": "string",
+            "nullable": true
+          },
+          "cardioanapneustikiSimeiologia": {
+            "type": "string",
+            "nullable": true
+          },
+          "psychoDiathesi": {
+            "type": "string",
+            "nullable": true
+          },
+          "psychoSymperifora": {
+            "type": "string",
+            "nullable": true
+          },
+          "psychoSkepseis": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NPatient": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "surname": {
+            "type": "string",
+            "nullable": true
+          },
+          "fathersName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ssn": {
+            "type": "string",
+            "nullable": true
+          },
+          "mobilePhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "homephone": {
+            "type": "string",
+            "nullable": true
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "otherIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalityId": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "sex": {
+            "type": "string",
+            "nullable": true
+          },
+          "addressStreet": {
+            "type": "string",
+            "nullable": true
+          },
+          "addressZip": {
+            "type": "string",
+            "nullable": true
+          },
+          "workPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "insuranceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lang": {
+            "type": "string",
+            "nullable": true
+          },
+          "age": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

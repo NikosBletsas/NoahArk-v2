@@ -10,6 +10,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
   onThemeChange,
   isMidnightTheme,
   currentThemeKey,
+
 }) => {
   
 

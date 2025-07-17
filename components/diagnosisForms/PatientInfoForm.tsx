@@ -18,6 +18,13 @@ const PatientInfoForm: React.FC<DiagnosisFormStepProps> = ({
           onChange={onFormChange}
         />
         <LabelledInput 
+          label="SSN/SID" 
+          id="patient-ssn-sid" 
+          placeholder="Enter SSN or SID" 
+          theme={theme} 
+          onChange={onFormChange}
+        />
+        <LabelledInput 
           label="Age" 
           id="patient-age" 
           type="number" 
