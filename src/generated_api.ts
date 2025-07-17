@@ -362,10 +362,15 @@ export class Api<
      * @summary Stores object of user - modified configuration.
      * @request POST:/api/Configuration/SetConfiguration
      */
-    configurationSetConfigurationCreate: (params: RequestParams = {}) =>
+    configurationSetConfigurationCreate: (
+      data: any,
+      params: RequestParams = {},
+    ) =>
       this.request<void, void>({
         path: `/api/Configuration/SetConfiguration`,
         method: "POST",
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
 
@@ -483,7 +488,7 @@ export class Api<
     mainAddMoreFilesList: (data: string[], params: RequestParams = {}) =>
       this.request<void, void>({
         path: `/api/Main/AddMoreFiles`,
-        method: "GET",
+        method: "POST",
         body: data,
         type: ContentType.Json,
         ...params,

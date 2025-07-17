@@ -2,11 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Activity, Monitor, Wifi, ShieldCheck, Eye, EyeOff, Loader } from 'lucide-react';
 import { BaseScreenProps } from '../types';
 import { SCREEN_NAMES } from '../constants';
-import {
-  //Init,
-  //Login,
-  //LoginOffline,
-} from '../src/api';
 import { Api } from '../src/generated_api';
 interface IconButtonProps {
   icon: React.ReactElement<{ className?: string }>;
@@ -66,6 +61,7 @@ const LoginScreen: React.FC<BaseScreenProps> = ({
       const initialize = async () => {
         try {
           const api = new Api();
+          console.log('Calling Init API');
           const initData = await api.api.loginApiInitList();
           console.log('Init API Response:', initData);
           // Store initData in state if needed
@@ -89,6 +85,7 @@ const LoginScreen: React.FC<BaseScreenProps> = ({
 
     try {
       const api = new Api();
+      console.log('Calling Login API');
       const loginData = await api.api.loginApiLoginList({ user: username, password: password });
       console.log('Login API Response:', loginData);
       setCurrentScreen(SCREEN_NAMES.DASHBOARD);
@@ -109,6 +106,7 @@ const LoginScreen: React.FC<BaseScreenProps> = ({
 
     try {
       const api = new Api();
+      console.log('Calling LoginOffline API');
       const loginOfflineData = await api.api.loginApiLoginOfflineList();
       console.log('LoginOffline API Response:', loginOfflineData);
       setCurrentScreen(SCREEN_NAMES.DASHBOARD);

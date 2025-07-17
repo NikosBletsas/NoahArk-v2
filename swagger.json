@@ -37,6 +37,47 @@
         }
       }
     },
+    "/api/Devices/PatientMonitor/Init": {
+      "get": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Init the Patient Monitor",
+        "responses": {
+          "200": {
+            "description": "OK if successful"
+          }
+        }
+      }
+    },
+    "/api/Devices/BloodPressure/GetDeviceData": {
+      "get": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Get the Patient Blood Pressure Data",
+        "responses": {
+          "200": {
+            "description": "OK if successful"
+          },
+          "501": {
+            "description": "NOT LOGGED IN"
+          }
+        }
+      }
+    },
+    "/api/Devices/BloodPressure/SendData": {
+      "get": {
+        "tags": [
+          "Devices"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/LoginAPI/Init": {
       "get": {
         "tags": [
@@ -347,6 +388,40 @@
           },
           "502": {
             "description": "Obligatory fields not completed or patient already exists"
+          }
+        }
+      }
+    },
+    "/api/Main/SendData": {
+      "get": {
+        "tags": [
+          "Main"
+        ],
+        "summary": "Uploads files to the server",
+        "responses": {
+          "200": {
+            "description": "OK - All files uploaded"
+          },
+          "501": {
+            "description": "NOT LOGGED IN"
+          },
+          "502": {
+            "description": "No Files to send"
+          },
+          "503": {
+            "description": "Files upload failed"
+          }
+        }
+      }
+    },
+    "/api/Main/ResetCase": {
+      "post": {
+        "tags": [
+          "Main"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }

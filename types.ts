@@ -68,3 +68,18 @@ export interface DiagnosisFormStepProps {
   isMidnightTheme: boolean;
   onFormChange?: () => void;
 }
+
+export interface LoginRequest {
+  username?: string | null;
+  password?: string | null;
+}
+
+export interface LoginResponse {
+  success?: boolean;
+  message?: string | null;
+  token?: string | null;
+}
+
+export interface InitResponse {
+  someData?: string | null;
+}

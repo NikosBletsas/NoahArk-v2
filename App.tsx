@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { THEMES, SCREEN_NAMES, THEME_KEYS } from './constants';
 import { ThemeKey, ScreenName, Theme } from './types';
@@ -16,32 +16,35 @@ import EmergencyCaseDiagnosisScreen from './components/EmergencyCaseDiagnosisScr
 import DeviceConfigurationScreen from './components/DeviceConfigurationScreen';
 import ConnectionStatusScreen from './components/ConnectionStatusScreen';
 import ConnectivityTestScreen from './components/ConnectivityTestScreen';
-import * as signalR from '@microsoft/signalr';
+import useSignalR from './src/hooks/useSignalR';
+
 
 /**
  * Main application component.
  * Manages the current screen, theme, and global modals.
  */
 const App: React.FC = () => {
- console.log('App component rendering');
- const isElectron = typeof window !== 'undefined' && typeof (window as any).process === 'object' && (window as any).process?.type === 'renderer';
- console.log('Running in Electron:', isElectron);
- const queryClient = new QueryClient();
- // State for the currently displayed screen
- const [currentScreen, setCurrentScreen] = useState<ScreenName>(SCREEN_NAMES.LOGIN);
- 
- // Initialize with 'noah' theme (light mode) by default
- const [currentThemeKey, setCurrentThemeKey] = useState<ThemeKey>('noah');
-  
+  const hubUrl = "https://localhost:5001/notificationhub";
+  const { connectionState } = useSignalR(hubUrl);
+  console.log('App component rendering');
+  const isElectron = typeof window !== 'undefined' && typeof (window as any).process === 'object' && (window as any).process?.type === 'renderer';
+  console.log('Running in Electron:', isElectron);
+  const queryClient = new QueryClient();
+  // State for the currently displayed screen
+  const [currentScreen, setCurrentScreen] = useState<ScreenName>(SCREEN_NAMES.LOGIN);
+
+  // Initialize with 'noah' theme (light mode) by default
+  const [currentThemeKey, setCurrentThemeKey] = useState<ThemeKey>('noah');
+
   // State for ConnectionStatus modal visibility
   const [showConnectionStatus, setShowConnectionStatus] = useState(false);
-  
+
   // State for ConnectivityTest modal visibility
   const [showConnectivityTest, setShowConnectivityTest] = useState(false);
 
   // Get the full theme object based on the current key
   const theme: Theme = THEMES[currentThemeKey];
-  
+
   // Helper boolean for dark themes (only checking for 'black' now since we're limiting to light/dark)
   const isMidnightTheme = currentThemeKey === 'black';
 
@@ -65,8 +68,8 @@ const App: React.FC = () => {
     // Hide modals when changing main screen to prevent them from persisting incorrectly,
     // unless the target screen is one that might trigger them (like Device Configuration or Login)
     if (screen !== SCREEN_NAMES.DEVICE_CONFIGURATION && screen !== SCREEN_NAMES.LOGIN) {
-        setShowConnectionStatus(false);
-        setShowConnectivityTest(false);
+      setShowConnectionStatus(false);
+      setShowConnectivityTest(false);
     }
     setCurrentScreen(screen);
   };
@@ -77,20 +80,20 @@ const App: React.FC = () => {
    */
   const renderScreen = () => {
     // Determine if modal setters should be passed to the current screen
-    const shouldPassModalSetters = 
+    const shouldPassModalSetters =
       currentScreen === SCREEN_NAMES.DEVICE_CONFIGURATION ||
       currentScreen === SCREEN_NAMES.LOGIN;
 
     // Common props passed to all main screens
-    const commonScreenProps = { 
-        theme, 
-        setCurrentScreen: handleSetCurrentScreen, 
-        isMidnightTheme, 
-        currentThemeKey: currentThemeKey as string,
-        onThemeChange: handleThemeChange,
-        setShowConnectionStatus: shouldPassModalSetters ? setShowConnectionStatus : undefined,
-        setShowConnectivityTest: shouldPassModalSetters ? setShowConnectivityTest : undefined,
-      };
+    const commonScreenProps = {
+      theme,
+      setCurrentScreen: handleSetCurrentScreen,
+      isMidnightTheme,
+      currentThemeKey: currentThemeKey as string,
+      onThemeChange: handleThemeChange,
+      setShowConnectionStatus: shouldPassModalSetters ? setShowConnectionStatus : undefined,
+      setShowConnectivityTest: shouldPassModalSetters ? setShowConnectivityTest : undefined,
+    };
 
     switch (currentScreen) {
       case SCREEN_NAMES.LOGIN:
@@ -120,47 +123,51 @@ const App: React.FC = () => {
     }
   };
 
+  console.log('SignalR Hub URL:', hubUrl);
+
   return (
     <QueryClientProvider client={queryClient}>
+      <div className="fixed top-0 left-0 p-4 z-50">
+        <p className="text-white">SignalR Status: {connectionState}</p>
+      </div>
       <div className={`relative min-h-screen bg-gradient-to-br ${theme.background}`}>
-        
         {/* Global Theme Toggle - With proper spacing and z-index */}
         <ThemeToggle
-        currentThemeKey={currentThemeKey}
-        onThemeChange={handleThemeChange}
-        className="fixed top-4 right-4 z-[60]"
-        disabled={false}
-      />
-
-      {/* Main screen content - no extra padding, screens handle their own spacing */}
-      {renderScreen()}
-
-      {/* Connection Status Modal */}
-      {showConnectionStatus && (
-        <ConnectionStatusScreen
-          theme={theme}
-          isMidnightTheme={isMidnightTheme}
           currentThemeKey={currentThemeKey}
-          setCurrentScreen={handleSetCurrentScreen} 
-          onClose={() => setShowConnectionStatus(false)}
-          setShowConnectivityTest={setShowConnectivityTest}
+          onThemeChange={handleThemeChange}
+          className="fixed top-4 right-4 z-[60]"
+          disabled={false}
         />
-      )}
 
-      {/* Connectivity Test Modal */}
-      {showConnectivityTest && (
-        <ConnectivityTestScreen
-          theme={theme}
-          isMidnightTheme={isMidnightTheme}
-          currentThemeKey={currentThemeKey}
-          setCurrentScreen={handleSetCurrentScreen}
-          onClose={() => setShowConnectivityTest(false)}
-          setShowConnectionStatus={setShowConnectionStatus}
-        />
-      )}
-       </div>
-     </QueryClientProvider>
-   );
- };
+        {/* Main screen content - no extra padding, screens handle their own spacing */}
+        {renderScreen()}
+
+        {/* Connection Status Modal */}
+        {showConnectionStatus && (
+          <ConnectionStatusScreen
+            theme={theme}
+            isMidnightTheme={isMidnightTheme}
+            currentThemeKey={currentThemeKey}
+            setCurrentScreen={handleSetCurrentScreen}
+            onClose={() => setShowConnectionStatus(false)}
+            setShowConnectivityTest={setShowConnectivityTest}
+          />
+        )}
+
+        {/* Connectivity Test Modal */}
+        {showConnectivityTest && (
+          <ConnectivityTestScreen
+            theme={theme}
+            isMidnightTheme={isMidnightTheme}
+            currentThemeKey={currentThemeKey}
+            setCurrentScreen={handleSetCurrentScreen}
+            onClose={() => setShowConnectivityTest(false)}
+            setShowConnectionStatus={setShowConnectionStatus}
+          />
+        )}
+      </div>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
