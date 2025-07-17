@@ -10,12 +10,12 @@ interface InputWithIconButtonProps {
   currentThemeKey: string; // Changed from ThemeKey to string
   placeholder?: string;
   value?: string;
-  defaultValue?: string; // Add this line
+  defaultValue?: string; 
   isReadOnly?: boolean;
   icon: React.ReactNode;
   onIconClick: () => void;
   buttonTitle: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; // Add this line
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const InputWithIconButton: React.FC<InputWithIconButtonProps> = ({

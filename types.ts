@@ -31,7 +31,9 @@ export interface AppHeaderProps {
   onBack: () => void;
   showThemeButton?: boolean;
   onShowThemeSelector?: () => void;
+  onThemeChange?: (themeKey: string) => void;
   isMidnightTheme: boolean;
+  currentThemeKey?: string;
 }
 
 export interface BaseScreenProps {

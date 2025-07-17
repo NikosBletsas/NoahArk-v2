@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { THEMES, SCREEN_NAMES, THEME_KEYS } from './constants';
 import { ThemeKey, ScreenName, Theme } from './types';
 import ThemeToggle from './components/ThemeToggle';
@@ -15,17 +16,22 @@ import EmergencyCaseDiagnosisScreen from './components/EmergencyCaseDiagnosisScr
 import DeviceConfigurationScreen from './components/DeviceConfigurationScreen';
 import ConnectionStatusScreen from './components/ConnectionStatusScreen';
 import ConnectivityTestScreen from './components/ConnectivityTestScreen';
+import * as signalR from '@microsoft/signalr';
 
 /**
  * Main application component.
  * Manages the current screen, theme, and global modals.
  */
 const App: React.FC = () => {
-  // State for the currently displayed screen
-  const [currentScreen, setCurrentScreen] = useState<ScreenName>(SCREEN_NAMES.LOGIN);
-  
-  // Initialize with 'noah' theme (light mode) by default
-  const [currentThemeKey, setCurrentThemeKey] = useState<ThemeKey>('noah');
+ console.log('App component rendering');
+ const isElectron = typeof window !== 'undefined' && typeof (window as any).process === 'object' && (window as any).process?.type === 'renderer';
+ console.log('Running in Electron:', isElectron);
+ const queryClient = new QueryClient();
+ // State for the currently displayed screen
+ const [currentScreen, setCurrentScreen] = useState<ScreenName>(SCREEN_NAMES.LOGIN);
+ 
+ // Initialize with 'noah' theme (light mode) by default
+ const [currentThemeKey, setCurrentThemeKey] = useState<ThemeKey>('noah');
   
   // State for ConnectionStatus modal visibility
   const [showConnectionStatus, setShowConnectionStatus] = useState(false);
@@ -115,10 +121,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className={`relative min-h-screen bg-gradient-to-br ${theme.background}`}>
-      
-      {/* Global Theme Toggle - With proper spacing and z-index */}
-      <ThemeToggle
+    <QueryClientProvider client={queryClient}>
+      <div className={`relative min-h-screen bg-gradient-to-br ${theme.background}`}>
+        
+        {/* Global Theme Toggle - With proper spacing and z-index */}
+        <ThemeToggle
         currentThemeKey={currentThemeKey}
         onThemeChange={handleThemeChange}
         className="fixed top-4 right-4 z-[60]"
@@ -151,8 +158,9 @@ const App: React.FC = () => {
           setShowConnectionStatus={setShowConnectionStatus}
         />
       )}
-    </div>
-  );
-};
+       </div>
+     </QueryClientProvider>
+   );
+ };
 
 export default App;
