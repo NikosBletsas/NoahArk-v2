@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Activity, Monitor, Wifi, ShieldCheck, Eye, EyeOff, Loader } from 'lucide-react';
+import { Wifi, ShieldCheck, Eye, EyeOff, Loader } from 'lucide-react';
 import { BaseScreenProps } from '../types';
 import { SCREEN_NAMES } from '../constants';
+
 import { Api } from '../src/generated_api';
+
 interface IconButtonProps {
   icon: React.ReactElement<{ className?: string }>;
   label: string;
@@ -61,7 +63,6 @@ const LoginScreen: React.FC<BaseScreenProps> = ({
       const initialize = async () => {
         try {
           const api = new Api();
-          console.log('Calling Init API');
           const initData = await api.api.loginApiInitList();
           console.log('Init API Response:', initData);
           // Store initData in state if needed
@@ -85,7 +86,6 @@ const LoginScreen: React.FC<BaseScreenProps> = ({
 
     try {
       const api = new Api();
-      console.log('Calling Login API');
       const loginData = await api.api.loginApiLoginList({ user: username, password: password });
       console.log('Login API Response:', loginData);
       setCurrentScreen(SCREEN_NAMES.DASHBOARD);
@@ -106,7 +106,6 @@ const LoginScreen: React.FC<BaseScreenProps> = ({
 
     try {
       const api = new Api();
-      console.log('Calling LoginOffline API');
       const loginOfflineData = await api.api.loginApiLoginOfflineList();
       console.log('LoginOffline API Response:', loginOfflineData);
       setCurrentScreen(SCREEN_NAMES.DASHBOARD);
@@ -118,11 +117,14 @@ const LoginScreen: React.FC<BaseScreenProps> = ({
       console.log('handleLoginOffline finished');
     }
   };
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !isLoading) {
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isLoading) {
       handleLogin();
     }
   };
+
   return (
     <div className={`min-h-screen bg-gradient-to-br ${theme.background} flex items-center justify-center p-4 sm:p-6 relative`}>
       <div className={`${theme.card} backdrop-blur-lg rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10 w-full max-w-sm sm:max-w-md md:max-w-lg border border-white/20`}>
@@ -146,7 +148,7 @@ const LoginScreen: React.FC<BaseScreenProps> = ({
         </div>
 
         {/* Form */}
-        <div className="space-y-4 md:space-y-5" onKeyPress={handleKeyPress}>
+        <form className="space-y-4 md:space-y-5" onSubmit={handleSubmit}>
           {loginError && (
             <div className="text-red-500 text-sm">{loginError}</div>
           )}
@@ -201,7 +203,7 @@ const LoginScreen: React.FC<BaseScreenProps> = ({
 
           <div className="pt-3 sm:pt-4">
             <button
-              onClick={handleLogin}
+              type="submit"
               disabled={isLoading}
               className={`w-full bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} py-2.5 sm:py-3 md:py-3.5 rounded-lg sm:rounded-xl hover:opacity-90 transition-all duration-200 font-medium text-sm sm:text-base md:text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2`}
             >
@@ -215,7 +217,7 @@ const LoginScreen: React.FC<BaseScreenProps> = ({
               )}
             </button>
           </div>
-        </div>
+        </form>
 
         <div className="pt-3 sm:pt-4">
           <button
