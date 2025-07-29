@@ -1,25 +1,19 @@
 import React from 'react';
 import { ArrowLeft, Activity } from 'lucide-react';
-import { AppHeaderProps } from '../../types';
+import { useTheme } from '../../src/contexts/ThemeContext';
+
+interface AppHeaderProps {
+  title: string;
+  onBack?: () => void;
+  showThemeButton?: boolean;
+}
 
 const AppHeader: React.FC<AppHeaderProps> = ({
-  theme,
   title,
   onBack,
   showThemeButton,
-  onThemeChange,
-  isMidnightTheme,
-  currentThemeKey,
-
 }) => {
-  
-
-  const handleThemeToggle = () => {
-    if (onThemeChange) {
-      const newTheme = currentThemeKey === 'black' ? 'noah' : 'black';
-      onThemeChange(newTheme);
-    }
-  };
+  const { theme, isMidnightTheme, currentThemeKey, toggleTheme } = useTheme();
 
   return (
     <div className={`${theme.card} backdrop-blur-lg border-b border-white/20 p-3 sm:p-4 md:p-5 lg:p-6 flex items-center justify-between sticky top-0 z-10`}>
@@ -34,8 +28,8 @@ const AppHeader: React.FC<AppHeaderProps> = ({
           </button>
         )}
         <div className="w-36 h-20 sm:w-40 sm:h-22 md:w-44 md:h-24 flex items-center justify-start">
-          <img 
-            src={currentThemeKey === 'black' || isMidnightTheme
+          <img
+            src={currentThemeKey === 'black'
               ? "/assets/NoA.H. Logo Horizontal white.svg"
               : "/assets/NoA.H. Logo Horizontal blue-black.svg"
             }
@@ -50,9 +44,9 @@ const AppHeader: React.FC<AppHeaderProps> = ({
         {title}
       </div>
 
-      {showThemeButton && onThemeChange && (
+      {showThemeButton && (
         <button
-          onClick={handleThemeToggle}
+          onClick={toggleTheme}
           className={`p-2 sm:p-3 md:p-3.5 lg:p-4 ${theme.card} backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-lg border border-white/20 hover:scale-105 transition-all duration-200`}
           title={`Switch to ${currentThemeKey === 'black' ? 'Light' : 'Dark'} Mode`}
         >

@@ -36,17 +36,6 @@ export interface AppHeaderProps {
   currentThemeKey?: string;
 }
 
-export interface BaseScreenProps {
-  theme: any;
-  setCurrentScreen: (screen: ScreenName) => void; // Changed from string to ScreenName
-  isMidnightTheme: boolean;
-  currentThemeKey: string;
-  setShowThemeSelector?: (show: boolean) => void;
-  onThemeChange?: (themeKey: string) => void;
-  setShowConnectionStatus?: (show: boolean) => void;
-  setShowConnectivityTest?: (show: boolean) => void;
-}
-
 export interface ModalScreenProps { 
   theme: Theme;
   isMidnightTheme: boolean;
@@ -89,6 +78,7 @@ export interface Consultation {
   name: string;
   surname: string;
   consultationDate: string;
-  details: string;
+  chiefComplaint: string;
+  historyOfPresentIllness: string;
   doctor: string;
 }

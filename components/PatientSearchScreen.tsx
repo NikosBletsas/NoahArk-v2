@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, UserPlus, Filter, Edit, X, Save, User, Phone, Mail, MapPin, Heart, Shield, FileText } from 'lucide-react';
-import { BaseScreenProps } from '../types';
+import { useTheme } from '../src/contexts/ThemeContext';
 import { SCREEN_NAMES } from '../constants';
 import AppHeader from './shared/AppHeader';
 
@@ -32,9 +33,8 @@ const PatientEditForm: React.FC<{
   isOpen: boolean;
   onClose: () => void;
   onSave: (updatedPatient: Patient) => void;
-  theme: any;
-  isMidnightTheme: boolean;
-}> = ({ patient, isOpen, onClose, onSave, theme, isMidnightTheme }) => {
+}> = ({ patient, isOpen, onClose, onSave }) => {
+  const { theme, isMidnightTheme } = useTheme();
   const [formData, setFormData] = useState<Patient>(patient);
 
   if (!isOpen) return null;
@@ -386,11 +386,9 @@ const PatientEditForm: React.FC<{
   );
 };
 
-const PatientSearchScreen: React.FC<BaseScreenProps> = ({ 
-  theme, 
-  setCurrentScreen, 
-  isMidnightTheme
-}) => {
+const PatientSearchScreen: React.FC = () => {
+  const { theme, isMidnightTheme } = useTheme();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
@@ -486,11 +484,9 @@ const PatientSearchScreen: React.FC<BaseScreenProps> = ({
   return (
     <div className={`min-h-screen bg-gradient-to-br ${theme.background} flex flex-col`}>
       <AppHeader
-        theme={theme}
         title="NOAH - Patient Search"
-        onBack={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
+        onBack={() => navigate(`/${SCREEN_NAMES.DASHBOARD}`)}
         showThemeButton={false}
-        isMidnightTheme={isMidnightTheme}
       />
 
       <div className="p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 flex-grow">
@@ -521,7 +517,7 @@ const PatientSearchScreen: React.FC<BaseScreenProps> = ({
                 </button>
                 
                 <button
-                  onClick={() => setCurrentScreen(SCREEN_NAMES.EMERGENCY_CASE_DIAGNOSIS)}
+                  onClick={() => navigate(`/${SCREEN_NAMES.EMERGENCY_CASE_DIAGNOSIS}`)}
                   className={`w-full sm:w-auto bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} px-3 py-2 sm:px-4 sm:py-2.5 lg:px-5 lg:py-3 rounded-lg sm:rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center space-x-1.5 sm:space-x-2 font-medium text-sm sm:text-base lg:text-lg`}
                 >
                   <UserPlus size={16} className="w-4 h-4 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
@@ -678,7 +674,7 @@ const PatientSearchScreen: React.FC<BaseScreenProps> = ({
       <div className={`sticky bottom-0 left-0 right-0 bg-gradient-to-r ${theme.accent} p-3 sm:p-4 md:p-5 lg:p-6 border-t ${isMidnightTheme ? 'border-gray-600' : 'border-white/10'}`}>
         <div className="flex justify-center">
           <button
-            onClick={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
+            onClick={() => navigate(`/${SCREEN_NAMES.DASHBOARD}`)}
             className={`flex items-center space-x-1.5 sm:space-x-2 md:space-x-3 bg-white/20 ${theme.textOnAccent} px-4 py-2 sm:px-6 sm:py-2.5 md:px-7 md:py-3 lg:px-8 lg:py-3.5 rounded-lg sm:rounded-xl hover:bg-white/30 transition-all duration-200 font-medium text-sm sm:text-base md:text-lg lg:text-xl`}
           >
             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
@@ -694,8 +690,6 @@ const PatientSearchScreen: React.FC<BaseScreenProps> = ({
           isOpen={showEditForm}
           onClose={handleCloseEditForm}
           onSave={handleSavePatient}
-          theme={theme}
-          isMidnightTheme={isMidnightTheme}
         />
       )}
     </div>

@@ -1,11 +1,14 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, RefreshCw, Send } from 'lucide-react';
-import { BaseScreenProps } from '../types';
+import { useTheme } from '../src/contexts/ThemeContext';
 import { SCREEN_NAMES } from '../constants';
 import AppHeader from './shared/AppHeader';
 
-const AssignEmergencyScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, isMidnightTheme }) => {
+const AssignEmergencyScreen: React.FC = () => {
+  const { theme, isMidnightTheme } = useTheme();
+  const navigate = useNavigate();
   const [dateTimeValue, setDateTimeValue] = useState(() => {
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -25,12 +28,10 @@ const AssignEmergencyScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScr
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${theme.background} flex flex-col`}>
-      <AppHeader 
-        theme={theme} 
-        title="NOAH - Assign Emergency" 
-        onBack={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
+      <AppHeader
+        title="NOAH - Assign Emergency"
+        onBack={() => navigate(`/${SCREEN_NAMES.DASHBOARD}`)}
         showThemeButton={true}
-        isMidnightTheme={isMidnightTheme}
       />
 
       <div className="p-3 sm:p-4 md:p-6 flex-grow">
@@ -54,7 +55,7 @@ const AssignEmergencyScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScr
                 </thead>
                 <tbody className={`${isMidnightTheme ? 'bg-gray-800/60 backdrop-blur-sm' : 'bg-white/80 backdrop-blur-sm'}`}>
                   {tableRows.map((row, rowIndex) => (
-                    <tr key={rowIndex} className={`border-b ${isMidnightTheme ? 'border-gray-700' : 'border-gray-200'} ${isMidnightTheme ? theme.textPrimary : 'text-gray-700'}`}>
+                    <tr key={row.id} className={`border-b ${isMidnightTheme ? 'border-gray-700' : 'border-gray-200'} ${isMidnightTheme ? theme.textPrimary : 'text-gray-700'}`}>
                       <td className="px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 whitespace-nowrap">{row.id}</td>
                       <td className="px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 whitespace-nowrap">{row.availableFrom}</td>
                       <td className="px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 whitespace-nowrap">{row.availableUntil}</td>
@@ -99,7 +100,7 @@ const AssignEmergencyScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScr
                 <span>Refresh List</span>
               </button>
               <button
-                onClick={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
+                onClick={() => navigate(`/${SCREEN_NAMES.DASHBOARD}`)}
                 className={`bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} px-4 py-2.5 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 font-medium text-sm sm:text-base`}
               >
                 <ArrowLeft size={18} />

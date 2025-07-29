@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Activity, Menu, X, Trash2, RotateCcw } from 'lucide-react'; 
-import { BaseScreenProps, DiagnosisStep, DiagnosisStepKey } from '../types';
-import { SCREEN_NAMES, DIAGNOSIS_STEP_KEYS } from '../constants';
-
+import { useNavigate } from 'react-router-dom';
+import { Activity, Menu, X, Trash2, RotateCcw } from 'lucide-react';
+import { useTheme } from '../src/contexts/ThemeContext';
+import { DiagnosisStep } from '../types';
+import { SCREEN_NAMES } from '../constants';
 import PatientInfoForm from './diagnosisForms/PatientInfoForm';
 import HistoryTraumaVitalsSkinForm from './diagnosisForms/HistoryTraumaVitalsSkinForm';
 import GeneralSignsForm from './diagnosisForms/GeneralSignsForm';
@@ -20,13 +21,9 @@ const DIAGNOSIS_STEPS_CONFIG: DiagnosisStep[] = [
   { key: 'cardiorespPsychSigns', label: 'Cardioresp./Psych. Signs', component: CardiorespPsychSignsForm },
 ];
 
-const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({ 
-  theme, 
-  setCurrentScreen, 
-  isMidnightTheme, 
-  currentThemeKey, 
-  setShowThemeSelector 
-}) => {
+const EmergencyCaseDiagnosisScreen: React.FC = () => {
+  const { theme, isMidnightTheme, currentThemeKey, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [formStepRenderKey, setFormStepRenderKey] = useState(0); 
@@ -42,17 +39,17 @@ const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({
       setIsCurrentFormModified(false);
     } else {
       console.log("Submitting diagnosis data...");
-      setCurrentScreen(SCREEN_NAMES.DASHBOARD);
+      navigate(`/${SCREEN_NAMES.DASHBOARD}`);
     }
   };
 
   const handleSubmitToDashboard = () => {
     console.log("Submitting diagnosis data early...");
-    setCurrentScreen(SCREEN_NAMES.DASHBOARD);
+    navigate(`/${SCREEN_NAMES.DASHBOARD}`);
   };
 
   const handleCancel = () => {
-    setCurrentScreen(SCREEN_NAMES.DASHBOARD);
+    navigate(`/${SCREEN_NAMES.DASHBOARD}`);
   };
 
   const handleConfirmClearForm = () => {
@@ -172,15 +169,13 @@ const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({
             <Menu size={22} className="w-[22px] h-[22px] sm:w-6 sm:h-6" />
           </button>
           <h2 className={`text-sm sm:text-base font-semibold ${theme.textPrimary} truncate mx-2`}>{currentStepConfig.label}</h2>
-            {setShowThemeSelector && (
                  <button
-                    onClick={() => setShowThemeSelector(true)}
+                    onClick={toggleTheme}
                     className={`p-1.5 sm:p-2 ${theme.card} backdrop-blur-lg rounded-lg sm:rounded-xl shadow-md border border-white/10 hover:scale-105`}
                     title="Change Theme"
                   >
                   <div className={`w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-r ${theme.primary} rounded-sm sm:rounded-md`}></div>
                 </button>
-            )}
         </div>
         
         <div className="p-3 sm:p-4 md:p-6 lg:p-8 flex-grow overflow-y-auto">
@@ -207,15 +202,6 @@ const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({
                     </div>
                 </div>
 
-                {setShowThemeSelector && (
-                    <button
-                        onClick={() => setShowThemeSelector(true)}
-                        className={`p-3 md:p-3.5 lg:p-4 ${theme.card} backdrop-blur-lg rounded-2xl shadow-lg border border-white/20 hover:scale-105 transition-all duration-200 flex-shrink-0`}
-                        title="Change Theme"
-                    >
-                        <div className={`w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 bg-gradient-to-r ${theme.primary} rounded-lg`}></div>
-                    </button>
-                )}
             </div>
 
             {/* Mobile Progress Bar */}
@@ -232,7 +218,7 @@ const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({
                     ></div>
                 </div>
             </div>
-            <div className={`${theme.card} backdrop-blur-lg rounded-xl shadow-2xl border border-white/20 flex flex-col h-full`}>
+            <div className={`${theme.card} backdrop-blur-lg rounded-xl shadow-2xl border border-white/20 flex flex-col`}>
                 <div className={`bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} p-2.5 sm:p-3 md:p-3.5 lg:p-4 rounded-t-lg sm:rounded-t-xl flex items-center justify-between`}>
                     <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold">{currentStepConfig.label}</h2>
                     

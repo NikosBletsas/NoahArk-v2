@@ -1,6 +1,7 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MonitorDot, AirVent, Activity, HeartPulse, ScanEye, Radio, Fingerprint, Thermometer, TestTubeDiagonal, PersonStanding, Stethoscope } from 'lucide-react';
-import { BaseScreenProps, ThemeKey } from '../types';
+import { useTheme } from '../src/contexts/ThemeContext';
 import { SCREEN_NAMES } from '../constants';
 import AppHeader from './shared/AppHeader';
 
@@ -10,31 +11,24 @@ interface DeviceTileProps {
   onClick?: () => void;
   gradient: string;
   borderColor: string;
-  theme: BaseScreenProps['theme'];
-  currentThemeKey: string; // Change from ThemeKey to string
 }
 
-const DeviceTile: React.FC<DeviceTileProps> = ({ icon, label, onClick, gradient, borderColor, theme, currentThemeKey }) => (
-  <div
-    onClick={onClick}
-    className={`bg-gradient-to-br ${gradient} p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl text-center cursor-pointer hover:scale-105 transition-all duration-200 border ${borderColor} flex flex-col items-center justify-center aspect-square`}
-  >
-    {icon}
-    <h3 className={`font-semibold ${currentThemeKey === 'black' ? 'text-slate-800' : theme.textPrimary} mt-2 text-xs sm:text-sm md:text-base lg:text-lg`}>{label}</h3>
-  </div>
-);
+const DeviceTile: React.FC<DeviceTileProps> = ({ icon, label, onClick, gradient, borderColor }) => {
+  const { theme, currentThemeKey } = useTheme();
+  return (
+    <div
+      onClick={onClick}
+      className={`bg-gradient-to-br ${gradient} p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl text-center cursor-pointer hover:scale-105 transition-all duration-200 border ${borderColor} flex flex-col items-center justify-center aspect-square`}
+    >
+      {icon}
+      <h3 className={`font-semibold ${currentThemeKey === 'black' ? 'text-slate-800' : theme.textPrimary} mt-2 text-xs sm:text-sm md:text-base lg:text-lg`}>{label}</h3>
+    </div>
+  );
+};
 
-interface MedicalMeasurementsScreenProps extends BaseScreenProps {
-  setShowThemeSelector?: (show: boolean) => void;
-}
-
-const MedicalMeasurementsScreen: React.FC<MedicalMeasurementsScreenProps> = ({ 
-  theme, 
-  setCurrentScreen, 
-  setShowThemeSelector, 
-  isMidnightTheme, 
-  currentThemeKey 
-}) => {
+const MedicalMeasurementsScreen: React.FC = () => {
+  const { theme, isMidnightTheme, currentThemeKey } = useTheme();
+  const navigate = useNavigate();
   const iconSize = "w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-16 lg:h-16";
   const devices = [
     { icon: <MonitorDot className={`${iconSize} mx-auto text-blue-600`} />, label: 'Patient Monitor', gradient: 'from-blue-50 to-blue-100', borderColor: 'border-blue-200', screen: SCREEN_NAMES.PATIENT_MONITOR },
@@ -52,12 +46,10 @@ const MedicalMeasurementsScreen: React.FC<MedicalMeasurementsScreenProps> = ({
   
   return (
     <div className={`min-h-screen bg-gradient-to-br ${theme.background} flex flex-col`}>
-      <AppHeader 
-        theme={theme} 
-        title="NOAH - Medical Devices" 
-        onBack={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
+      <AppHeader
+        title="NOAH - Medical Devices"
+        onBack={() => navigate(`/${SCREEN_NAMES.DASHBOARD}`)}
         showThemeButton={false}
-        isMidnightTheme={isMidnightTheme}
       />
 
       <div className="p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 flex-grow">
@@ -68,15 +60,13 @@ const MedicalMeasurementsScreen: React.FC<MedicalMeasurementsScreenProps> = ({
 
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6 lg:gap-7">
             {devices.map(device => (
-              <DeviceTile 
-                key={device.label} 
-                icon={device.icon} 
+              <DeviceTile
+                key={device.label}
+                icon={device.icon}
                 label={device.label}
                 gradient={device.gradient}
                 borderColor={device.borderColor}
-                onClick={device.screen ? () => setCurrentScreen(device.screen) : undefined}
-                theme={theme}
-                currentThemeKey={currentThemeKey}
+                onClick={device.screen ? () => navigate(`/${device.screen}`) : undefined}
               />
             ))}
           </div>
@@ -86,7 +76,7 @@ const MedicalMeasurementsScreen: React.FC<MedicalMeasurementsScreenProps> = ({
       <div className={`sticky bottom-0 left-0 right-0 bg-gradient-to-r ${theme.accent} p-3 sm:p-4 md:p-5 lg:p-6 border-t ${isMidnightTheme || currentThemeKey === 'black' ? 'border-gray-600' : 'border-white/10'}`}>
         <div className="flex justify-center">
           <button
-            onClick={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
+            onClick={() => navigate(`/${SCREEN_NAMES.DASHBOARD}`)}
             className={`flex items-center space-x-1.5 sm:space-x-2 md:space-x-3 bg-white/20 ${currentThemeKey === 'black' ? 'text-slate-800' : theme.textOnAccent} px-4 py-2 sm:px-6 sm:py-2.5 md:px-7 md:py-3 lg:px-8 lg:py-3.5 rounded-lg sm:rounded-xl hover:bg-white/30 transition-all duration-200 font-medium text-sm sm:text-base md:text-lg lg:text-xl`}
           >
             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />

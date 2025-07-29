@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, Activity, Database, ArrowLeft } from 'lucide-react';
-import { BaseScreenProps } from '../types';
+import { useTheme } from '../src/contexts/ThemeContext';
 import { SCREEN_NAMES } from '../constants';
 
 // Modern VitalSignCard Component
-const VitalSignCard = ({ value, label, theme, index }: { value: string, label: string, theme: any, index: number }) => (
+const VitalSignCard = ({ value, label, index }: { value: string, label: string, index: number }) => {
+  const { theme } = useTheme();
+  return (
     <div
         className={`${theme.card} rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 lg:p-8 text-center shadow-lg hover:shadow-xl transition-all duration-300 border hover:border-gray-300 group relative overflow-hidden`}
         style={{ animationDelay: `${index * 100}ms` }}
@@ -19,10 +22,13 @@ const VitalSignCard = ({ value, label, theme, index }: { value: string, label: s
             </div>
         </div>
     </div>
-);
+  );
+};
 
 // Enhanced Patient Monitor Screen
-const PatientMonitorScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, currentThemeKey }) => {
+const PatientMonitorScreen: React.FC = () => {
+  const { theme, currentThemeKey } = useTheme();
+  const navigate = useNavigate();
     const [progress, setProgress] = useState(65);
     const [logs, setLogs] = useState([
         { time: new Date().toLocaleString(), message: 'System initialized', type: 'info' },
@@ -93,12 +99,6 @@ const PatientMonitorScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScre
                 <h1 className={`text-xl sm:text-2xl md:text-3xl font-bold ${theme.textOnAccent} relative z-10 tracking-tight`}>
                     Patient Monitor
                 </h1>
-                <button
-                    onClick={() => setCurrentScreen(SCREEN_NAMES.MEASUREMENTS)}
-                    className={`${theme.textOnAccent} hover:bg-white/15 active:bg-white/25 p-2 sm:p-2.5 md:p-3 rounded-xl transition-all duration-200 hover:scale-105 relative z-10`}
-                >
-                    <X size={24} className="sm:w-6 sm:h-6 md:w-7 md:h-7" />
-                </button>
             </div>
 
             <div className="p-3 sm:p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
@@ -114,7 +114,6 @@ const PatientMonitorScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScre
                                         key={index}
                                         value={item.value}
                                         label={item.label}
-                                        theme={theme}
                                         index={index}
                                     />
                                 ))}
@@ -177,7 +176,7 @@ const PatientMonitorScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScre
 
                     {/* Enhanced Return Button */}
                     <button
-                        onClick={() => setCurrentScreen(SCREEN_NAMES.MEASUREMENTS)}
+                        onClick={() => navigate(`/${SCREEN_NAMES.MEASUREMENTS}`)}
                         className={`flex items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-5 rounded-xl sm:rounded-2xl font-semibold text-sm sm:text-base md:text-lg hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 relative overflow-hidden group`}
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

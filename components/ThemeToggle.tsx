@@ -1,23 +1,20 @@
 import React from 'react';
-import { ThemeKey } from '../types';
+import { useTheme } from '../src/contexts/ThemeContext';
 
 interface ThemeToggleProps {
-  currentThemeKey: ThemeKey;
-  onThemeChange: (themeKey: ThemeKey) => void;
   className?: string;
   disabled?: boolean;
 }
 const ThemeToggle: React.FC<ThemeToggleProps> = ({
-  currentThemeKey,
-  onThemeChange,
   className = "",
   disabled = false
 }) => {
+  const { currentThemeKey, toggleTheme } = useTheme();
   const isDarkMode = currentThemeKey === 'black';
 
   const handleToggle = () => {
     if (disabled) return;
-    onThemeChange(isDarkMode ? 'noah' : 'black');
+    toggleTheme();
   };
 
   return (

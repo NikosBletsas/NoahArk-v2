@@ -1,21 +1,21 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FileText, Monitor, X, ArrowLeft, Activity } from 'lucide-react';
-import { BaseScreenProps } from '../types';
+import { useTheme } from '../src/contexts/ThemeContext';
 import { SCREEN_NAMES } from '../constants';
 import AppHeader from './shared/AppHeader';
 
 
-const SpirometerScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, setShowThemeSelector, isMidnightTheme }) => {
+const SpirometerScreen: React.FC = () => {
+  const { theme, isMidnightTheme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   return (
     <div className={`min-h-screen bg-gradient-to-br ${theme.background} flex flex-col`}>
-       <AppHeader 
-        theme={theme} 
-        title="Respirometer Data" 
-        onBack={() => setCurrentScreen(SCREEN_NAMES.MEASUREMENTS)}
+      <AppHeader
+        title="Respirometer Data"
+        onBack={() => navigate(`/${SCREEN_NAMES.MEASUREMENTS}`)}
         showThemeButton={true}
-        onShowThemeSelector={() => setShowThemeSelector?.(true)}
-        isMidnightTheme={isMidnightTheme}
       />
 
       <div className="p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 flex-grow">
@@ -55,7 +55,7 @@ const SpirometerScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, 
               </button>
               
               <button
-                onClick={() => setCurrentScreen(SCREEN_NAMES.MEASUREMENTS)}
+                onClick={() => navigate(`/${SCREEN_NAMES.MEASUREMENTS}`)}
                 className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg sm:rounded-xl hover:from-teal-700 hover:to-teal-800 transition-all duration-200 flex items-center justify-center space-x-2 sm:space-x-3 text-sm sm:text-base md:text-lg lg:text-xl"
               >
                 <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />

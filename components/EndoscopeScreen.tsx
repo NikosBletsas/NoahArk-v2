@@ -1,14 +1,17 @@
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Camera, Play, Square, ArrowLeft, AlertTriangle } from 'lucide-react';
-import { BaseScreenProps } from '../types';
+import { useTheme } from '../src/contexts/ThemeContext';
 import { SCREEN_NAMES } from '../constants';
 import AppHeader from './shared/AppHeader';
 
 /**
  * Screen for Endoscope functionality, including camera feed, recording, and resolution settings.
  */
-const EndoscopeScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, setShowThemeSelector, isMidnightTheme }) => {
+const EndoscopeScreen: React.FC = () => {
+  const { theme, isMidnightTheme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   const [isRecording, setIsRecording] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -68,17 +71,14 @@ const EndoscopeScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, s
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${theme.background} flex flex-col`}>
-    <AppHeader 
-      theme={theme} 
-      title="Horus Endoscope" 
-      onBack={() => {
-        stopCamera();
-        setCurrentScreen(SCREEN_NAMES.MEASUREMENTS);
-      }}
-      showThemeButton={!!setShowThemeSelector} // Only show if function exists
-      onShowThemeSelector={setShowThemeSelector ? () => setShowThemeSelector(true) : undefined}
-      isMidnightTheme={isMidnightTheme}
-    />
+      <AppHeader
+        title="Horus Endoscope"
+        onBack={() => {
+          stopCamera();
+          navigate(`/${SCREEN_NAMES.MEASUREMENTS}`);
+        }}
+        showThemeButton={true}
+      />
 
       <div className="p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 flex-grow">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 h-full">
@@ -149,7 +149,7 @@ const EndoscopeScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScreen, s
              <button
                 onClick={() => {
                   stopCamera();
-                  setCurrentScreen(SCREEN_NAMES.MEASUREMENTS);
+                  navigate(`/${SCREEN_NAMES.MEASUREMENTS}`);
                 }}
                 className="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white p-2.5 sm:p-3 md:p-3.5 lg:p-4 rounded-lg sm:rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-200 flex items-center justify-center space-x-2 text-sm sm:text-base md:text-lg lg:text-xl"
               >

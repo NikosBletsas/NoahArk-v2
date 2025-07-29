@@ -1,7 +1,9 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import { RouterProvider } from 'react-router-dom';
+import { ThemeProvider } from './src/contexts/ThemeContext';
+import { router } from './src/router';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -11,6 +13,8 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </React.StrictMode>
 );

@@ -39,6 +39,10 @@ export const THEMES: Record<ThemeKey, Theme> = {  noah: {
   }
 };
 
+export const API_URLS = {
+  SIGNALR_HUB: 'https://localhost:5001/notificationhub',
+};
+
 export const SCREEN_NAMES = {
   LOGIN: 'login',
   DASHBOARD: 'dashboard',

@@ -1,15 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Wifi, ShieldCheck, Eye, EyeOff, Loader } from 'lucide-react';
-import { BaseScreenProps } from '../types';
+import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useTheme } from '../src/contexts/ThemeContext';
 import { SCREEN_NAMES } from '../constants';
-
 import { Api } from '../src/generated_api';
+
+interface OutletContextType {
+  setShowConnectionStatus: (show: boolean) => void;
+  setShowConnectivityTest: (show: boolean) => void;
+}
 
 interface IconButtonProps {
   icon: React.ReactElement<{ className?: string }>;
   label: string;
   onClick?: () => void;
-  theme: BaseScreenProps['theme'];
   bgColorClass: string;
   iconColorClass?: string;
   disabled?: boolean;
@@ -19,11 +23,11 @@ const IconButton: React.FC<IconButtonProps> = ({
   icon,
   label,
   onClick,
-  theme,
   bgColorClass,
   iconColorClass = 'text-white',
   disabled = false
 }) => {
+  const { theme } = useTheme();
   return (
     <button
       onClick={onClick}
@@ -41,15 +45,10 @@ const IconButton: React.FC<IconButtonProps> = ({
   );
 };
 
-const LoginScreen: React.FC<BaseScreenProps> = ({
-  theme,
-  setCurrentScreen,
-  onThemeChange,
-  isMidnightTheme,
-  currentThemeKey,
-  setShowConnectionStatus,
-  setShowConnectivityTest
-}) => {
+const LoginScreen: React.FC = () => {
+  const { theme, isMidnightTheme, currentThemeKey } = useTheme();
+  const { setShowConnectionStatus, setShowConnectivityTest } = useOutletContext<OutletContextType>();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState('');
@@ -88,7 +87,7 @@ const LoginScreen: React.FC<BaseScreenProps> = ({
       const api = new Api();
       const loginData = await api.api.loginApiLoginList({ user: username, password: password });
       console.log('Login API Response:', loginData);
-      setCurrentScreen(SCREEN_NAMES.DASHBOARD);
+      navigate(`/${SCREEN_NAMES.DASHBOARD}`);
     } catch (error: any) {
       console.error('Login error:', error);
       setLoginError('Invalid username or password.');
@@ -108,7 +107,7 @@ const LoginScreen: React.FC<BaseScreenProps> = ({
       const api = new Api();
       const loginOfflineData = await api.api.loginApiLoginOfflineList();
       console.log('LoginOffline API Response:', loginOfflineData);
-      setCurrentScreen(SCREEN_NAMES.DASHBOARD);
+      navigate(`/${SCREEN_NAMES.DASHBOARD}`);
     } catch (error: any) {
       console.error('Login Offline error:', error);
       setLoginError('Login Offline failed.');
@@ -242,24 +241,16 @@ const LoginScreen: React.FC<BaseScreenProps> = ({
             <IconButton
               icon={<Wifi />}
               label="Connectivity"
-              theme={theme}
               bgColorClass="bg-blue-500"
               disabled={isLoading}
-              onClick={() => {
-                if (setShowConnectionStatus) setShowConnectionStatus(true);
-                else console.log("Connectivity clicked - setShowConnectionStatus not available");
-              }}
+              onClick={() => setShowConnectionStatus(true)}
             />
             <IconButton
               icon={<ShieldCheck />}
               label="Diagnostics"
-              theme={theme}
               bgColorClass="bg-green-500"
               disabled={isLoading}
-              onClick={() => {
-                if (setShowConnectivityTest) setShowConnectivityTest(true);
-                else console.log("Diagnostics clicked - setShowConnectivityTest not available");
-              }}
+              onClick={() => setShowConnectivityTest(true)}
             />
           </div>
         </div>

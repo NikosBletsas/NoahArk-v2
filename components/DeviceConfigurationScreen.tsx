@@ -1,11 +1,19 @@
 import React from 'react';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { Activity, Save, ArrowLeft, Settings as SettingsIcon, Wifi, TestTubeDiagonal, HardDrive, Search, Zap } from 'lucide-react';
-import { BaseScreenProps } from '../types';
+import { useTheme } from '../src/contexts/ThemeContext';
 import { SCREEN_NAMES } from '../constants';
 import FormSection from './shared/FormSection';
 import { LabelledInput, LabelledSelect } from './shared/FormControls';
 
-const DeviceManufacturerRow: React.FC<{label: string; idPrefix: string; theme: BaseScreenProps['theme']}> = ({label, idPrefix, theme}) => (
+interface OutletContextType {
+  setShowConnectionStatus: (show: boolean) => void;
+  setShowConnectivityTest: (show: boolean) => void;
+}
+
+const DeviceManufacturerRow: React.FC<{label: string; idPrefix: string;}> = ({label, idPrefix}) => {
+  const { theme } = useTheme();
+  return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-5 lg:gap-6 items-end">
         <LabelledSelect label={`${label} Brand`} id={`${idPrefix}-brand`} theme={theme}>
             <option value="">Select Brand</option>
@@ -19,23 +27,13 @@ const DeviceManufacturerRow: React.FC<{label: string; idPrefix: string; theme: B
             <span className={`${theme.textPrimary} text-xs sm:text-sm md:text-base lg:text-lg`}>{label} Device Exists</span>
         </label>
     </div>
-);
+  );
+};
 
-interface DeviceConfigurationScreenProps extends BaseScreenProps {
-  setShowThemeSelector?: (show: boolean) => void;
-  setShowConnectionStatus?: (show: boolean) => void;
-  setShowConnectivityTest?: (show: boolean) => void;
-}
-
-const DeviceConfigurationScreen: React.FC<DeviceConfigurationScreenProps> = ({ 
-  theme, 
-  setCurrentScreen, 
-  setShowThemeSelector, 
-  isMidnightTheme, 
-  currentThemeKey, 
-  setShowConnectionStatus, 
-  setShowConnectivityTest 
-}) => {
+const DeviceConfigurationScreen: React.FC = () => {
+  const { theme, isMidnightTheme, currentThemeKey, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+  const { setShowConnectionStatus, setShowConnectivityTest } = useOutletContext<OutletContextType>();
   
   const deviceManufacturers = [
     { label: "ECG", idPrefix: "ecg" },
@@ -53,8 +51,8 @@ const DeviceConfigurationScreen: React.FC<DeviceConfigurationScreenProps> = ({
       <div className={`p-3 sm:p-4 md:p-5 lg:p-6 ${theme.card} backdrop-blur-lg border-b ${isMidnightTheme || currentThemeKey === 'black' ? 'border-gray-700/50' : 'border-white/20'} shadow-sm sticky top-0 z-20`}>
         <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 max-w-7xl mx-auto">
        <div className="w-36 h-20 sm:w-40 sm:h-22 md:w-44 md:h-24 flex items-center justify-start">
-         <img 
-           src={currentThemeKey === 'black' || isMidnightTheme
+         <img
+           src={currentThemeKey === 'black'
              ? "/assets/NoA.H. Logo Horizontal white.svg"
              : "/assets/NoA.H. Logo Horizontal blue-black.svg"
            }
@@ -63,15 +61,13 @@ const DeviceConfigurationScreen: React.FC<DeviceConfigurationScreenProps> = ({
          />
        </div>
           <div className="flex-grow"></div>
-             {setShowThemeSelector && (
                  <button
-                    onClick={() => setShowThemeSelector(true)}
+                    onClick={toggleTheme}
                     className={`p-2 sm:p-3 md:p-3.5 lg:p-4 ${theme.card} backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-lg border ${isMidnightTheme || currentThemeKey === 'black' ? 'border-gray-700/50' : 'border-white/20'} hover:scale-105 transition-all duration-200`}
                     title="Change Theme"
                   >
                   <div className={`w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 bg-gradient-to-r ${theme.primary} rounded-md sm:rounded-lg`}></div>
                 </button>
-            )}
         </div>
       </div>
 
@@ -123,23 +119,23 @@ const DeviceConfigurationScreen: React.FC<DeviceConfigurationScreenProps> = ({
           <FormSection title="Device Manufacturer" theme={theme}>
             <div className="space-y-4 sm:space-y-6 md:space-y-7 lg:space-y-8">
               {deviceManufacturers.map(device => (
-                <DeviceManufacturerRow key={device.idPrefix} label={device.label} idPrefix={device.idPrefix} theme={theme} />
+                <DeviceManufacturerRow key={device.idPrefix} label={device.label} idPrefix={device.idPrefix} />
               ))}
             </div>
           </FormSection>
 
           <FormSection title="Network & Connectivity" theme={theme}>
              <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:space-x-3">
-                 <button 
-                    onClick={() => setShowConnectionStatus && setShowConnectionStatus(true)}
-                    className={`${baseButtonStyles} w-full sm:flex-1 bg-gradient-to-r ${theme.primary} ${theme.textOnAccent} hover:opacity-90 focus:ring-violet-500`} 
+                 <button
+                    onClick={() => setShowConnectionStatus(true)}
+                    className={`${baseButtonStyles} w-full sm:flex-1 bg-gradient-to-r ${theme.primary} ${theme.textOnAccent} hover:opacity-90 focus:ring-violet-500`}
                     aria-label="Open Network Settings"
                     >
                     <Wifi size={16} className="md:size-5 lg:size-6" />
                     <span>Network Settings</span>
                 </button>
-                <button 
-                    onClick={() => setShowConnectivityTest && setShowConnectivityTest(true)}
+                <button
+                    onClick={() => setShowConnectivityTest(true)}
                     className={`${baseButtonStyles} w-full sm:flex-1 bg-green-500 hover:bg-green-600 text-white focus:ring-green-500`}
                     aria-label="Run Connectivity Tests"
                     >
@@ -161,14 +157,14 @@ const DeviceConfigurationScreen: React.FC<DeviceConfigurationScreenProps> = ({
             <span>Save</span>
           </button>
           <button
-            onClick={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
+            onClick={() => navigate(`/${SCREEN_NAMES.DASHBOARD}`)}
             className={`${baseButtonStyles} border ${theme.buttonSecondaryBorder} ${theme.buttonSecondaryText} ${theme.buttonSecondaryHoverBg} focus:ring-gray-400`}
           >
             <ArrowLeft size={16} className="md:size-5 lg:size-6" />
             <span>Return</span>
           </button>
           <button
-            onClick={() => setCurrentScreen(SCREEN_NAMES.SETTINGS)}
+            onClick={() => navigate(`/${SCREEN_NAMES.SETTINGS}`)}
             className={`${baseButtonStyles} border ${theme.buttonSecondaryBorder} ${theme.buttonSecondaryText} ${theme.buttonSecondaryHoverBg} focus:ring-gray-400`}
           >
             <SettingsIcon size={16} className="md:size-5 lg:size-6" />
