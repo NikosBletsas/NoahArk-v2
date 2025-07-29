@@ -51,7 +51,7 @@ const DashboardScreen: React.FC<BaseScreenProps> = ({
     { icon: <Video className={`${iconSize} mx-auto text-blue-500`} />, label: 'Webex Call', screen: undefined /* TODO */ },
     { icon: <Pill className={`${iconSize} mx-auto text-rose-500`} />, label: 'Drugs Inventory', screen: undefined /* TODO */ },
     { icon: <User className={`${iconSize} mx-auto text-indigo-600`} />, label: 'Send Data to Doctor', screen: undefined /* TODO */ },
-    { icon: <FileText className={`${iconSize} mx-auto text-teal-600`} />, label: 'Case Consultations', screen: undefined /* TODO */ },
+    { icon: <FileText className={`${iconSize} mx-auto text-teal-600`} />, label: 'Case Consultations', screen: SCREEN_NAMES.CASE_CONSULTATIONS /* TODO */ },
     { icon: <Brain className={`${iconSize} mx-auto text-red-600`} />, label: 'Artificial Intelligence', screen: undefined /* TODO */ },
     { icon: <Settings className={`${iconSize} mx-auto text-gray-600`} />, label: 'System Operations', screen: SCREEN_NAMES.SYSTEM_OPERATIONS },
   ];

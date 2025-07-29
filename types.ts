@@ -216,3 +216,12 @@ export interface InlineCheckboxGroupProps {
   theme: any;
   onFormChange?: () => void;
 }
+
+export interface Consultation {
+  caseId: string;
+  name: string;
+  surname: string;
+  consultationDate: string;
+  details: string;
+  doctor: string;
+}

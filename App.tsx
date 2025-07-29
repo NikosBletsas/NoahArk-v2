@@ -15,6 +15,7 @@ import EmergencyCaseDiagnosisScreen from './components/EmergencyCaseDiagnosisScr
 import DeviceConfigurationScreen from './components/DeviceConfigurationScreen';
 import ConnectionStatusScreen from './components/ConnectionStatusScreen';
 import ConnectivityTestScreen from './components/ConnectivityTestScreen';
+import ConsultationsScreen from './components/ConsultationScreen';
 
 /**
  * Main application component.
@@ -92,6 +93,8 @@ const App: React.FC = () => {
         return <EmergencyCaseDiagnosisScreen {...commonScreenProps} />;
       case SCREEN_NAMES.DEVICE_CONFIGURATION:
         return <DeviceConfigurationScreen {...commonScreenProps} />;
+      case SCREEN_NAMES.CASE_CONSULTATIONS: 
+        return <ConsultationsScreen {...commonScreenProps} />;
       default:
         return <LoginScreen {...commonScreenProps} />;
     }

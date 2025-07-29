@@ -52,6 +52,7 @@ export const SCREEN_NAMES = {
   DEVICE_CONFIGURATION: 'device-configuration',
   CONNECTION_STATUS: 'connection-status',
   CONNECTIVITY_TEST: 'connectivity-test',
+  CASE_CONSULTATIONS: 'case-consultations'
 } as const;
 
 export const DIAGNOSIS_STEP_KEYS = [
