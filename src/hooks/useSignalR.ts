@@ -40,16 +40,23 @@ const useSignalR = (hubUrl: string) => {
       setMessages(prevMessages => [...prevMessages, 'Connection closed.']);
     });
 
-    return () => {
-      if (connection) {
-        connection.off('ReceiveMessage');
-        connection.stop();
+    return () => { 
+      newConnection.off('ReceiveMessage');
+      newConnection.onclose((error) => {
+        setConnectionState('Disconnected');
+        setMessages(prevMessages => [...prevMessages, `Connection closed: ${error ? error.message : 'No error'}`]);
+      });
+
+      newConnection.off('ReceiveMessage');
+      if (newConnection.state === signalR.HubConnectionState.Connected) {
+        newConnection.stop();
       }
     };
-  }, [hubUrl]);
+  }, 
+  [hubUrl]);
   
 
   return { connection, messages, connectionState };
 };
 
-export default useSignalR;
+export default useSignalR; 

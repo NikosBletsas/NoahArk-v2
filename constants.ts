@@ -44,6 +44,7 @@ export const SCREEN_NAMES = {
   DASHBOARD: 'dashboard',
   PATIENT_SEARCH: 'patient-search',
   MEASUREMENTS: 'measurements',
+  PATIENT_MONITOR: 'patient-monitor',
   SYSTEM_OPERATIONS: 'system-operations',
   SPIROMETER: 'spirometer',
   ENDOSCOPE: 'endoscope',
@@ -53,6 +54,7 @@ export const SCREEN_NAMES = {
   DEVICE_CONFIGURATION: 'device-configuration',
   CONNECTION_STATUS: 'connection-status',
   CONNECTIVITY_TEST: 'connectivity-test',
+  CONSULTATIONS: 'consultations',
 } as const;
 
 export const DIAGNOSIS_STEP_KEYS = [

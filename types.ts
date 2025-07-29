@@ -83,3 +83,12 @@ export interface LoginResponse {
 export interface InitResponse {
   someData?: string | null;
 }
+
+export interface Consultation {
+  caseId: string;
+  name: string;
+  surname: string;
+  consultationDate: string;
+  details: string;
+  doctor: string;
+}

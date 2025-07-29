@@ -68,40 +68,41 @@ const AssignEmergencyScreen: React.FC<BaseScreenProps> = ({ theme, setCurrentScr
             </div>
           </div>
 
-          {/* Date-Time Input Section */}
-          <div className="mb-4 sm:mb-6 md:mb-8">
-            <label htmlFor="availability-datetime" className={`block text-xs sm:text-sm md:text-base font-medium ${theme.textSecondary} mb-1`}>
-              Date - Time to check availability from
-            </label>
-            <input
-              type="datetime-local"
-              id="availability-datetime"
-              value={dateTimeValue}
-              onChange={(e) => setDateTimeValue(e.target.value)}
-              className={`w-full sm:w-auto px-3 py-2 md:px-4 md:py-2.5 border ${theme.inputBorder} ${theme.inputBackground} ${theme.textPrimary} ${theme.inputPlaceholder} rounded-md sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base md:text-lg`}
-            />
-          </div>
-
-          {/* Buttons Section */}
-          <div className="mt-auto flex flex-col sm:flex-row sm:justify-between space-y-2 sm:space-y-0 sm:space-x-3">
-            <button 
-              className={`w-full sm:flex-grow-[2] bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 rounded-md sm:rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center space-x-1.5 sm:space-x-2 font-medium text-sm sm:text-base md:text-lg`}
-            >
-              <Send size={16} className="w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5" />
-              <span>Send Data to Selected Doctor</span>
-            </button>
-            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 sm:flex-grow-[1]">
+          {/* Date-Time Input and Buttons Section */}
+          <div className="mt-auto flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 sm:gap-6">
+            {/* Left side: Date-Time Input and Send Button */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="availability-datetime" className={`block text-xs sm:text-sm font-medium ${theme.textSecondary}`}>
+                Date - Time to check availability from
+              </label>
+              <input
+                type="datetime-local"
+                id="availability-datetime"
+                value={dateTimeValue}
+                onChange={(e) => setDateTimeValue(e.target.value)}
+                className={`w-full sm:w-auto px-3 py-2 border ${theme.inputBorder} ${theme.inputBackground} ${theme.textPrimary} ${theme.inputPlaceholder} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base`}
+              />
               <button 
-                className={`w-full sm:flex-1 bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 rounded-md sm:rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center space-x-1.5 sm:space-x-2 font-medium text-sm sm:text-base md:text-lg`}
+                className={`bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} px-4 py-2.5 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 font-medium text-sm sm:text-base`}
               >
-                <RefreshCw size={16} className="w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5" />
+                <Send size={18} />
+                <span>Send Data to DrTMA</span>
+              </button>
+            </div>
+
+            {/* Right side: Action Buttons */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <button 
+                className={`bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} px-4 py-2.5 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 font-medium text-sm sm:text-base`}
+              >
+                <RefreshCw size={18} />
                 <span>Refresh List</span>
               </button>
               <button
                 onClick={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
-                className={`w-full sm:flex-1 bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 rounded-md sm:rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center space-x-1.5 sm:space-x-2 font-medium text-sm sm:text-base md:text-lg`}
+                className={`bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} px-4 py-2.5 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 font-medium text-sm sm:text-base`}
               >
-                <ArrowLeft size={16} className="w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5" />
+                <ArrowLeft size={18} />
                 <span>Return</span>
               </button>
             </div>

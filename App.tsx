@@ -7,6 +7,7 @@ import LoginScreen from './components/LoginScreen';
 import DashboardScreen from './components/DashboardScreen';
 import PatientSearchScreen from './components/PatientSearchScreen';
 import MedicalMeasurementsScreen from './components/MedicalMeasurementsScreen';
+import PatientMonitorScreen from './components/PatientMonitorScreen';
 import SystemOperationsScreen from './components/SystemOperationsScreen';
 import SpirometerScreen from './components/SpirometerScreen';
 import EndoscopeScreen from './components/EndoscopeScreen';
@@ -16,6 +17,7 @@ import EmergencyCaseDiagnosisScreen from './components/EmergencyCaseDiagnosisScr
 import DeviceConfigurationScreen from './components/DeviceConfigurationScreen';
 import ConnectionStatusScreen from './components/ConnectionStatusScreen';
 import ConnectivityTestScreen from './components/ConnectivityTestScreen';
+import ConsultationsScreen from './components/ConsultationsScreen';
 import useSignalR from './src/hooks/useSignalR';
 
 
@@ -104,6 +106,8 @@ const App: React.FC = () => {
         return <PatientSearchScreen {...commonScreenProps} />;
       case SCREEN_NAMES.MEASUREMENTS:
         return <MedicalMeasurementsScreen {...commonScreenProps} />;
+      case SCREEN_NAMES.PATIENT_MONITOR:
+        return <PatientMonitorScreen {...commonScreenProps} />;
       case SCREEN_NAMES.SYSTEM_OPERATIONS:
         return <SystemOperationsScreen {...commonScreenProps} />;
       case SCREEN_NAMES.SPIROMETER:
@@ -118,6 +122,8 @@ const App: React.FC = () => {
         return <EmergencyCaseDiagnosisScreen {...commonScreenProps} />;
       case SCREEN_NAMES.DEVICE_CONFIGURATION:
         return <DeviceConfigurationScreen {...commonScreenProps} />;
+      case SCREEN_NAMES.CONSULTATIONS:
+        return <ConsultationsScreen {...commonScreenProps} />;
       default:
         return <LoginScreen {...commonScreenProps} />;
     }
