@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Activity, RefreshCw, Wifi, Eye, EyeOff, X, Link2, Link2Off, ArrowLeft } from 'lucide-react';
 import { ModalScreenProps } from '../types'; 
-import { SCREEN_NAMES } from '../constants';
 import InputWithIconButton from './shared/InputWithIconButton';
 
 interface AccessPoint {

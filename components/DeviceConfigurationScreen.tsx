@@ -61,13 +61,6 @@ const DeviceConfigurationScreen: React.FC = () => {
          />
        </div>
           <div className="flex-grow"></div>
-                 <button
-                    onClick={toggleTheme}
-                    className={`p-2 sm:p-3 md:p-3.5 lg:p-4 ${theme.card} backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-lg border ${isMidnightTheme || currentThemeKey === 'black' ? 'border-gray-700/50' : 'border-white/20'} hover:scale-105 transition-all duration-200`}
-                    title="Change Theme"
-                  >
-                  <div className={`w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 bg-gradient-to-r ${theme.primary} rounded-md sm:rounded-lg`}></div>
-                </button>
         </div>
       </div>
 
@@ -98,10 +91,10 @@ const DeviceConfigurationScreen: React.FC = () => {
                         <option value="USB0">USB0</option>
                     </LabelledSelect>
                 </div>
-                 <label htmlFor="hms-oximeter-exists" className="flex items-center space-x-2 sm:space-x-2.5 md:space-x-3 cursor-pointer my-3 sm:my-4 md:my-5 lg:my-6">
-                    <input type="checkbox" id="hms-oximeter-exists" className={`form-checkbox h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 rounded ${theme.inputBorder} text-blue-500 focus:ring-blue-500`} />
-                    <span className={`${theme.textPrimary} text-xs sm:text-sm md:text-base lg:text-lg`}>Oximeter Device Exists</span>
-                </label>
+<label htmlFor="hms-oximeter-exists" className="flex items-center space-x-2 sm:space-x-2.5 md:space-x-3 cursor-pointer my-3 sm:my-4 md:my-5 lg:my-6">
+    <input type="checkbox" id="hms-oximeter-exists" className={`form-checkbox h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 rounded ${theme.inputBorder} text-blue-500 focus:ring-blue-500`} />
+    <span className={`${theme.textPrimary} text-xs sm:text-sm md:text-base lg:text-lg`}>Oximeter Device Exists</span>
+</label>
                 <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:space-x-3 mt-3 sm:mt-4 md:mt-5 lg:mt-6">
                     <button className={`${baseButtonStyles} w-full sm:flex-1 bg-blue-500 hover:bg-blue-600 text-white focus:ring-blue-500`}>
                         <Search size={16} className="md:size-5 lg:size-6"/><span>Find All Ports</span>
