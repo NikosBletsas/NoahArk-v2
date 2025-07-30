@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Heart, Settings, Camera, User, FileText, RefreshCw, Monitor as DeviceMonitor, Activity, BriefcaseMedical, ClipboardPlus, HardDrive, ScanLine, Video, Pill, Brain } from 'lucide-react';
 import { useTheme } from '../src/contexts/ThemeContext';
-import { SCREEN_NAMES } from '../constants';
+import { SCREEN_NAMES, API_URLS } from '../constants';
 import { Api } from '../src/generated_api';
 import * as signalR from '@microsoft/signalr';
 
@@ -103,18 +103,12 @@ const DashboardScreen: React.FC = () => {
         const api = new Api();
         console.log("Dashboard: Calling mainGetBatteryStatusList...");
         const batteryStatusData = await api.api.mainGetBatteryStatusList();
-        console.log("Dashboard: Battery status data:", batteryStatusData);
-        let batteryStatus = 'N/A';
-        if (batteryStatusData?.data != null) {
-          console.log("Dashboard: Battery status data:", batteryStatusData);
-          console.log("Dashboard: Entire batteryStatusData object:", batteryStatusData);
-          console.log("Dashboard: Type of batteryStatusData:", typeof batteryStatusData);
-          console.log("Dashboard: batteryStatusData.batteryPercentage:", (batteryStatusData as any)?.batteryPercentage);
-          batteryStatus = batteryStatusData && (batteryStatusData as any)?.batteryPercentage !== null && (batteryStatusData as any)?.batteryPercentage !== undefined ? `${(batteryStatusData as any).batteryPercentage}%` : 'N/A';
+        const percentage = (batteryStatusData?.data as any)?.batteryPercentage;
+        if (percentage != null) {
+          setBatteryStatus(`${percentage}%`);
         } else {
-          console.warn("Battery status data is null or undefined");
+          setBatteryStatus('N/A');
         }
-        setBatteryStatus(batteryStatus);
       } catch (error) {
         console.error("Error fetching battery status:", error);
         setBatteryStatus('Error');
@@ -127,11 +121,8 @@ const DashboardScreen: React.FC = () => {
     let hubConnection: signalR.HubConnection | null = null;
 
     try {
-      const hubUrl = new URL("/notificationhub", window.location.origin);
-      hubUrl.protocol = "https";
-
       hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl(hubUrl.toString(), {
+        .withUrl(API_URLS.SIGNALR_HUB, {
           transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
           logMessageContent: true,
         })

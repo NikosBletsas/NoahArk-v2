@@ -372,6 +372,50 @@ export class Api<
     /**
      * No description
      *
+     * @tags Devices
+     * @name DevicesPatientMonitorInitList
+     * @summary Init the Patient Monitor
+     * @request GET:/api/Devices/PatientMonitor/Init
+     */
+    devicesPatientMonitorInitList: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/Devices/PatientMonitor/Init`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Devices
+     * @name DevicesBloodPressureGetDeviceDataList
+     * @summary Get the Patient Blood Pressure Data
+     * @request GET:/api/Devices/BloodPressure/GetDeviceData
+     */
+    devicesBloodPressureGetDeviceDataList: (params: RequestParams = {}) =>
+      this.request<void, void>({
+        path: `/api/Devices/BloodPressure/GetDeviceData`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Devices
+     * @name DevicesBloodPressureSendDataList
+     * @request GET:/api/Devices/BloodPressure/SendData
+     */
+    devicesBloodPressureSendDataList: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/Devices/BloodPressure/SendData`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags LoginAPI
      * @name LoginApiInitList
      * @summary Instantiates a new user session, reads configuration settings, and creates necessary directories.
@@ -570,6 +614,35 @@ export class Api<
         method: "POST",
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Main
+     * @name MainSendDataList
+     * @summary Uploads files to the server
+     * @request GET:/api/Main/SendData
+     */
+    mainSendDataList: (params: RequestParams = {}) =>
+      this.request<void, void>({
+        path: `/api/Main/SendData`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Main
+     * @name MainResetCaseCreate
+     * @request POST:/api/Main/ResetCase
+     */
+    mainResetCaseCreate: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/Main/ResetCase`,
+        method: "POST",
         ...params,
       }),
   };

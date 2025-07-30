@@ -31,7 +31,7 @@ const AssignEmergencyScreen: React.FC = () => {
       <AppHeader
         title="NOAH - Assign Emergency"
         onBack={() => navigate(`/${SCREEN_NAMES.DASHBOARD}`)}
-        showThemeButton={true}
+        showThemeButton={false}
       />
 
       <div className="p-3 sm:p-4 md:p-6 flex-grow">
