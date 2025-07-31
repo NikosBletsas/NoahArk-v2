@@ -14,9 +14,7 @@ interface OperationButtonProps {
   onClick?: () => void;
 }
 
-const OperationButton: React.FC<OperationButtonProps> = ({ icon, label, gradient, borderColor, textColor, onClick }) => {
-  const { theme } = useTheme();
-  return (
+const OperationButton: React.FC<OperationButtonProps> = ({ icon, label, gradient, borderColor, textColor, onClick }) => (
   <div
     onClick={onClick}
     className={`bg-gradient-to-br ${gradient} p-4 sm:p-6 md:p-8 lg:p-10 rounded-xl sm:rounded-2xl text-center cursor-pointer hover:scale-105 transition-all duration-200 border ${borderColor} flex flex-col items-center justify-center aspect-square`}
@@ -26,8 +24,7 @@ const OperationButton: React.FC<OperationButtonProps> = ({ icon, label, gradient
     })}
     <h3 className={`font-semibold ${textColor} text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl`}>{label}</h3>
   </div>
-  );
-};
+);
 
 
 const SystemOperationsScreen: React.FC = () => {

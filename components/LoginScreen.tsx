@@ -1,14 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Wifi, ShieldCheck, Eye, EyeOff, Loader } from 'lucide-react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
 import { useTheme } from '../src/contexts/ThemeContext';
-import { SCREEN_NAMES } from '../constants';
-import { Api } from '../src/generated_api';
-
-interface OutletContextType {
-  setShowConnectionStatus: (show: boolean) => void;
-  setShowConnectivityTest: (show: boolean) => void;
-}
+import { useUIStore } from '../src/stores/uiStore';
+import { useLogin } from '../src/hooks/useLogin';
 
 interface IconButtonProps {
   icon: React.ReactElement<{ className?: string }>;
@@ -47,13 +41,11 @@ const IconButton: React.FC<IconButtonProps> = ({
 
 const LoginScreen: React.FC = () => {
   const { theme, isMidnightTheme, currentThemeKey } = useTheme();
-  const { setShowConnectionStatus, setShowConnectivityTest } = useOutletContext<OutletContextType>();
-  const navigate = useNavigate();
+  const { setShowConnectionStatus, setShowConnectivityTest } = useUIStore();
+  const { login, loginOffline, isLoading, error } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
+  const [username, setUsername] = useState('noah1');
+  const [password, setPassword] = useState('q');
   const initCalled = useRef(false);
 
   useEffect(() => {
@@ -61,13 +53,9 @@ const LoginScreen: React.FC = () => {
     if (!initCalled.current) {
       const initialize = async () => {
         try {
-          const api = new Api();
-          const initData = await api.api.loginApiInitList();
-          console.log('Init API Response:', initData);
-          // Store initData in state if needed
+          console.log('Init API Response:', 'initData');
         } catch (error: any) {
           console.error('Init API Error:', error);
-          setLoginError('Failed to initialize. Please try again.');
         } finally {
           console.log('LoginScreen useEffect finished');
         }
@@ -78,43 +66,13 @@ const LoginScreen: React.FC = () => {
   }, []);
 
 
-  const handleLogin = async () => {
-    console.log('handleLogin called');
-    setIsLoading(true);
-    setLoginError('');
-
-    try {
-      const api = new Api();
-      const loginData = await api.api.loginApiLoginList({ user: username, password: password });
-      console.log('Login API Response:', loginData);
-      navigate(`/${SCREEN_NAMES.DASHBOARD}`);
-    } catch (error: any) {
-      console.error('Login error:', error);
-      setLoginError('Invalid username or password.');
-    }  finally {
-      setIsLoading(false);
-      console.log('handleLogin finished');
-    }
+  const handleLogin = () => {
+    login({ user: username, password });
   };
 
 
-  const handleLoginOffline = async () => {
-    console.log('handleLoginOffline called');
-    setIsLoading(true);
-    setLoginError('');
-
-    try {
-      const api = new Api();
-      const loginOfflineData = await api.api.loginApiLoginOfflineList();
-      console.log('LoginOffline API Response:', loginOfflineData);
-      navigate(`/${SCREEN_NAMES.DASHBOARD}`);
-    } catch (error: any) {
-      console.error('Login Offline error:', error);
-      setLoginError('Login Offline failed.');
-    } finally {
-      setIsLoading(false);
-      console.log('handleLoginOffline finished');
-    }
+  const handleLoginOffline = () => {
+    loginOffline();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -148,11 +106,11 @@ const LoginScreen: React.FC = () => {
 
         {/* Form */}
         <form className="space-y-4 md:space-y-5" onSubmit={handleSubmit}>
-          {loginError && (
-            <div className="text-red-500 text-sm">{loginError}</div>
+          {error && (
+            <div className="text-red-500 text-sm">{error}</div>
           )}
           <input
-            type="email"
+            type="text"
             placeholder="Username"
             disabled={isLoading}
             className={`w-full px-4 py-2.5 sm:py-3 md:px-5 md:py-3.5 ${theme.inputBackground} ${theme.inputBorder} ${theme.textPrimary} ${theme.inputPlaceholder} border rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm sm:text-base md:text-lg ${

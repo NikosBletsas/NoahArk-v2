@@ -2,33 +2,10 @@ import React from 'react';
 import { DiagnosisFormStepProps } from '../../types';
 import FormSection from '../shared/FormSection';
 import { LabelledInput, LabelledSelect, LabelledTextarea } from '../shared/FormControls';
+import CheckboxGrid from '../shared/CheckboxGrid';
 
 const traumaOptions = ["Accident", "Beating", "Car Accident", "Industrial Accident", "Fall", "Suicide Attempt"];
 const skinOptions = ["Cold", "Hot", "Dry", "Wet", "Sallow", "Cyan", "Jaundiced"];
-
-// Working CheckboxGrid component
-const WorkingCheckboxGrid: React.FC<{
-  options: string[];
-  theme: any;
-  onFormChange?: () => void;
-  columnsSM?: number;
-  columnsMD?: number;
-  columnsLG?: number;
-}> = ({ options, theme, onFormChange, columnsSM = 2, columnsMD = 3, columnsLG = 3 }) => (
-  <div className={`grid grid-cols-1 sm:grid-cols-${columnsSM} md:grid-cols-${columnsMD} lg:grid-cols-${columnsLG} gap-x-3 sm:gap-x-4 md:gap-x-5 gap-y-1.5 sm:gap-y-2 md:gap-y-2.5`}>
-    {options.map((option, index) => (
-      <label key={index} htmlFor={`checkbox-${option.toLowerCase().replace(/\s+/g, '-')}`} className="flex items-center space-x-2 sm:space-x-2.5 cursor-pointer group">
-        <input
-          type="checkbox"
-          id={`checkbox-${option.toLowerCase().replace(/\s+/g, '-')}`}
-          onChange={onFormChange}
-          className={`form-checkbox h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 rounded ${theme.inputBorder} text-blue-600 focus:ring-blue-500 transition duration-150 ease-in-out`}
-        />
-        <span className={`${theme.textPrimary} text-xs sm:text-sm md:text-base group-hover:${theme.textSecondary}`}>{option}</span>
-      </label>
-    ))}
-  </div>
-);
 
 const HistoryTraumaVitalsSkinForm: React.FC<DiagnosisFormStepProps> = ({ 
   theme, 
@@ -71,7 +48,7 @@ const HistoryTraumaVitalsSkinForm: React.FC<DiagnosisFormStepProps> = ({
       </FormSection>
 
       <FormSection title="Trauma" theme={theme} isSubSection={true}>
-        <WorkingCheckboxGrid options={traumaOptions} theme={theme} onFormChange={onFormChange} />
+        <CheckboxGrid options={traumaOptions} theme={theme} onFormChange={onFormChange} />
       </FormSection>
 
       <FormSection title="Vital Signs" theme={theme} isSubSection={true}>
@@ -86,7 +63,7 @@ const HistoryTraumaVitalsSkinForm: React.FC<DiagnosisFormStepProps> = ({
       </FormSection>
 
       <FormSection title="Skin" theme={theme} isSubSection={true}>
-        <WorkingCheckboxGrid options={skinOptions} theme={theme} onFormChange={onFormChange} />
+        <CheckboxGrid options={skinOptions} theme={theme} onFormChange={onFormChange} />
       </FormSection>
     </div>
   );

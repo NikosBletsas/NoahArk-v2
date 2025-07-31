@@ -1,6 +1,7 @@
 import React from 'react';
 import { DiagnosisFormStepProps } from '../../types';
 import FormSection from '../shared/FormSection';
+import CheckboxGrid from '../shared/CheckboxGrid';
 
 const CheckboxItem: React.FC<{ label: string; id: string; theme: any; onFormChange?: () => void }> = ({ 
   label, id, theme, onFormChange 
@@ -43,39 +44,6 @@ const InlineCheckboxGroup: React.FC<InlineCheckboxGroupProps> = ({
   </div>
 );
 
-// Working CheckboxGrid component
-const WorkingCheckboxGrid: React.FC<{
-  options: string[];
-  theme: any;
-  onFormChange?: () => void;
-  columnsSM?: number;
-  columnsMD?: number;
-  columnsLG?: number;
-  columnsXL?: number;
-  columns2XL?: number;
-}> = ({ 
-  options, 
-  theme, 
-  onFormChange,
-  columnsSM = 2,
-  columnsMD = 3,
-  columnsLG = 3,
-  columnsXL = 4,
-  columns2XL = 4
-}) => (
-  <div className={`grid grid-cols-1 sm:grid-cols-${columnsSM} md:grid-cols-${columnsMD} lg:grid-cols-${columnsLG} xl:grid-cols-${columnsXL} 2xl:grid-cols-${columns2XL} gap-x-3 sm:gap-x-4 md:gap-x-5 gap-y-1.5 sm:gap-y-2 md:gap-y-2.5`}>
-    {options.map((option, index) => (
-      <CheckboxItem
-        key={index}
-        label={option}
-        id={`checkbox-${option.toLowerCase().replace(/\s+/g, '-')}`}
-        theme={theme}
-        onFormChange={onFormChange}
-      />
-    ))}
-  </div>
-);
-
 const cardioPainOptions = ["Retrosternal", "Epigastric", "Back", "Neck", "Mandible", "Maxillary"];
 const cardioCharacterOptions = ["Pressure", "Strangulation", "Tightness", "Weight", "Burning"];
 const cardioOnsetOptions = ["Stress", "After Eating", "At Rest"];
@@ -98,12 +66,12 @@ const CardiorespPsychSignsForm: React.FC<DiagnosisFormStepProps> = ({
           <InlineCheckboxGroup groupLabel="Duration:" options={cardioDurationOptions} idPrefix="cardiodur" theme={theme} onFormChange={onFormChange} />
         </div>
         <div className="mt-3 sm:mt-4 md:mt-5">
-          <WorkingCheckboxGrid options={otherCardioSigns} theme={theme} onFormChange={onFormChange} columnsSM={2} columnsMD={3} columnsLG={3} columnsXL={4} columns2XL={4} />
+          <CheckboxGrid options={otherCardioSigns} theme={theme} onFormChange={onFormChange} columnsSM={2} columnsMD={3} columnsLG={3} columnsXL={4} columns2XL={4} />
         </div>
       </FormSection>
 
       <FormSection title="Psychiatric Signs" theme={theme} isSubSection={true}>
-        <WorkingCheckboxGrid options={psychiatricSignsOptions} theme={theme} onFormChange={onFormChange} columnsSM={2} columnsMD={3} columnsLG={3} columnsXL={4} columns2XL={4} />
+        <CheckboxGrid options={psychiatricSignsOptions} theme={theme} onFormChange={onFormChange} columnsSM={2} columnsMD={3} columnsLG={3} columnsXL={4} columns2XL={4} />
       </FormSection>
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Activity, Menu, X, Trash2, RotateCcw } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { DiagnosisStep } from '../types';
 import { SCREEN_NAMES } from '../constants';
@@ -126,7 +126,6 @@ const EmergencyCaseDiagnosisScreen: React.FC = () => {
     </>
   );
 
-  const commonSecondaryButtonClasses = `px-3 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-md sm:rounded-lg font-medium transition-colors duration-150 text-xs sm:text-sm md:text-base lg:text-lg`;
   let secondaryButtonStyling = "";
 
   if (isMidnightTheme) {

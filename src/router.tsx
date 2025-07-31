@@ -15,12 +15,18 @@ import EmergencyCaseDiagnosisScreen from '../components/EmergencyCaseDiagnosisSc
 import DeviceConfigurationScreen from '../components/DeviceConfigurationScreen';
 import ConsultationsScreen from '../components/ConsultationsScreen';
 
+/**
+ * The main router configuration for the application.
+ * It defines all the routes and their corresponding components.
+ */
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     children: [
+      // Redirect the root path to the login screen
       { index: true, element: <Navigate to={`/${SCREEN_NAMES.LOGIN}`} replace /> },
+      // Define all the application routes
       { path: SCREEN_NAMES.LOGIN, element: <LoginScreen /> },
       { path: SCREEN_NAMES.DASHBOARD, element: <DashboardScreen /> },
       { path: SCREEN_NAMES.PATIENT_SEARCH, element: <PatientSearchScreen /> },

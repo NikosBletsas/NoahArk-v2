@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Heart, Settings, Camera, User, FileText, RefreshCw, Monitor as DeviceMonitor, Activity, BriefcaseMedical, ClipboardPlus, HardDrive, ScanLine, Video, Pill, Brain } from 'lucide-react';
 import { useTheme } from '../src/contexts/ThemeContext';
-import { SCREEN_NAMES, API_URLS } from '../constants';
-import { Api } from '../src/generated_api';
-import * as signalR from '@microsoft/signalr';
+import { SCREEN_NAMES } from '../constants';
+import { useDashboardData } from '../src/hooks/useDashboardData';
 
 interface DashboardTileProps {
   icon: React.ReactNode;
@@ -28,32 +27,14 @@ const DashboardTile: React.FC<DashboardTileProps> = ({ icon, label, onClick }) =
 const DashboardScreen: React.FC = () => {
   const { theme, isMidnightTheme, currentThemeKey } = useTheme();
   const navigate = useNavigate();
-  //hold the current time
-  const [currentTime, setCurrentTime] = useState('');
-  const [batteryStatus, setBatteryStatus] = useState<string | null>('N/A');
-  const [heartbeat, setHeartbeat] = useState<any>(null);
-  const [hubConnectionStatus, setHubConnectionStatus] = useState('Disconnected');
-  const [connectionStatus, setConnectionStatus] = useState('Checking...');
-  const [patientId, setPatientId] = useState('N/A');
-  const [caseNumber, setCaseNumber] = useState('N/A');
-  const [videoStatus, setVideoStatus] = useState('N/A');
-
-  //update the time every second
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const seconds = String(now.getSeconds()).padStart(2, '0');
-      setCurrentTime(`${hours}:${minutes}:${seconds}`);
-    };
-
-    updateTime();
-
-    const intervalId = setInterval(updateTime, 1000);
-    
-    return () => clearInterval(intervalId);
-  }, []);
+  const {
+    currentTime,
+    batteryStatus,
+    heartbeat,
+    hubConnectionStatus,
+    initError,
+    batteryStatusError,
+  } = useDashboardData();
 
   const iconSize = "w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-16 lg:h-16";
   const tiles = [
@@ -70,101 +51,6 @@ const DashboardScreen: React.FC = () => {
     { icon: <Brain className={`${iconSize} mx-auto text-red-600`} />, label: 'Artificial Intelligence', screen: undefined /* TODO */ },
     { icon: <Settings className={`${iconSize} mx-auto text-gray-600`} />, label: 'System Operations', screen: SCREEN_NAMES.SYSTEM_OPERATIONS },
   ];
-
-  useEffect(() => {
-    const initializeDashboard = async () => {
-      try {
-        const api = new Api();
-
-
-
-
-
-
-
-        console.log("Dashboard: Calling mainInitList...");
-        try {
-          const mainInitListResult = await api.api.mainInitList();
-          console.log("Dashboard: mainInitList completed successfully", mainInitListResult);
-        } catch (error) {
-          console.error("Error initializing dashboard:", error);
-        }
-      } catch (error) {
-        console.error("Error creating API instance:", error);
-      }
-    };
-    
-
-
-    const fetchBatteryStatus = async () => {
-      try {
-
-
-        const api = new Api();
-        console.log("Dashboard: Calling mainGetBatteryStatusList...");
-        const batteryStatusData = await api.api.mainGetBatteryStatusList();
-        const percentage = (batteryStatusData?.data as any)?.batteryPercentage;
-        if (percentage != null) {
-          setBatteryStatus(`${percentage}%`);
-        } else {
-          setBatteryStatus('N/A');
-        }
-      } catch (error) {
-        console.error("Error fetching battery status:", error);
-        setBatteryStatus('Error');
-      }
-    };
-
-    initializeDashboard();
-    fetchBatteryStatus();
-
-    let hubConnection: signalR.HubConnection | null = null;
-
-    try {
-      hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl(API_URLS.SIGNALR_HUB, {
-          transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
-          logMessageContent: true,
-        })
-        .configureLogging(signalR.LogLevel.Debug)
-        .withAutomaticReconnect([0, 2000, 10000, 30000])
-        .build();
-
-      hubConnection.on('BatteryStatus', (data) => {
-        console.log('Battery Status from SignalR:', data);
-        setBatteryStatus(data !== null ? `${data}%` : 'N/A');
-      });
-
-      hubConnection.on('HeartBeat', (data) => {
-        console.log('Heartbeat from SignalR:', data);
-        setHeartbeat(data);
-      });
-
-
-
-
-
-
-
-
-
-      hubConnection.start()
-        .then(() => {
-          console.log('SignalR Connected!');
-          setHubConnectionStatus('Connected');
-        })
-        .catch(err => {
-          console.error('Error starting connection: ', err);
-          setHubConnectionStatus('Error');
-        });
-    } catch (error) {
-      console.error("Error starting SignalR connection:", error);
-    }
-
-    return () => {
-      hubConnection?.stop();
-    };
-  }, []);
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${theme.background} relative flex flex-col pb-16 sm:pb-20 md:pb-24 lg:pb-28 xl:pb-32`}>
@@ -191,12 +77,12 @@ const DashboardScreen: React.FC = () => {
           <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold mb-2 sm:mb-3">Status Information</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-2 text-xs sm:text-sm md:text-base lg:text-lg">
             <div className="flex justify-between"><span>Patient ID</span><span>N/A</span></div>
-            <div className="flex justify-between"><span>System time</span><span id="current-time">{currentTime}</span></div> 
-            <div className="flex justify-between"><span>Connection Status</span><span className={connectionStatus === '● Online' ? 'text-green-400' : connectionStatus === '● Offline' ? 'text-yellow-400' : 'text-red-400'}>{connectionStatus}</span></div>
+            <div className="flex justify-between"><span>System time</span><span id="current-time">{currentTime}</span></div>
+            <div className="flex justify-between"><span>Connection Status</span><span className={hubConnectionStatus === 'Connected' ? 'text-green-400' : 'text-red-400'}>{hubConnectionStatus}</span></div>
             <div className="flex justify-between"><span>Hub Status</span><span className={hubConnectionStatus === 'Connected' ? 'text-green-400' : 'text-red-400'}>{hubConnectionStatus}</span></div>
             <div className="flex justify-between"><span>Video</span><span>N/A</span></div>
             <div className="flex justify-between"><span>Case No</span><span>1</span></div>
-            <div className="flex justify-between"><span>Battery Status</span><span>{batteryStatus}</span></div>
+            <div className="flex justify-between"><span>Battery Status</span><span>{batteryStatusError ? 'Error' : batteryStatus}</span></div>
             <div className="flex justify-between"><span>Heartbeat</span><span>{heartbeat || 'N/A'}</span></div>
           </div>
         </div>

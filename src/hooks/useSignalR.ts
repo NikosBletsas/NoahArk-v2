@@ -29,34 +29,31 @@ const useSignalR = (hubUrl: string) => {
       }
     };
 
+    const onReceiveMessage = (user: string, message: string) => {
+      setMessages(prevMessages => [...prevMessages, `${user}: ${message}`]);
+    };
+
+    const onConnectionClose = (error?: Error) => {
+      setConnectionState('Disconnected');
+      setMessages(prevMessages => [...prevMessages, `Connection closed: ${error ? error.message : 'No error'}`]);
+    };
+
     startConnection();
 
-    newConnection.on('ReceiveMessage', (user, message) => {
-      setMessages(prevMessages => [...prevMessages, `${user}: ${message}`]);
-    });
+    newConnection.on('ReceiveMessage', onReceiveMessage);
+    newConnection.onclose(onConnectionClose);
 
-    newConnection.onclose(() => {
-      setConnectionState('Disconnected');
-      setMessages(prevMessages => [...prevMessages, 'Connection closed.']);
-    });
-
-    return () => { 
-      newConnection.off('ReceiveMessage');
-      newConnection.onclose((error) => {
-        setConnectionState('Disconnected');
-        setMessages(prevMessages => [...prevMessages, `Connection closed: ${error ? error.message : 'No error'}`]);
-      });
-
-      newConnection.off('ReceiveMessage');
+    return () => {
+      newConnection.off('ReceiveMessage', onReceiveMessage);
+      newConnection.off('close', onConnectionClose);
       if (newConnection.state === signalR.HubConnectionState.Connected) {
         newConnection.stop();
       }
     };
-  }, 
-  [hubUrl]);
+  }, [hubUrl]);
   
 
   return { connection, messages, connectionState };
 };
 
-export default useSignalR; 
+export default useSignalR;

@@ -1,15 +1,12 @@
 import React from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import { Activity, Save, ArrowLeft, Settings as SettingsIcon, Wifi, TestTubeDiagonal, HardDrive, Search, Zap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Save, ArrowLeft, Settings as SettingsIcon, Wifi, TestTubeDiagonal, HardDrive, Search, Zap } from 'lucide-react';
 import { useTheme } from '../src/contexts/ThemeContext';
+import { useUIStore } from '../src/stores/uiStore';
 import { SCREEN_NAMES } from '../constants';
 import FormSection from './shared/FormSection';
 import { LabelledInput, LabelledSelect } from './shared/FormControls';
 
-interface OutletContextType {
-  setShowConnectionStatus: (show: boolean) => void;
-  setShowConnectivityTest: (show: boolean) => void;
-}
 
 const DeviceManufacturerRow: React.FC<{label: string; idPrefix: string;}> = ({label, idPrefix}) => {
   const { theme } = useTheme();
@@ -31,9 +28,9 @@ const DeviceManufacturerRow: React.FC<{label: string; idPrefix: string;}> = ({la
 };
 
 const DeviceConfigurationScreen: React.FC = () => {
-  const { theme, isMidnightTheme, currentThemeKey, toggleTheme } = useTheme();
+  const { theme, isMidnightTheme, currentThemeKey } = useTheme();
   const navigate = useNavigate();
-  const { setShowConnectionStatus, setShowConnectivityTest } = useOutletContext<OutletContextType>();
+  const { setShowConnectionStatus, setShowConnectivityTest } = useUIStore();
   
   const deviceManufacturers = [
     { label: "ECG", idPrefix: "ecg" },

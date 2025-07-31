@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Activity, Database, ArrowLeft } from 'lucide-react';
+import { Activity, Database, ArrowLeft } from 'lucide-react';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { SCREEN_NAMES } from '../constants';
 
-// Modern VitalSignCard Component
 const VitalSignCard = ({ value, label, index }: { value: string, label: string, index: number }) => {
   const { theme } = useTheme();
   return (
@@ -25,7 +24,6 @@ const VitalSignCard = ({ value, label, index }: { value: string, label: string, 
   );
 };
 
-// Enhanced Patient Monitor Screen
 const PatientMonitorScreen: React.FC = () => {
   const { theme, currentThemeKey } = useTheme();
   const navigate = useNavigate();
@@ -111,7 +109,7 @@ const PatientMonitorScreen: React.FC = () => {
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
                                 {vitalSignsData.map((item, index) => (
                                     <VitalSignCard
-                                        key={index}
+                                        key={item.label}
                                         value={item.value}
                                         label={item.label}
                                         index={index}
@@ -132,21 +130,22 @@ const PatientMonitorScreen: React.FC = () => {
                             </div>
                             <div className={`${theme.inputBackground} ${theme.inputBorder} border-2 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 h-48 sm:h-64 md:h-80 xl:h-96 overflow-y-auto text-sm sm:text-base ${theme.textSecondary} scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent`}>
                                 <div className="space-y-3 sm:space-y-4">
-                                    {logs.map((log, index) => (
-                                        <div key={index} className={`text-xs sm:text-sm p-2 sm:p-3 rounded-lg ${
-                                            log.type === 'success'
-                                                ? currentThemeKey === 'black'
-                                                    ? 'bg-green-100/20 text-green-400 border border-green-500/30'
-                                                    : 'bg-green-100/30 text-green-700 border border-green-200'
-                                                : currentThemeKey === 'black'
-                                                    ? 'bg-blue-100/20 border border-blue-500/30 text-gray-300'
-                                                    : 'bg-blue-100/30 border border-blue-200'
-                                            } ${currentThemeKey === 'black' ? '' : theme.textPrimary}`}>
-                                            <span className={`font-mono text-xs ${currentThemeKey === 'black' ? 'opacity-90' : 'opacity-80'}`}>{log.time}</span>
-                                            <br />
-                                            <span className="font-medium">{log.message}</span>
-                                        </div>
-                                    ))}
+                                    {logs.map((log, index) => {
+                                        const isSuccess = log.type === 'success';
+                                        const isBlackTheme = currentThemeKey === 'black';
+
+                                        const logStyle = isSuccess
+                                            ? (isBlackTheme ? 'bg-green-100/20 text-green-400 border border-green-500/30' : 'bg-green-100/30 text-green-700 border border-green-200')
+                                            : (isBlackTheme ? 'bg-blue-100/20 border border-blue-500/30 text-gray-300' : 'bg-blue-100/30 border border-blue-200');
+
+                                        return (
+                                            <div key={log.time} className={`text-xs sm:text-sm p-2 sm:p-3 rounded-lg ${logStyle} ${isBlackTheme ? '' : theme.textPrimary}`}>
+                                                <span className={`font-mono text-xs ${isBlackTheme ? 'opacity-90' : 'opacity-80'}`}>{log.time}</span>
+                                                <br />
+                                                <span className="font-medium">{log.message}</span>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>

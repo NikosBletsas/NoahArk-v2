@@ -11,6 +11,10 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+/**
+ * Provides the theme context to the application.
+ * It manages the current theme and provides a function to toggle it.
+ */
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentThemeKey, setCurrentThemeKey] = useState<ThemeKey>('noah');
 
@@ -35,6 +39,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   );
 };
 
+/**
+ * A custom hook to access the theme context.
+ * It provides the current theme, theme key, and a function to toggle the theme.
+ */
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (context === undefined) {

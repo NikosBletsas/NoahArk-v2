@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
-import { Activity, Wifi, UploadCloud, TestTubeDiagonal, X, ArrowLeft, Server, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Wifi, UploadCloud, TestTubeDiagonal, X, ArrowLeft, Server, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { ModalScreenProps } from '../types';
-import { SCREEN_NAMES } from '../constants';
 
 interface TestItem {
   id: string;

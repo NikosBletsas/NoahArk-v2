@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Theme, ThemeKey } from '../../types';
 
 interface InputWithIconButtonProps {
   label: string;
