@@ -1,0 +1,32 @@
+{
+  "docs": {
+    "Application": [
+      "app",
+      "router",
+      "login-screen",
+      "dashboard-screen",
+      "patient-search-screen",
+      "medical-measurements-screen",
+      "patient-monitor-screen",
+      "system-operations-screen",
+      "spirometer-screen",
+      "endoscope-screen",
+      "settings-screen",
+      "assign-emergency-screen",
+      "emergency-case-diagnosis-screen",
+      "device-configuration-screen",
+      "consultations-screen"
+    ],
+    "Hooks": [
+      "uselogin",
+      "usedashboarddata",
+      "usesignalr"
+    ],
+    "Context": [
+      "themecontext"
+    ],
+    "Stores": [
+      "uistore"
+    ]
+  }
+}

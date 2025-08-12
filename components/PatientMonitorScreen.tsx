@@ -1,27 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Activity, Database, ArrowLeft } from 'lucide-react';
+import { Activity, Database, ArrowLeft, Thermometer, HeartPulse, Wind, Droplet, Gauge, Percent, Clock } from 'lucide-react';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { SCREEN_NAMES } from '../constants';
 
-const VitalSignCard = ({ value, label, index }: { value: string, label: string, index: number }) => {
-  const { theme } = useTheme();
-  return (
-    <div
-        className={`${theme.card} rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 lg:p-8 text-center shadow-lg hover:shadow-xl transition-all duration-300 border hover:border-gray-300 group relative overflow-hidden`}
-        style={{ animationDelay: `${index * 100}ms` }}
-    >
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="relative z-10 flex flex-col justify-center items-center h-full">
-            <div className={`font-bold ${theme.textPrimary} leading-none ${label === 'Last Check' ? 'text-3xl sm:text-4xl md:text-5xl' : 'text-4xl sm:text-5xl md:text-6xl'}`}>
-                {value}
-            </div>
-            <div className={`text-xs sm:text-sm md:text-base ${theme.textSecondary} font-medium tracking-wide uppercase mt-2`}>
-                {label}
+const VitalSignCard = ({ value, label, icon: Icon, index }: { value: string, label: string, icon?: React.ElementType, index: number }) => {
+    const { theme } = useTheme();
+    const iconSize = label === 'Last Check' ? '0.8em' : '0.6em';
+    const textSize = label === 'Last Check' ? 'text-xl sm:text-2xl md:text-3xl' : 'text-4xl sm:text-5xl md:text-6xl';
+
+    return (
+        <div
+            className={`${theme.card} rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 lg:p-8 text-center shadow-lg hover:shadow-xl transition-all duration-300 border hover:border-gray-300 group relative overflow-hidden`}
+            style={{ animationDelay: `${index * 100}ms` }}
+        >
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="relative z-10 flex flex-col justify-center items-center h-full">
+                <div className={`font-bold ${theme.textPrimary} leading-none ${textSize} flex items-center justify-center gap-x-2`}>
+                    {Icon && <Icon style={{ width: iconSize, height: iconSize }} />}
+                    <span>{value}</span>
+                </div>
+                <div className={`text-xs sm:text-sm md:text-base ${theme.textSecondary} font-medium tracking-wide uppercase mt-2`}>
+                    {label}
+                </div>
             </div>
         </div>
-    </div>
-  );
+    );
 };
 
 const PatientMonitorScreen: React.FC = () => {
@@ -78,15 +82,15 @@ const PatientMonitorScreen: React.FC = () => {
     }, []);
 
     const vitalSignsData = [
-        { value: `${vitalSigns.heartRate}`, label: 'Heart Rate', unit: 'bpm' },
-        { value: `${vitalSigns.spO2}`, label: 'SpO2', unit: '%' },
-        { value: `${vitalSigns.temperature}`, label: 'Temperature', unit: '°C' },
-        { value: `${vitalSigns.respiratoryRate}`, label: 'Respiratory Rate', unit: 'bpm' },
-        { value: `${vitalSigns.bloodSugar}`, label: 'Blood Sugar', unit: 'mg/dL' },
-        { value: `${vitalSigns.systolicPressure}`, label: 'Systolic Pressure', unit: 'mmHg' },
-        { value: `${vitalSigns.meanPressure}`, label: 'Mean Pressure', unit: 'mmHg' },
-        { value: `${vitalSigns.diastolicPressure}`, label: 'Diastolic Pressure', unit: 'mmHg' },
-        { value: vitalSigns.checkTime, label: 'Last Check', unit: '' }
+        { value: `${vitalSigns.heartRate}`, label: 'Heart Rate', unit: 'bpm', icon: HeartPulse },
+        { value: `${vitalSigns.spO2}`, label: 'SpO2', unit: '%', icon: Percent },
+        { value: `${vitalSigns.temperature}`, label: 'Temperature', unit: '°C', icon: Thermometer },
+        { value: `${vitalSigns.respiratoryRate}`, label: 'Respiratory Rate', unit: 'bpm', icon: Wind },
+        { value: `${vitalSigns.bloodSugar}`, label: 'Blood Sugar', unit: 'mg/dL', icon: Droplet },
+        { value: `${vitalSigns.systolicPressure}`, label: 'Systolic Pressure', unit: 'mmHg', icon: Gauge },
+        { value: `${vitalSigns.meanPressure}`, label: 'Mean Pressure', unit: 'mmHg', icon: Gauge },
+        { value: `${vitalSigns.diastolicPressure}`, label: 'Diastolic Pressure', unit: 'mmHg', icon: Gauge },
+        { value: vitalSigns.checkTime, label: 'Last Check', unit: '', icon: Clock }
     ];
 
     return (
@@ -112,6 +116,7 @@ const PatientMonitorScreen: React.FC = () => {
                                         key={item.label}
                                         value={item.value}
                                         label={item.label}
+                                        icon={item.icon}
                                         index={index}
                                     />
                                 ))}

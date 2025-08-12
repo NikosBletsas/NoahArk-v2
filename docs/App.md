@@ -1,7 +1,34 @@
+---
+id: app
+title: App Component
+---
+
+The `App` component is the root component of the application. It is responsible for setting up the main layout, routing, and global providers.
+
+### Structure
+
+- **`QueryClientProvider`**: Wraps the entire application to provide a `QueryClient` instance for `@tanstack/react-query`.
+- **SignalR Status**: Displays the current connection status of the SignalR hub.
+- **Main Container**: A `div` that sets the background gradient and theme.
+- **`ThemeToggle`**: A button that allows the user to toggle between light and dark themes.
+- **`Outlet`**: Renders the component for the current route, as defined in `src/router.tsx`.
+- **Modals**: 
+    - `ConnectionStatusScreen`: A modal that displays the connection status.
+    - `ConnectivityTestScreen`: A modal that allows the user to test their connectivity.
+
+### Functionality
+
+- **State Management**: Uses `useUIStore` (built with Zustand) to manage the visibility of the connection status and connectivity test modals.
+- **Routing**: Uses `useNavigate` from `react-router-dom` to programmatically navigate between screens.
+- **Theming**: Uses `useTheme` from `src/contexts/ThemeContext` to apply the current theme to the application.
+- **Real-time Communication**: Uses the `useSignalR` hook to connect to the SignalR hub and display the connection status.
+
+### Code
+
+```typescript
 import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { API_URLS } from './constants';
 import { useTheme } from './src/contexts/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
@@ -68,7 +95,6 @@ const App: React.FC = () => {
           />
         )}
       </div>
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 };
