@@ -25,8 +25,15 @@ export type ScreenName = typeof SCREEN_NAMES[keyof typeof SCREEN_NAMES];
 
 export type DiagnosisStepKey = typeof DIAGNOSIS_STEP_KEYS[number];
 
+export interface BaseScreenProps {
+  theme: Theme;
+  isMidnightTheme: boolean;
+  currentThemeKey: ThemeKey;
+  setCurrentScreen: (screen: ScreenName) => void;
+  setShowThemeSelector?: (show: boolean) => void;
+}
+
 export interface AppHeaderProps {
-  theme: any;
   title: string;
   onBack: () => void;
   showThemeButton?: boolean;

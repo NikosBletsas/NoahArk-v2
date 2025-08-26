@@ -1,31 +1,39 @@
 // src/hooks/useSignalR.ts
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as signalR from '@microsoft/signalr';
 
+let connection: signalR.HubConnection | null = null;
+
 const useSignalR = (hubUrl: string) => {
-  const [connection, setConnection] = useState<signalR.HubConnection | null>(null);
   const [messages, setMessages] = useState<string[]>([]);
   const [connectionState, setConnectionState] = useState<string>('Disconnected');
+  const hubUrlRef = useRef(hubUrl);
 
   useEffect(() => {
-    const newConnection = new signalR.HubConnectionBuilder()
-      .withUrl(hubUrl)
-      .withAutomaticReconnect()
-      .configureLogging(signalR.LogLevel.Information)
-      .build();
+    hubUrlRef.current = hubUrl;
+  }, [hubUrl]);
 
-    setConnection(newConnection);
+  useEffect(() => {
+    if (!connection) {
+      connection = new signalR.HubConnectionBuilder()
+        .withUrl(hubUrlRef.current)
+        .withAutomaticReconnect()
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+    }
 
     const startConnection = async () => {
-      try {
-        setConnectionState('Connecting...');
-        await newConnection.start();
-        setConnectionState('Connected');
-        console.log('SignalR Connected.');
-      } catch (err) {
-        console.error('SignalR Connection Error: ', err);
-        setConnectionState('Disconnected');
+      if (connection?.state === signalR.HubConnectionState.Disconnected) {
+        try {
+          setConnectionState('Connecting...');
+          await connection.start();
+          setConnectionState('Connected');
+          console.log('SignalR Connected.');
+        } catch (err) {
+          console.error('SignalR Connection Error: ', err);
+          setConnectionState('Disconnected');
+        }
       }
     };
 
@@ -40,18 +48,14 @@ const useSignalR = (hubUrl: string) => {
 
     startConnection();
 
-    newConnection.on('ReceiveMessage', onReceiveMessage);
-    newConnection.onclose(onConnectionClose);
+    connection.on('ReceiveMessage', onReceiveMessage);
+    connection.onclose(onConnectionClose);
 
     return () => {
-      newConnection.off('ReceiveMessage', onReceiveMessage);
-      newConnection.off('close', onConnectionClose);
-      if (newConnection.state === signalR.HubConnectionState.Connected) {
-        newConnection.stop();
-      }
+      connection?.off('ReceiveMessage', onReceiveMessage);
+      connection?.off('close', onConnectionClose);
     };
-  }, [hubUrl]);
-  
+  }, []);
 
   return { connection, messages, connectionState };
 };

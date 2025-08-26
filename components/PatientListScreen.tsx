@@ -479,12 +479,9 @@ const PatientSearchScreen: React.FC<BaseScreenProps> = ({
   return (
     <div className={`min-h-screen bg-gradient-to-br ${theme.background} flex flex-col`}>
       <AppHeader
-        theme={theme}
         title="NOAH - Patient Search"
         onBack={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
         showThemeButton={true}
-        onShowThemeSelector={() => setShowThemeSelector?.(true)}
-        isMidnightTheme={isMidnightTheme}
       />
 
       <div className="p-2 sm:p-3 md:p-4 lg:p-6 xl:p-8 flex-grow">

@@ -15,7 +15,6 @@ export const useLogin = () => {
       navigate(`/${SCREEN_NAMES.DASHBOARD}`);
     },
     onError: (error: any) => {
-      console.error('Login error:', error);
       if (error instanceof Response) {
         setError(`HTTP ${error.status}: ${error.statusText}`);
       } else if (error instanceof Error) {
