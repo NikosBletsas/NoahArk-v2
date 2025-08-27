@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, UserPlus, Filter, Edit, X, Save, User, Phone, Mail, MapPin, Heart, Shield, FileText } from 'lucide-react';
+import { ArrowLeft, Search, UserPlus, Filter, Edit, X, Save, User, Phone, Mail, MapPin, Heart, Shield, FileText, AlertCircle } from 'lucide-react';
 import { useTheme } from '../src/contexts/ThemeContext';
 import { SCREEN_NAMES } from '../constants';
 import AppHeader from './shared/AppHeader';
+import { usePatientSearch } from '../src/hooks/usePatientSearch';
+import { NPatient } from '../src/generated_api';
 
 interface Patient {
   id: string;
@@ -402,7 +404,26 @@ const PatientSearchScreen: React.FC = () => {
     dobTo: ''
   });
 
-  // Initialize mock patients
+  // Initialize patient search hook for API integration
+  const { searchPatient, isLoading, error, searchResults, clearSearch } = usePatientSearch();
+
+  // Handle API search when search term changes
+  const handleSearch = () => {
+    if (searchTerm.trim()) {
+      // Create search criteria based on current search term
+      const searchCriteria: NPatient = {
+        name: searchTerm.includes(' ') ? searchTerm.split(' ')[0] : searchTerm,
+        surname: searchTerm.includes(' ') ? searchTerm.split(' ')[1] : searchTerm,
+      };
+      
+      // Execute API search
+      searchPatient(searchCriteria);
+    } else {
+      clearSearch();
+    }
+  };
+
+  // Initialize mock patients (fallback for when API is not available)
   React.useEffect(() => {
     const mockPatients: Patient[] = Array(10).fill(null).map((_, i) => ({
       id: `P00${i + 1}`,
@@ -426,8 +447,37 @@ const PatientSearchScreen: React.FC = () => {
       medicalRecordNumber: `MRN${String(100001 + i)}`,
       insuranceNumber: `INS-${String(i + 1).padStart(3, '0')}-001`
     }));
-    setPatients(mockPatients);
-  }, []);
+    
+    // Use mock data if no API results available
+    if (searchResults.length === 0 && !isLoading) {
+      setPatients(mockPatients);
+    }
+  }, [searchResults, isLoading]);
+
+  // Update patients when API search results change
+  React.useEffect(() => {
+    if (searchResults.length > 0) {
+      // Convert API results to local Patient format
+      const apiPatients: Patient[] = searchResults.map((result, index) => ({
+        id: result.id || `API${index + 1}`,
+        name: result.name || '',
+        surname: result.surname || '',
+        dob: result.birthDate ? new Date(result.birthDate).toISOString().split('T')[0] : '',
+        gender: result.gender || result.sex || '',
+        ssn: result.ssn || '***-**-****',
+        sid: result.otherIdentifier || `SID${index + 1}`,
+        phone: result.mobilePhone || result.homephone || result.workPhone,
+        email: `${result.name?.toLowerCase()}.${result.surname?.toLowerCase()}@email.com`,
+        address: result.addressStreet,
+        city: 'Unknown',
+        state: 'Unknown',
+        zipCode: result.addressZip,
+        medicalRecordNumber: `MRN${result.id}`,
+        insuranceNumber: result.insuranceName || 'Unknown'
+      }));
+      setPatients(apiPatients);
+    }
+  }, [searchResults]);
 
   // Enhanced filtering logic
   const filteredPatients = patients.filter(patient => {
@@ -509,6 +559,15 @@ const PatientSearchScreen: React.FC = () => {
               
               <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full md:w-auto">
                 <button
+                  onClick={handleSearch}
+                  disabled={isLoading}
+                  className={`w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-2 sm:px-4 sm:py-2.5 lg:px-5 lg:py-3 rounded-lg sm:rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center space-x-1.5 sm:space-x-2 font-medium text-sm sm:text-base lg:text-lg disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <Search size={16} className="w-4 h-4 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
+                  <span>{isLoading ? 'Searching...' : 'Search API'}</span>
+                </button>
+                
+                <button
                   onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
                   className={`w-full sm:w-auto bg-gradient-to-r ${theme.primary} ${theme.textOnAccent} px-3 py-2 sm:px-4 sm:py-2.5 lg:px-5 lg:py-3 rounded-lg sm:rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center space-x-1.5 sm:space-x-2 font-medium text-sm sm:text-base lg:text-lg`}
                 >
@@ -589,10 +648,19 @@ const PatientSearchScreen: React.FC = () => {
             )}
           </div>
 
+          {/* Error Display */}
+          {error && (
+            <div className={`mb-4 p-3 rounded-lg bg-red-100 border border-red-300 flex items-center space-x-2`}>
+              <AlertCircle className="w-5 h-5 text-red-600" />
+              <span className="text-red-700 text-sm">{error}</span>
+            </div>
+          )}
+
           {/* Results Summary */}
           {(searchTerm || showAdvancedSearch) && (
             <div className={`mb-4 ${theme.textSecondary} text-sm`}>
               Found {filteredPatients.length} patient{filteredPatients.length !== 1 ? 's' : ''}
+              {searchResults.length > 0 && <span className="ml-2 text-green-600">(API Results)</span>}
             </div>
           )}
 

@@ -1,5 +1,18 @@
 {
   "docs": {
+    "Getting Started": [
+      "README"
+    ],
+    "API Integration": [
+      "API-Integration",
+      "usePatientSearch",
+      "usePatientManagement",
+      "useEmergencyCase",
+      "useDeviceOperations",
+      "useSystemOperations",
+      "useConfiguration",
+      "useAppInitialization"
+    ],
     "Application": [
       "app",
       "router",

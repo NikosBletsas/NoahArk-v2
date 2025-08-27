@@ -5,6 +5,9 @@
     "previous": "Previous",
     "tagline": "A website for testing",
     "docs": {
+      "API-Integration": {
+        "title": "API Integration Documentation"
+      },
       "app": {
         "title": "App Component"
       },
@@ -54,6 +57,9 @@
       "patient-search-screen": {
         "title": "Patient Search Screen"
       },
+      "README": {
+        "title": "Noah Ark Medical Application Documentation"
+      },
       "router": {
         "title": "Router Configuration"
       },
@@ -72,14 +78,35 @@
       "uistore": {
         "title": "uiStore"
       },
+      "useAppInitialization": {
+        "title": "useAppInitialization Hook Documentation"
+      },
+      "useConfiguration": {
+        "title": "useConfiguration Hook Documentation"
+      },
       "usedashboarddata": {
         "title": "useDashboardData Hook"
       },
-      "uselogin": {
-        "title": "useLogin Hook"
+      "useDeviceOperations": {
+        "title": "useDeviceOperations Hook Documentation"
+      },
+      "useEmergencyCase": {
+        "title": "useEmergencyCase Hook Documentation"
+      },
+      "useLogin": {
+        "title": "useLogin"
+      },
+      "usePatientManagement": {
+        "title": "usePatientManagement Hook Documentation"
+      },
+      "usePatientSearch": {
+        "title": "usePatientSearch Hook Documentation"
       },
       "usesignalr": {
         "title": "useSignalR Hook"
+      },
+      "useSystemOperations": {
+        "title": "useSystemOperations Hook Documentation"
       }
     },
     "links": {
@@ -87,6 +114,8 @@
       "Help": "Help"
     },
     "categories": {
+      "Getting Started": "Getting Started",
+      "API Integration": "API Integration",
       "Application": "Application",
       "Hooks": "Hooks",
       "Context": "Context",

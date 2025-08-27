@@ -16,7 +16,7 @@ const HistoryTraumaVitalsSkinForm: React.FC<DiagnosisFormStepProps> = ({
     <div className="space-y-4 sm:space-y-6 md:space-y-7">
       <FormSection title="Emergency Case Information" theme={theme} isSubSection={true}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 sm:gap-x-6 md:gap-x-7 gap-y-3 sm:gap-y-4 md:gap-y-5">
-            <LabelledSelect label="Patient Came" id="patient-came" theme={theme} onChange={onFormChange}>
+            <LabelledSelect label="Patient Case" id="patient-case" theme={theme} onChange={onFormChange}>
                 <option value="">Select how patient arrived</option>
                 <option value="ambulance">Ambulance</option>
                 <option value="private_vehicle">Private Vehicle</option>
