@@ -1,19 +1,20 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
-import { SCREEN_NAMES } from '../constants';
-import App from '../App';
-import LoginScreen from '../components/LoginScreen';
-import DashboardScreen from '../components/DashboardScreen';
-import PatientSearchScreen from '../components/PatientSearchScreen';
-import MedicalMeasurementsScreen from '../components/MedicalMeasurementsScreen';
-import PatientMonitorScreen from '../components/PatientMonitorScreen';
-import SystemOperationsScreen from '../components/SystemOperationsScreen';
-import SpirometerScreen from '../components/SpirometerScreen';
-import EndoscopeScreen from '../components/EndoscopeScreen';
-import SettingsScreen from '../components/SettingsScreen';
-import AssignEmergencyScreen from '../components/AssignEmergencyScreen';
-import EmergencyCaseDiagnosisScreen from '../components/EmergencyCaseDiagnosisScreen';
-import DeviceConfigurationScreen from '../components/DeviceConfigurationScreen';
-import ConsultationsScreen from '../components/ConsultationsScreen';
+
+import { SCREEN_NAMES } from '@/constants';
+import App from '@/App';
+import LoginScreen from '@/components/Screens/Login/LoginScreen';
+import DashboardScreen from '@/components/Screens/Dashboard/DashboardScreen';
+import PatientSearchScreen from '@/components/Screens/SearchPatient/PatientSearchScreen';
+import MedicalMeasurementsScreen from '@/components/Screens/MedicalMeasurements/MedicalMeasurementsScreen';
+import PatientMonitorScreen from '@/components/Screens/MedicalMeasurements/PatientMonitorScreen';
+import SystemOperationsScreen from '@/components/Screens/SystemOperations/SystemOperationsScreen';
+import SpirometerScreen from '@/components/Screens/MedicalMeasurements/SpirometerScreen';
+import EndoscopeScreen from '@/components/Screens/MedicalMeasurements/EndoscopeScreen';
+import SettingsScreen from '@/components/Screens/AdvanceSettings/SettingsScreen';
+import AssignEmergencyScreen from '@/components/Screens/Emergency/AssignEmergencyScreen';
+import EmergencyCaseDiagnosisScreen from '@/components/Screens/Emergency/EmergencyCaseDiagnosisScreen';
+import DeviceConfigurationScreen from '@/components/Screens/DeviceSetup/DeviceConfigurationScreen';
+import ConsultationsScreen from '@/components/Screens/CaseConsultations/ConsultationsScreen';
 
 /**
  * The main router configuration for the application.

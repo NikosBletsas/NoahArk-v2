@@ -1,4 +1,4 @@
-import { Api } from '../generated_api';
+import { Api } from '@/api/generated_api';
 
 /**
  * A singleton instance of the API client.

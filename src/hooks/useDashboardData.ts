@@ -1,14 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import apiClient from '../api';
+import apiClient from '@/api';
 import * as signalR from '@microsoft/signalr';
-import { API_URLS } from '../../constants';
+import { API_URLS } from '@/constants';
+
+// Global variables για singleton pattern
+let globalHubConnection: signalR.HubConnection | null = null;
+let isConnecting = false;
 
 export const useDashboardData = () => {
   const [currentTime, setCurrentTime] = useState('');
   const [batteryStatus, setBatteryStatus] = useState<string | null>('N/A');
   const [heartbeat, setHeartbeat] = useState<any>(null);
   const [hubConnectionStatus, setHubConnectionStatus] = useState('Disconnected');
+  const isSubscribed = useRef(false);
 
   const { data: initData, error: initError } = useQuery({
     queryKey: ['dashboardInit'],
@@ -18,7 +23,7 @@ export const useDashboardData = () => {
   const { data: batteryStatusData, error: batteryStatusError } = useQuery({
     queryKey: ['batteryStatus'],
     queryFn: () => apiClient.api.mainGetBatteryStatusList(),
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 30000,
   });
 
   useEffect(() => {
@@ -42,36 +47,59 @@ export const useDashboardData = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  // SignalR effect - τρέχει μόνο μία φορά για όλο το app
   useEffect(() => {
-    const hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(API_URLS.SIGNALR_HUB, {
-        transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
-        logMessageContent: true,
-      })
-      .configureLogging(signalR.LogLevel.Debug)
-      .withAutomaticReconnect([0, 2000, 10000, 30000])
-      .build();
+    const initSignalR = async () => {
+      // Δημιουργία σύνδεσης μόνο αν δεν υπάρχει
+      if (!globalHubConnection && !isConnecting) {
+        isConnecting = true;
+        
+        globalHubConnection = new signalR.HubConnectionBuilder()
+          .withUrl(API_URLS.SIGNALR_HUB, {
+            transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
+            logMessageContent: true,
+          })
+          .configureLogging(signalR.LogLevel.Debug)
+          .withAutomaticReconnect([0, 2000, 10000, 30000])
+          .build();
 
-    hubConnection.on('BatteryStatus', (data) => {
-      setBatteryStatus(data !== null ? `${data}%` : 'N/A');
-    });
+        try {
+          await globalHubConnection.start();
+          setHubConnectionStatus('Connected');
+        } catch {
+          setHubConnectionStatus('Error');
+        } finally {
+          isConnecting = false;
+        }
+      }
 
-    hubConnection.on('HeartBeat', (data) => {
-      setHeartbeat(data);
-    });
+      // Εγγραφή στα events μόνο μία φορά ανά component instance
+      if (globalHubConnection && !isSubscribed.current) {
+        isSubscribed.current = true;
 
-    hubConnection
-      .start()
-      .then(() => {
-        setHubConnectionStatus('Connected');
-      })
-      .catch(() => {
-        setHubConnectionStatus('Error');
-      });
+        const batteryHandler = (data: any) => {
+          setBatteryStatus(data !== null ? `${data}%` : 'N/A');
+        };
 
-    return () => {
-      hubConnection?.stop();
+        const heartbeatHandler = (data: any) => {
+          setHeartbeat(data);
+        };
+
+        globalHubConnection.on('BatteryStatus', batteryHandler);
+        globalHubConnection.on('HeartBeat', heartbeatHandler);
+
+        // Cleanup function
+        return () => {
+          if (globalHubConnection) {
+            globalHubConnection.off('BatteryStatus', batteryHandler);
+            globalHubConnection.off('HeartBeat', heartbeatHandler);
+          }
+          isSubscribed.current = false;
+        };
+      }
     };
+
+    initSignalR();
   }, []);
 
   return {

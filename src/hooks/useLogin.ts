@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import apiClient from '../api';
-import { SCREEN_NAMES } from '../../constants';
+import apiClient from '@/api';
+import { SCREEN_NAMES } from '@/constants';
 
 export const useLogin = () => {
   const navigate = useNavigate();
@@ -15,7 +15,6 @@ export const useLogin = () => {
       navigate(`/${SCREEN_NAMES.DASHBOARD}`);
     },
     onError: (error: any) => {
-      console.error('Login error:', error);
       if (error instanceof Response) {
         setError(`HTTP ${error.status}: ${error.statusText}`);
       } else if (error instanceof Error) {
