@@ -5,7 +5,7 @@ import { Api } from '@/api/generated_api';
  * This instance is configured with the base URL of the API.
  */
 const apiClient = new Api({
-  baseUrl: '',
+  baseUrl: 'https://localhost:5001',
 });
 
 export default apiClient;
