@@ -1,21 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, UserPlus, Filter, Edit, AlertCircle } from 'lucide-react';
-import { useTheme } from '@/contexts/ThemeContext';
+import { ArrowLeft, Search, UserPlus, Filter, Edit, X, Save, User, Phone, Mail, MapPin, Heart, Shield, FileText, AlertCircle } from 'lucide-react';
+
+import { useTheme } from '@/contexts/ThemeContext'
 import { SCREEN_NAMES } from '@/constants';
-import AppHeader from '@/components/Layout/AppHeader';
-import PatientEditForm from '@/components/Screens/SearchPatient/PatientEditForm';
-import { usePatientSearch } from '@/hooks/usePatientSearch';
+import AppHeader from '@/components/Layout/AppHeader'
+import { usePatientSearch } from '@/hooks/usePatientSearch'
 import { NPatient } from '@/src/generated_api';
 import { Patient } from '@/types';
+import PatientEditForm from './PatientEditForm';
 
-interface AdvancedFilters {
-  ssn: string;
-  sid: string;
-  gender: string;
-  dobFrom: string;
-  dobTo: string;
-}
 
 const PatientSearchScreen: React.FC = () => {
   const { theme, isMidnightTheme } = useTheme();
@@ -25,7 +19,7 @@ const PatientSearchScreen: React.FC = () => {
   const [showEditForm, setShowEditForm] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [patients, setPatients] = useState<Patient[]>([]);
-  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>({
+  const [advancedFilters, setAdvancedFilters] = useState({
     ssn: '',
     sid: '',
     gender: '',
@@ -171,7 +165,7 @@ const PatientSearchScreen: React.FC = () => {
       <div className="p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 flex-grow">
         <div className={`${theme.card} backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 flex flex-col h-full`}>
           
-          {/* Search and Add Section */}
+          {/* Search and Add Section - Better tablet landscape layout */}
           <div className="flex flex-col space-y-3 lg:space-y-4 mb-4 sm:mb-6 lg:mb-8">
             {/* Top row - Basic search and buttons */}
             <div className="flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0 md:space-x-4">
@@ -214,7 +208,7 @@ const PatientSearchScreen: React.FC = () => {
               </div>
             </div>
 
-            {/* Advanced Search Panel */}
+            {/* Advanced Search Panel - Better landscape layout */}
             {showAdvancedSearch && (
               <div className={`${theme.inputBackground} border ${theme.inputBorder} rounded-lg sm:rounded-xl p-3 lg:p-4 space-y-3 lg:space-y-4`}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3 lg:gap-4">
@@ -293,7 +287,7 @@ const PatientSearchScreen: React.FC = () => {
             </div>
           )}
 
-          {/* Table Section */}
+          {/* Table Section - Optimized for landscape */}
           <div className="overflow-x-auto flex-grow">
             <div className="max-h-[calc(100vh-320px)] sm:max-h-[calc(100vh-300px)] md:max-h-[calc(100vh-280px)] lg:max-h-[calc(100vh-260px)] xl:max-h-[calc(100vh-240px)] overflow-y-auto border ${isMidnightTheme ? 'border-gray-700/60' : 'border-gray-300/70'} rounded-lg">
               <table className="min-w-full text-xs sm:text-sm lg:text-base">

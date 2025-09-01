@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Wifi, ShieldCheck, Eye, EyeOff, Loader } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useUIStore } from '@/stores/uiStore';
-import { useLogin } from '@/hooks/useLogin';
+import { useLoginFlow } from '@/hooks/useLogin'; 
 
 interface IconButtonProps {
   icon: React.ReactElement<{ className?: string }>;
@@ -42,34 +42,39 @@ const IconButton: React.FC<IconButtonProps> = ({
 const LoginScreen: React.FC = () => {
   const { theme, isMidnightTheme, currentThemeKey } = useTheme();
   const { setShowConnectionStatus, setShowConnectivityTest } = useUIStore();
-  const { login, loginOffline, isLoading, error } = useLogin();
+  
+  // use of login flow
+  const { 
+    initData, 
+    initError, 
+    initLoading,
+    login,
+    loginOffline,
+    isLoading,
+    loginLoading,
+    offlineLoginLoading
+  } = useLoginFlow();
+
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('harry');
   const [password, setPassword] = useState('q');
-  const initCalled = useRef(false);
 
+  // Handle init data
   useEffect(() => {
-    console.log('LoginScreen useEffect called');
-    if (!initCalled.current) {
-      const initialize = async () => {
-        try {
-          console.log('Init API Response:', 'initData');
-        } catch (error: any) {
-          console.error('Init API Error:', error);
-        } finally {
-          console.log('LoginScreen useEffect finished');
-        }
-      };
-      initialize();
-      initCalled.current = true;
+    if (initData) {
+      console.log('Init API Response:', initData);
     }
-  }, []);
-
+    if (initError) {
+      console.error('Init API Error:', initError);
+    }
+  }, [initData, initError]);
 
   const handleLogin = () => {
-    login({ user: username, password });
+    if (!username.trim() || !password.trim()) {
+      return;
+    }
+    login({ user: username.trim(), password: password.trim() });
   };
-
 
   const handleLoginOffline = () => {
     loginOffline();
@@ -77,7 +82,7 @@ const LoginScreen: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isLoading) {
+    if (!loginLoading) {
       handleLogin();
     }
   };
@@ -85,6 +90,17 @@ const LoginScreen: React.FC = () => {
   return (
     <div className={`min-h-screen bg-gradient-to-br ${theme.background} flex items-center justify-center p-4 sm:p-6 relative`}>
       <div className={`${theme.card} backdrop-blur-lg rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10 w-full max-w-sm sm:max-w-md md:max-w-lg border border-white/20`}>
+        
+        {/* Init loading indicator */}
+        {initLoading && (
+          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl flex items-center justify-center z-10">
+            <div className="flex flex-col items-center space-y-2">
+              <Loader className="w-8 h-8 animate-spin text-blue-500" />
+              <span className={`text-sm ${theme.textSecondary}`}>Initializing...</span>
+            </div>
+          </div>
+        )}
+
         <div className="text-center mb-8">
           <div className="flex flex-col items-center space-y-6 mb-4">
             {/* NOAH logo */}
@@ -106,9 +122,6 @@ const LoginScreen: React.FC = () => {
 
         {/* Form */}
         <form className="space-y-4 md:space-y-5" onSubmit={handleSubmit}>
-          {error && (
-            <div className="text-red-500 text-sm">{error}</div>
-          )}
           <input
             type="text"
             placeholder="Username"
@@ -118,6 +131,7 @@ const LoginScreen: React.FC = () => {
             }`}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
           />
 
           <div className="relative">
@@ -130,6 +144,7 @@ const LoginScreen: React.FC = () => {
               }`}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
             />
             <button
               type="button"
@@ -148,6 +163,7 @@ const LoginScreen: React.FC = () => {
 
           <div className="text-right mt-1">
             <button
+              type="button"
               onClick={() => console.log("Forgot password clicked")}
               disabled={isLoading}
               className={`text-xs sm:text-sm ${theme.textSecondary} hover:underline focus:outline-none focus:ring-1 focus:ring-blue-500 rounded ${
@@ -161,10 +177,10 @@ const LoginScreen: React.FC = () => {
           <div className="pt-3 sm:pt-4">
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !username.trim() || !password.trim()}
               className={`w-full bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} py-2.5 sm:py-3 md:py-3.5 rounded-lg sm:rounded-xl hover:opacity-90 transition-all duration-200 font-medium text-sm sm:text-base md:text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2`}
             >
-              {isLoading ? (
+              {loginLoading ? (
                 <>
                   <Loader className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                   <span>Signing in...</span>
@@ -182,10 +198,10 @@ const LoginScreen: React.FC = () => {
             disabled={isLoading}
             className={`w-full bg-gray-400 ${theme.textOnAccent} py-2.5 sm:py-3 md:py-3.5 rounded-lg sm:rounded-xl hover:opacity-90 transition-all duration-200 font-medium text-sm sm:text-base md:text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2`}
           >
-            {isLoading ? (
+            {offlineLoginLoading ? (
               <>
                 <Loader className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
-                <span>Signing in...</span>
+                <span>Connecting offline...</span>
               </>
             ) : (
               <span>Login Offline</span>

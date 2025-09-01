@@ -5,10 +5,12 @@ import { useUIStore } from "@/stores/uiStore";
 import { Consultation } from "@/types";
 import { SCREEN_NAMES } from "@/constants";
 import AppHeader from '@/components/Layout/AppHeader';
+import { useNavigate } from "react-router-dom";
 
 const ConsultationsScreen: React.FC = () => {
+  const navigate = useNavigate()
   const { theme, isMidnightTheme, toggleTheme, currentThemeKey } = useTheme();
-  const { setCurrentScreen } = useUIStore();
+
   
   const [selectedConsultation, setSelectedConsultation] = useState<Consultation | null>(null);
 
@@ -63,7 +65,7 @@ const ConsultationsScreen: React.FC = () => {
       <AppHeader
         theme={theme}
         title="Consultations"
-        onBack={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
+        onBack={() => navigate(`/${SCREEN_NAMES.DASHBOARD}`)}
         onThemeChange={handleThemeChange}
         isMidnightTheme={isMidnightTheme}
         currentThemeKey={currentThemeKey}
@@ -255,7 +257,7 @@ const ConsultationsScreen: React.FC = () => {
               </button>
 
               <button
-                onClick={() => setCurrentScreen(SCREEN_NAMES.DASHBOARD)}
+                onClick={() => navigate(`/${SCREEN_NAMES.DASHBOARD}`)}
                 className={`flex items-center justify-center space-x-2 px-4 py-2 md:px-6 md:py-3 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 shadow-lg ${isMidnightTheme ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800" : `bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} hover:opacity-90`}`}>
                 <ArrowLeft className="w-4 h-4" />
                 <span>Return</span>
