@@ -36,7 +36,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
           <img 
             src={currentThemeKey === 'black' || isMidnightTheme
               ? "/images/NoA.H. Logo Horizontal white.svg"
-              : "/images/public/NoA.H. Logo Horizontal blue-black.svg"
+              : "/images/NoA.H. Logo Horizontal blue-black.svg"
             }
             alt="NOAH Logo"
             className="w-full h-full object-contain max-w-36 max-h-20 sm:max-w-40 sm:max-h-22 md:max-w-44 md:max-h-24"
