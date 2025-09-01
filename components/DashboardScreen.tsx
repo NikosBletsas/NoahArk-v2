@@ -63,8 +63,8 @@ const DashboardScreen: React.FC<BaseScreenProps> = ({
             <div className="w-40 h-24 sm:w-44 sm:h-26 md:w-48 md:h-28 flex items-center justify-center">
               <img 
                 src={currentThemeKey === 'black'
-                  ? "/assets/NoA.H. Logo Horizontal white.svg"
-                  : "/assets/NoA.H. Logo Horizontal blue-black.svg" 
+                  ? "../public/NoA.H. Logo Horizontal white.svg"
+                  : "../public/NoA.H. Logo Horizontal blue-black.svg" 
                 }
                 alt="NOAH Logo" 
                 className="w-full h-full object-contain max-w-40 max-h-24 sm:max-w-44 sm:max-h-26 md:max-w-48 md:max-h-28" 
