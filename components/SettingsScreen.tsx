@@ -66,7 +66,7 @@ const SettingsScreen: React.FC<BaseScreenProps> = ({
       <div className={`mt-auto pt-3 sm:pt-4 md:pt-5 lg:pt-6 border-t border-white/20`}>
           <div className="w-36 sm:w-44 h-10 sm:h-12 flex items-center justify-center">
             <img 
-              src="../public/NoA.H. Logo Horizontal white.svg" 
+              src="/images/NoA.H. Logo Horizontal white.svg" 
               alt="NOAH Logo" 
               className="w-36 sm:w-44 h-10 sm:h-12 object-contain -m-1"
             />

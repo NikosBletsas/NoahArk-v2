@@ -128,7 +128,7 @@ const EmergencyCaseDiagnosisScreen: React.FC<BaseScreenProps> = ({
       <div className="mt-auto pt-3 sm:pt-4 border-t border-slate-600 flex flex-col items-center">
         <div className="w-32 sm:w-36 h-8 sm:h-10 flex items-center justify-center mb-2 sm:mb-3">
           <img 
-            src="../public/NoA.H. Logo Horizontal white.svg" 
+            src="/images/NoA.H. Logo Horizontal white.svg" 
             alt="NOAH Logo" 
             className="w-full h-full object-contain max-w-32 max-h-8 sm:max-w-36 sm:max-h-10"
           />

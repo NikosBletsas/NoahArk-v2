@@ -35,8 +35,8 @@ const AppHeader: React.FC<AppHeaderProps> = ({
         <div className="w-36 h-20 sm:w-40 sm:h-22 md:w-44 md:h-24 flex items-center justify-start">
           <img 
             src={currentThemeKey === 'black' || isMidnightTheme
-              ? "../../public/NoA.H. Logo Horizontal white.svg"
-              : "../../public/NoA.H. Logo Horizontal blue-black.svg"
+              ? "/images/NoA.H. Logo Horizontal white.svg"
+              : "/images/public/NoA.H. Logo Horizontal blue-black.svg"
             }
             alt="NOAH Logo"
             className="w-full h-full object-contain max-w-36 max-h-20 sm:max-w-40 sm:max-h-22 md:max-w-44 md:max-h-24"
