@@ -1,29 +1,32 @@
-import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+
 import apiClient from "@/api";
 import { NPatient } from "@/api/generated_api";
-import { Patient } from '@/types';
+import { Patient } from "@/types";
 
 /**
  * Transform API response (NPatient) to our domain model (Patient)
  */
 const transformApiPatientToPatient = (apiPatient: NPatient): Patient => {
   return {
-    id: apiPatient.id || '',
-    name: apiPatient.name || '',
-    surname: apiPatient.surname || '',
-    dob: apiPatient.birthDate ? new Date(apiPatient.birthDate).toISOString().split('T')[0] : '',
-    gender: apiPatient.gender || apiPatient.sex || '',
-    ssn: apiPatient.ssn || '',
-    sid: apiPatient.otherIdentifier || '',
-    phone: apiPatient.mobilePhone || apiPatient.homephone || '',
+    id: apiPatient.id || "",
+    name: apiPatient.name || "",
+    surname: apiPatient.surname || "",
+    dob: apiPatient.birthDate
+      ? new Date(apiPatient.birthDate).toISOString().split("T")[0]
+      : "",
+    gender: apiPatient.gender || apiPatient.sex || "",
+    ssn: apiPatient.ssn || "",
+    sid: apiPatient.otherIdentifier || "",
+    phone: apiPatient.mobilePhone || apiPatient.homephone || "",
     email: `${apiPatient.name?.toLowerCase()}.${apiPatient.surname?.toLowerCase()}@email.com`,
     address: apiPatient.addressStreet,
-    city: 'Unknown',
-    state: 'Unknown', 
+    city: "Unknown",
+    state: "Unknown",
     zipCode: apiPatient.addressZip,
     medicalRecordNumber: `MRN${apiPatient.id}`,
-    insuranceNumber: apiPatient.insuranceName || 'Unknown'
+    insuranceNumber: apiPatient.insuranceName || "Unknown",
   };
 };
 
@@ -37,21 +40,44 @@ export const usePatientSearch = () => {
 
   const searchMutation = useMutation({
     mutationFn: async (searchCriteria: NPatient) => {
+      console.log("Sending search criteria:", searchCriteria);
       const response = await apiClient.api.mainSearchPatientCreate(searchCriteria);
-      
-      // Type assertion - we know the API actually returns patient data
-      // even though Swagger says it returns void
+
+      if (!response.data) {
+        try {
+          const clonedResponse = response.clone();
+          const rawText = await clonedResponse.text();
+
+          if (rawText) {
+            const parsedData = JSON.parse(rawText);
+            console.log("Manually parsed data:", parsedData);
+
+            // Επιστρέφουμε το patients array, όχι το object
+            return parsedData.patients || [];
+          }
+        } catch (error) {
+          console.error("Failed to parse response:", error);
+        }
+        return [];
+      }
+
       return response.data as NPatient[];
     },
     onSuccess: (apiPatients: NPatient[]) => {
-      // Transform API response to our domain model
+      console.log("onSuccess called with:", apiPatients);
+
+      // Τώρα το apiPatients είναι array και όχι object
       const transformedPatients = apiPatients.map(transformApiPatientToPatient);
       setSearchResults(transformedPatients);
       setError(null);
-      
+
       console.log(`Found ${apiPatients.length} patients from API`);
     },
-    // No onError - centralized error handler in queryClient.ts handles this
+    onError: (error: any) => {
+      console.error("Search error:", error);
+      setError(error.message || "An error occurred during search");
+      setSearchResults([]);
+    },
   });
 
   const clearSearch = () => {
@@ -66,4 +92,4 @@ export const usePatientSearch = () => {
     searchResults,
     clearSearch,
   };
-};
+}

@@ -48,3 +48,7 @@ To preview the production build locally (after running `npm run build`):
 ```bash
 npm run preview
 ```
+
+
+command for update generated api
+## npx swagger-typescript-api generate -p ./swagger.json -o ./src/api -n generated_api.ts

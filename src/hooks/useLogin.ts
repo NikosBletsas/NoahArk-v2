@@ -30,8 +30,7 @@ export const useLogin = () => {
 
     onError: (error) => {
       console.error("Login specific error:", error);
-      
-      
+
       if (error instanceof Response && error.status === 401) {
         toast.error("Invalid username or password.");
         return;
