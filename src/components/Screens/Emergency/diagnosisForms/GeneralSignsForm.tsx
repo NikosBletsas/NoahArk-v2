@@ -1,6 +1,7 @@
 import React from 'react';
 import { DiagnosisFormStepProps } from '@/types';
 import CheckboxGrid from '../../../ui/CheckboxGrid';
+import { useEmergencyCaseStore } from '@/stores/emergencyCaseStore';
 
 const generalSignsOptions = [
   "Fever", "Shiver", "Cough", "Weakening", "Malaise", "Nausea", "Dizziness", "Dry Mouth",
@@ -14,12 +15,22 @@ const GeneralSignsForm: React.FC<DiagnosisFormStepProps> = ({
   isMidnightTheme, 
   onFormChange 
 }) => {
+  const { formData, updateFormData } = useEmergencyCaseStore();
+
+  const handleGeneralSignsChange = (selectedOptions: string[]) => {
+    updateFormData({ genikiSimeiologia: selectedOptions.join(', ') });
+    if (onFormChange) {
+      onFormChange();
+    }
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6 md:space-y-7">
       <CheckboxGrid 
         options={generalSignsOptions} 
         theme={theme} 
-        onFormChange={onFormChange}
+        onFormChange={handleGeneralSignsChange}
+        initialSelected={formData.genikiSimeiologia ? formData.genikiSimeiologia.split(', ') : []}
         columnsSM={2} 
         columnsMD={3} 
         columnsLG={4} 

@@ -2,6 +2,7 @@ import React from 'react';
 import { DiagnosisFormStepProps } from '@/types';
 import FormSection from '../../../shared/FormSection';
 import CheckboxGrid from '../../../ui/CheckboxGrid';
+import { useEmergencyCaseStore } from '@/stores/emergencyCaseStore';
 
 const traumaSignsOptions = [
   "Pain", "Edema", "Injury", "Bite", "Fracture",
@@ -29,13 +30,44 @@ const SurgicalNeurologicSignsForm: React.FC<DiagnosisFormStepProps> = ({
   isMidnightTheme, 
   onFormChange
 }) => {
+  const { formData, updateFormData } = useEmergencyCaseStore();
+
+  const handleTraumaSignsChange = (selectedOptions: string[]) => {
+    updateFormData({ xeirourgikiSimeiologia: selectedOptions.join(', ') });
+    if (onFormChange) {
+      onFormChange();
+    }
+  };
+
+  const handleNeurologicSignsChange = (selectedOptions: string[]) => {
+    updateFormData({ neurologikiSimeiologia: selectedOptions.join(', ') });
+    if (onFormChange) {
+      onFormChange();
+    }
+  };
+
+  const handleParesisHemiplegiaChange = (selectedOptions: string[]) => {
+    const paresisOptions = selectedOptions.filter(opt => opt.includes('Paresis'));
+    const hemiplegiaOptions = selectedOptions.filter(opt => opt.includes('Hemiplegia'));
+    
+    updateFormData({ 
+      neuroParesi: paresisOptions.join(', '),
+      neuroHmipligia: hemiplegiaOptions.join(', ')
+    });
+    
+    if (onFormChange) {
+      onFormChange();
+    }
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6 md:space-y-7">
       <FormSection title="Trauma Signs" theme={theme} isSubSection={true}>
         <CheckboxGrid 
           options={traumaSignsOptions} 
           theme={theme} 
-          onFormChange={onFormChange}
+          onFormChange={handleTraumaSignsChange}
+          initialSelected={formData.xeirourgikiSimeiologia ? formData.xeirourgikiSimeiologia.split(', ') : []}
           columnsSM={2} 
           columnsMD={3} 
           columnsLG={3} 
@@ -48,7 +80,8 @@ const SurgicalNeurologicSignsForm: React.FC<DiagnosisFormStepProps> = ({
         <CheckboxGrid 
           options={neurologicSignsOptions} 
           theme={theme} 
-          onFormChange={onFormChange}
+          onFormChange={handleNeurologicSignsChange}
+          initialSelected={formData.neurologikiSimeiologia ? formData.neurologikiSimeiologia.split(', ') : []}
           columnsSM={2} 
           columnsMD={2} 
           columnsLG={2} 
@@ -60,7 +93,11 @@ const SurgicalNeurologicSignsForm: React.FC<DiagnosisFormStepProps> = ({
              <CheckboxGrid 
                options={paresisHemiplegiaOptions} 
                theme={theme} 
-               onFormChange={onFormChange}
+               onFormChange={handleParesisHemiplegiaChange}
+               initialSelected={[
+                 ...(formData.neuroParesi ? formData.neuroParesi.split(', ') : []),
+                 ...(formData.neuroHmipligia ? formData.neuroHmipligia.split(', ') : [])
+               ]}
                columnsSM={2} 
                columnsMD={2} 
                columnsLG={2} 

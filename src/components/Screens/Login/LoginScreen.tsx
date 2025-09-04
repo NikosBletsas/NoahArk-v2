@@ -56,7 +56,7 @@ const LoginScreen: React.FC = () => {
   } = useLoginFlow();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState('harry');
+  const [username, setUsername] = useState('noah1');
   const [password, setPassword] = useState('q');
 
   // Handle init data

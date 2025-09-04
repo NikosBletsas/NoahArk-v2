@@ -19,7 +19,7 @@ export const useMain = () => {
   // Get Battery Status - Auto-fetch with polling
   const getBatteryStatus = useQuery({
     queryKey: ["main", "batteryStatus"],
-    queryFn: () => apiClient.api.mainGetBatteryStatusList(),
+    queryFn: async () => apiClient.api.mainGetBatteryStatusList(),
     enabled: true, // Auto-fetch
     staleTime: 30 * 1000, // 30 seconds
     refetchInterval: 60 * 1000, // Refetch every 60 seconds

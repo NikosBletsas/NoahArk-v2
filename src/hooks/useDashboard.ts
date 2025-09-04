@@ -5,13 +5,41 @@ import { useDevices } from "@/hooks/useDevices";
 import { useConfig } from "@/hooks/useConfig";
 import { signalRService } from "@/services/signalRService";
 
+// Helper functions for case data persistence
+const getCurrentCaseData = () => {
+  try {
+    const stored = localStorage.getItem('currentEmergencyCase');
+    return stored ? JSON.parse(stored) : null;
+  } catch {
+    return null;
+  }
+};
+
+const setCurrentCaseData = (caseData: any) => {
+  try {
+    localStorage.setItem('currentEmergencyCase', JSON.stringify(caseData));
+  } catch (error) {
+    console.error('Failed to store case data:', error);
+  }
+};
+
 export const useDashboard = () => {
   // Time and SignalR state
   const [currentTime, setCurrentTime] = useState<string>("");
   const [batteryStatus, setBatteryStatus] = useState<string>("N/A");
   const [heartbeat, setHeartbeat] = useState<any>(null);
-  const [hubConnectionStatus, setHubConnectionStatus] =
-    useState<string>("Disconnected");
+  const [hubConnectionStatus, setHubConnectionStatus] = useState<string>("Disconnected");
+  
+  // Current case data
+  const [currentCaseData, setCurrentCaseDataState] = useState<any>(null);
+
+  // Load case data on mount
+  useEffect(() => {
+    const caseData = getCurrentCaseData();
+    if (caseData) {
+      setCurrentCaseDataState(caseData);
+    }
+  }, []);
 
   // Import from existing hooks
   const mainHook = useMain();
@@ -129,8 +157,8 @@ export const useDashboard = () => {
       !mainHook.isBatteryLoading &&
       !mainHook.batteryStatus &&
       batteryStatus === "N/A",
-    patientId: "N/A", // Replace with actual patient ID when available
-    caseNo: "1", // Replace with actual case number
+    patientId: currentCaseData?.patientId || "N/A",
+    caseNo: currentCaseData?.caseId || "N/A",
     videoStatus: "N/A", // Replace with actual video status
   };
 

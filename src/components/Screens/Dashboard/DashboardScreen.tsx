@@ -1,5 +1,5 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Search,
   Heart,
@@ -17,7 +17,8 @@ import {
   Brain,
   Loader,
   AlertCircle,
-  Activity,   
+  Activity,
+  X,
 } from "lucide-react";
 
 import { useTheme } from "@/contexts/ThemeContext";
@@ -41,8 +42,10 @@ const DashboardTile: React.FC<DashboardTileProps> = ({
   return (
     <div
       onClick={disabled ? undefined : onClick}
-      className={`${theme.card} backdrop-blur-lg rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 text-center cursor-pointer hover:scale-105 transition-all duration-200 shadow-lg border border-white/20 flex flex-col items-center justify-center aspect-square ${
-        disabled ? 'opacity-50 cursor-not-allowed hover:scale-100' : ''
+      className={`${
+        theme.card
+      } backdrop-blur-lg rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 text-center cursor-pointer hover:scale-105 transition-all duration-200 shadow-lg border border-white/20 flex flex-col items-center justify-center aspect-square ${
+        disabled ? "opacity-50 cursor-not-allowed hover:scale-100" : ""
       }`}
     >
       {icon}
@@ -58,12 +61,41 @@ const DashboardTile: React.FC<DashboardTileProps> = ({
 const DashboardScreen: React.FC = () => {
   const { theme, isMidnightTheme, currentThemeKey } = useTheme();
   const navigate = useNavigate();
-  
+  const location = useLocation();
+
+  // State for new emergency case
+  const [newEmergencyCase, setNewEmergencyCase] = useState<any>(null);
+  const [showCaseSuccess, setShowCaseSuccess] = useState(false);
+
   // All dashboard logic is now contained in the hook
   const dashboard = useDashboard();
 
+  // Check for new emergency case data from navigation
+  useEffect(() => {
+    if (location.state?.newEmergencyCase) {
+      const caseData = location.state.newEmergencyCase;
+      setNewEmergencyCase(caseData);
+      setShowCaseSuccess(true);
+
+      // Store case data in localStorage for persistence
+      try {
+        localStorage.setItem("currentEmergencyCase", JSON.stringify(caseData));
+      } catch (error) {
+        console.error("Failed to store case data:", error);
+      }
+
+      // Clear the navigation state to prevent showing again on refresh
+      navigate(location.pathname, { replace: true });
+
+      // Hide success message after 5 seconds
+      setTimeout(() => {
+        setShowCaseSuccess(false);
+      }, 5000);
+    }
+  }, [location.state, navigate, location.pathname]);
+
   const iconSize = "w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-16 lg:h-16";
-  
+
   const tiles = [
     {
       icon: <Search className={`${iconSize} mx-auto ${theme.icon}`} />,
@@ -76,7 +108,9 @@ const DashboardScreen: React.FC = () => {
       screen: SCREEN_NAMES.MEASUREMENTS,
     },
     {
-      icon: <BriefcaseMedical className={`${iconSize} mx-auto text-pink-600`} />,
+      icon: (
+        <BriefcaseMedical className={`${iconSize} mx-auto text-pink-600`} />
+      ),
       label: "Assign Emergency",
       screen: SCREEN_NAMES.ASSIGN_EMERGENCY,
     },
@@ -86,9 +120,11 @@ const DashboardScreen: React.FC = () => {
       screen: SCREEN_NAMES.DEVICE_CONFIGURATION,
     },
     {
-      icon: dashboard.isScanning ? 
-        <Loader className={`${iconSize} mx-auto text-sky-600 animate-spin`} /> :
-        <ScanLine className={`${iconSize} mx-auto text-sky-600`} />,
+      icon: dashboard.isScanning ? (
+        <Loader className={`${iconSize} mx-auto text-sky-600 animate-spin`} />
+      ) : (
+        <ScanLine className={`${iconSize} mx-auto text-sky-600`} />
+      ),
       label: "Scan Documents",
       onClick: dashboard.scanDocument,
       disabled: dashboard.isScanning,
@@ -100,7 +136,7 @@ const DashboardScreen: React.FC = () => {
     },
     {
       icon: <Video className={`${iconSize} mx-auto text-blue-500`} />,
-      label: "Webex Call", 
+      label: "Webex Call",
       screen: undefined,
     },
     {
@@ -109,9 +145,13 @@ const DashboardScreen: React.FC = () => {
       screen: undefined,
     },
     {
-      icon: dashboard.isSendingData ?
-        <Loader className={`${iconSize} mx-auto text-indigo-600 animate-spin`} /> :
-        <User className={`${iconSize} mx-auto text-indigo-600`} />,
+      icon: dashboard.isSendingData ? (
+        <Loader
+          className={`${iconSize} mx-auto text-indigo-600 animate-spin`}
+        />
+      ) : (
+        <User className={`${iconSize} mx-auto text-indigo-600`} />
+      ),
       label: "Send Data to Doctor",
       onClick: dashboard.sendDataToDoctor,
       disabled: dashboard.isSendingData,
@@ -133,7 +173,7 @@ const DashboardScreen: React.FC = () => {
     },
   ];
 
-  const handleTileClick = (tile: typeof tiles[0]) => {
+  const handleTileClick = (tile: (typeof tiles)[0]) => {
     if (tile.onClick) {
       tile.onClick();
     } else if (tile.screen) {
@@ -142,21 +182,66 @@ const DashboardScreen: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${theme.background} relative flex flex-col pb-16 sm:pb-20 md:pb-24 lg:pb-28 xl:pb-32`}>
-      
+    <div
+      className={`min-h-screen bg-gradient-to-br ${theme.background} relative flex flex-col pb-16 sm:pb-20 md:pb-24 lg:pb-28 xl:pb-32`}
+    >
+      {/* Success Notification */}
+      {showCaseSuccess && newEmergencyCase && (
+        <div className="bg-green-600 text-white p-3 sm:p-4 flex items-center justify-between animate-in slide-in-from-top duration-300">
+          <div className="flex items-center space-x-3">
+            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+              <svg
+                className="w-4 h-4 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="font-semibold">
+                Emergency Case Created Successfully!
+              </p>
+              <p className="text-sm opacity-90">
+                Case No: {newEmergencyCase.caseId} | Patient:{" "}
+                {newEmergencyCase.patientName} {newEmergencyCase.patientSurname}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowCaseSuccess(false)}
+            className="p-1 hover:bg-green-700 rounded-md transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+      )}
+
       {/* Header */}
-      <div className={`${theme.card} backdrop-blur-lg border-b border-white/20 p-3 sm:p-4 md:p-5 lg:p-6 z-10`}>
+      <div
+        className={`${theme.card} backdrop-blur-lg border-b border-white/20 p-3 sm:p-4 md:p-5 lg:p-6 z-10`}
+      >
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="w-40 h-24 sm:w-44 sm:h-26 md:w-48 md:h-28 flex items-center justify-center">
             <img
-              src={currentThemeKey === "black" 
-                ? "/assets/NoA.H. Logo Horizontal white.svg"
-                : "/assets/NoA.H. Logo Horizontal blue-black.svg"}
+              src={
+                currentThemeKey === "black"
+                  ? "/assets/NoA.H. Logo Horizontal white.svg"
+                  : "/assets/NoA.H. Logo Horizontal blue-black.svg"
+              }
               alt="NOAH Logo"
               className="w-full h-full object-contain max-w-40 max-h-24 sm:max-w-44 sm:max-h-26 md:max-w-48 md:h-28"
             />
           </div>
-          <div className={`text-xs sm:text-sm md:text-base lg:text-lg ${theme.textPrimary} font-semibold text-center flex-1 pr-16 sm:pr-20 md:pr-16`}>
+          <div
+            className={`text-xs sm:text-sm md:text-base lg:text-lg ${theme.textPrimary} font-semibold text-center flex-1 pr-16 sm:pr-20 md:pr-16`}
+          >
             Telemedicine EMR System
             {dashboard.isAppInitializing && (
               <div className="flex items-center justify-center mt-2">
@@ -169,7 +254,9 @@ const DashboardScreen: React.FC = () => {
       </div>
 
       {/* Status Bar */}
-      <div className={`bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} p-3 sm:p-4 md:p-5 lg:p-6`}>
+      <div
+        className={`bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} p-3 sm:p-4 md:p-5 lg:p-6`}
+      >
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-2 sm:mb-3">
             <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold">
@@ -180,18 +267,25 @@ const DashboardScreen: React.FC = () => {
               className="flex items-center space-x-2 px-3 py-1 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
               disabled={dashboard.isBatteryLoading}
             >
-              {dashboard.isBatteryLoading ? 
-                <Loader className="w-4 h-4 animate-spin" /> : 
+              {dashboard.isBatteryLoading ? (
+                <Loader className="w-4 h-4 animate-spin" />
+              ) : (
                 <RefreshCw className="w-4 h-4" />
-              }
+              )}
               <span className="text-sm">Refresh</span>
             </button>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-2 text-xs sm:text-sm md:text-base lg:text-lg">
             <div className="flex justify-between">
               <span>Patient ID</span>
-              <span>{dashboard.patientId}</span>
+              <span
+                className={
+                  newEmergencyCase ? "text-green-400 font-semibold" : ""
+                }
+              >
+                {newEmergencyCase?.patientId || dashboard.patientId}
+              </span>
             </div>
             <div className="flex justify-between">
               <span>System time</span>
@@ -199,13 +293,25 @@ const DashboardScreen: React.FC = () => {
             </div>
             <div className="flex justify-between">
               <span>Connection Status</span>
-              <span className={dashboard.hubConnectionStatus === "Connected" ? "text-green-400" : "text-red-400"}>
+              <span
+                className={
+                  dashboard.hubConnectionStatus === "Connected"
+                    ? "text-green-400"
+                    : "text-red-400"
+                }
+              >
                 {dashboard.hubConnectionStatus}
               </span>
             </div>
             <div className="flex justify-between">
               <span>Hub Status</span>
-              <span className={dashboard.hubConnectionStatus === "Connected" ? "text-green-400" : "text-red-400"}>
+              <span
+                className={
+                  dashboard.hubConnectionStatus === "Connected"
+                    ? "text-green-400"
+                    : "text-red-400"
+                }
+              >
                 {dashboard.hubConnectionStatus}
               </span>
             </div>
@@ -215,7 +321,37 @@ const DashboardScreen: React.FC = () => {
             </div>
             <div className="flex justify-between">
               <span>Case No</span>
-              <span>{dashboard.caseNo}</span>
+              <span
+                className={
+                  newEmergencyCase ? "text-green-400 font-semibold" : ""
+                }
+              >
+                1
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span>Case ID</span>
+              <span
+                className={
+                  newEmergencyCase ? "text-green-400 font-semibold" : ""
+                }
+              >
+                {(() => {
+                  // Try to get case ID from current emergency case data
+                  const storedCase = localStorage.getItem(
+                    "currentEmergencyCase"
+                  );
+                  if (storedCase) {
+                    try {
+                      const caseData = JSON.parse(storedCase);
+                      return caseData?.caseId || "N/A";
+                    } catch {
+                      return "N/A";
+                    }
+                  }
+                  return newEmergencyCase?.caseId || "N/A";
+                })()}
+              </span>
             </div>
             <div className="flex justify-between items-center">
               <span>Battery Status</span>
@@ -259,13 +395,23 @@ const DashboardScreen: React.FC = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <div className={`fixed bottom-0 left-0 right-0 bg-gradient-to-r ${theme.accent} p-2 sm:p-3 md:p-4 lg:p-5 z-10 border-t ${isMidnightTheme || currentThemeKey === "black" ? "border-gray-600" : "border-white/10"}`}>
+      <div
+        className={`fixed bottom-0 left-0 right-0 bg-gradient-to-r ${
+          theme.accent
+        } p-2 sm:p-3 md:p-4 lg:p-5 z-10 border-t ${
+          isMidnightTheme || currentThemeKey === "black"
+            ? "border-gray-600"
+            : "border-white/10"
+        }`}
+      >
         <div className="flex justify-around max-w-2xl mx-auto">
-          <button className={`flex flex-col items-center ${theme.textOnAccent} hover:opacity-80 transition-opacity px-1 py-1 sm:px-2 md:px-3`}>
+          <button
+            className={`flex flex-col items-center ${theme.textOnAccent} hover:opacity-80 transition-opacity px-1 py-1 sm:px-2 md:px-3`}
+          >
             <FileText className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 mb-0.5" />
             <span className="text-xs md:text-sm lg:text-base block">Save</span>
           </button>
-          
+
           <button
             onClick={dashboard.resetCase}
             disabled={dashboard.isResettingCase}
@@ -277,10 +423,10 @@ const DashboardScreen: React.FC = () => {
               <RefreshCw className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 mb-0.5" />
             )}
             <span className="text-xs md:text-sm lg:text-base block">
-              {dashboard.isResettingCase ? 'Resetting...' : 'Reset'}
+              {dashboard.isResettingCase ? "Resetting..." : "Reset"}
             </span>
           </button>
-          
+
           <button
             onClick={dashboard.initializeDevices}
             disabled={dashboard.isInitializingDevices}
@@ -291,15 +437,19 @@ const DashboardScreen: React.FC = () => {
             ) : (
               <DeviceMonitor className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 mb-0.5" />
             )}
-            <span className="text-xs md:text-sm lg:text-base block">Devices</span>
+            <span className="text-xs md:text-sm lg:text-base block">
+              Devices
+            </span>
           </button>
-          
+
           <button
             onClick={() => navigate(`/${SCREEN_NAMES.SETTINGS}`)}
             className={`flex flex-col items-center ${theme.textOnAccent} hover:opacity-80 transition-opacity px-1 py-1 sm:px-2 md:px-3`}
           >
             <Settings className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 mb-0.5" />
-            <span className="text-xs md:text-sm lg:text-base block">Advanced</span>
+            <span className="text-xs md:text-sm lg:text-base block">
+              Advanced
+            </span>
           </button>
         </div>
       </div>
