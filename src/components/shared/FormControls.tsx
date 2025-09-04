@@ -37,7 +37,7 @@ export const LabelledInput: React.FC<LabelledInputProps> = ({
   isReadOnly,
 }) => (
   <div>
-    <label htmlFor={id} className={`block text-xs sm:text-sm md:text-base lg:text-lg font-medium ${theme.textSecondary} mb-1 md:mb-1.5 lg:mb-2`}>{label}</label>
+    <label htmlFor={id} className={`block text-xs sm:text-sm md:text-base lg:text-lg font-medium ${isReadOnly ? 'text-gray-400' : theme.textSecondary} mb-1 md:mb-1.5 lg:mb-2`}>{label}</label>
     <input
       type={type}
       id={id}
@@ -46,7 +46,7 @@ export const LabelledInput: React.FC<LabelledInputProps> = ({
       placeholder={placeholder}
       onChange={onChange as (e: React.ChangeEvent<HTMLInputElement>) => void}
       readOnly={isReadOnly}
-      className={`w-full px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2.5 lg:px-5 lg:py-3 text-sm sm:text-base md:text-lg lg:text-xl border ${theme.inputBorder} ${theme.inputBackground} ${theme.textPrimary} ${theme.inputPlaceholder} rounded-md sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${isReadOnly ? 'bg-opacity-70 cursor-default' : ''} transition-colors`}
+      className={`w-full px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2.5 lg:px-5 lg:py-3 text-sm sm:text-base md:text-lg lg:text-xl border ${isReadOnly ? 'border-gray-300 bg-gray-100 text-gray-500' : `${theme.inputBorder} ${theme.inputBackground} ${theme.textPrimary}`} ${theme.inputPlaceholder} rounded-md sm:rounded-lg focus:outline-none ${isReadOnly ? '' : 'focus:ring-2 focus:ring-blue-500'} ${isReadOnly ? 'cursor-not-allowed' : ''} transition-colors`}
     />
   </div>
 );
@@ -62,14 +62,14 @@ export const LabelledSelect: React.FC<LabelledSelectProps> = ({
   isReadOnly,
 }) => (
   <div>
-    <label htmlFor={id} className={`block text-xs sm:text-sm md:text-base lg:text-lg font-medium ${theme.textSecondary} mb-1 md:mb-1.5 lg:mb-2`}>{label}</label>
+    <label htmlFor={id} className={`block text-xs sm:text-sm md:text-base lg:text-lg font-medium ${isReadOnly ? 'text-gray-400' : theme.textSecondary} mb-1 md:mb-1.5 lg:mb-2`}>{label}</label>
     <select
       id={id}
       value={value}
       defaultValue={defaultValue}
       onChange={onChange as (e: React.ChangeEvent<HTMLSelectElement>) => void}
       disabled={isReadOnly}
-      className={`w-full px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2.5 lg:px-5 lg:py-3 text-sm sm:text-base md:text-lg lg:text-xl border ${theme.inputBorder} ${theme.inputBackground} ${theme.textPrimary} rounded-md sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${isReadOnly ? 'bg-opacity-70 cursor-not-allowed' : ''} transition-colors`}
+      className={`w-full px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2.5 lg:px-5 lg:py-3 text-sm sm:text-base md:text-lg lg:text-xl border ${isReadOnly ? 'border-gray-300 bg-gray-100 text-gray-500' : `${theme.inputBorder} ${theme.inputBackground} ${theme.textPrimary}`} rounded-md sm:rounded-lg focus:outline-none ${isReadOnly ? '' : 'focus:ring-2 focus:ring-blue-500'} ${isReadOnly ? 'cursor-not-allowed' : ''} transition-colors`}
     >
       {children}
     </select>
@@ -89,11 +89,11 @@ export const LabelledTextarea: React.FC<LabelledTextareaProps> = ({
   isReadOnly,
 }) => (
   <div>
-    <label htmlFor={id} className={`block text-xs sm:text-sm md:text-base lg:text-lg font-medium ${theme.textSecondary} mb-1 md:mb-1.5 lg:mb-2`}>{label}</label>
+    <label htmlFor={id} className={`block text-xs sm:text-sm md:text-base lg:text-lg font-medium ${isReadOnly ? 'text-gray-400' : theme.textSecondary} mb-1 md:mb-1.5 lg:mb-2`}>{label}</label>
     <textarea
       id={id}
       rows={smRows ? undefined : rows} 
-      className={`w-full px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2.5 lg:px-5 lg:py-3 text-sm sm:text-base md:text-lg lg:text-xl border ${theme.inputBorder} ${theme.inputBackground} ${theme.textPrimary} ${theme.inputPlaceholder} rounded-md sm:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${isReadOnly ? 'bg-opacity-70 cursor-default' : ''} transition-colors resize-y ${smRows ? `sm:h-auto sm:rows-${smRows}` : ''}`}
+      className={`w-full px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2.5 lg:px-5 lg:py-3 text-sm sm:text-base md:text-lg lg:text-xl border ${isReadOnly ? 'border-gray-300 bg-gray-100 text-gray-500' : `${theme.inputBorder} ${theme.inputBackground} ${theme.textPrimary}`} ${theme.inputPlaceholder} rounded-md sm:rounded-lg focus:outline-none ${isReadOnly ? '' : 'focus:ring-2 focus:ring-blue-500'} ${isReadOnly ? 'cursor-not-allowed' : ''} transition-colors resize-y ${smRows ? `sm:h-auto sm:rows-${smRows}` : ''}`}
       style={smRows ? { height: 'auto' } : {}} 
       value={value}
       defaultValue={defaultValue}

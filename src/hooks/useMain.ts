@@ -106,6 +106,9 @@ export const useMain = () => {
       toast.success("Case reset successfully");
       queryClient.invalidateQueries({ queryKey: ["main"] });
     },
+    onError: (error: any) => {
+      toast.error(`Failed to reset case: ${error.message}`);
+    },
   });
 
   return {
@@ -127,27 +130,28 @@ export const useMain = () => {
     // Actions
     scanDocument: scanDocument.mutate,
     isScanning: scanDocument.isPending,
-    
+
     sendData: sendData.mutate,
     isSending: sendData.isPending,
-    
+
     addMoreFiles: addMoreFiles.mutate,
     isAddingFiles: addMoreFiles.isPending,
-    
+
     createEmergencyCase: newEmergencyCase.mutate,
     isCreatingCase: newEmergencyCase.isPending,
-    
+
     searchPatient: searchPatient.mutate,
     isSearching: searchPatient.isPending,
     searchResults: searchPatient.data,
-    
+
     addPatient: addPatient.mutate,
     isAddingPatient: addPatient.isPending,
-    
+
     setRecoverySession: setRecoverySession.mutate,
     isSettingSession: setRecoverySession.isPending,
-    
+
     resetCase: resetCase.mutate,
+    resetCaseAsync: resetCase.mutateAsync,
     isResetting: resetCase.isPending,
   };
 };

@@ -47,16 +47,20 @@ export const usePatientSearch = () => {
         try {
           const clonedResponse = response.clone();
           const rawText = await clonedResponse.text();
+          console.log("Raw API response text:", rawText);
 
           if (rawText) {
             const parsedData = JSON.parse(rawText);
             console.log("Manually parsed data:", parsedData);
 
             // Επιστρέφουμε το patients array, όχι το object
-            return parsedData.patients || [];
+            const patients = parsedData.patients || parsedData || [];
+            console.log("Extracted patients:", patients);
+            return patients;
           }
         } catch (error) {
           console.error("Failed to parse response:", error);
+          console.error("Raw text was:", rawText);
         }
         return [];
       }
@@ -64,14 +68,23 @@ export const usePatientSearch = () => {
       return response.data as NPatient[];
     },
     onSuccess: (apiPatients: NPatient[]) => {
-      console.log("onSuccess called with:", apiPatients);
+      console.log("=== DEBUG: Patient Search Success ===");
+      console.log("Raw API patients:", apiPatients);
 
       // Τώρα το apiPatients είναι array και όχι object
-      const transformedPatients = apiPatients.map(transformApiPatientToPatient);
+      const transformedPatients = apiPatients.map((apiPatient, index) => {
+        console.log(`Patient ${index}:`, apiPatient);
+        console.log(`Patient ${index} ID:`, apiPatient.id);
+        const transformed = transformApiPatientToPatient(apiPatient);
+        console.log(`Transformed patient ${index}:`, transformed);
+        return transformed;
+      });
+      
       setSearchResults(transformedPatients);
       setError(null);
 
       console.log(`Found ${apiPatients.length} patients from API`);
+      console.log("Final transformed patients:", transformedPatients);
     },
     onError: (error: any) => {
       console.error("Search error:", error);

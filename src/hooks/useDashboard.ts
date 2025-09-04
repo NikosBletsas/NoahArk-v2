@@ -8,7 +8,7 @@ import { signalRService } from "@/services/signalRService";
 // Helper functions for case data persistence
 const getCurrentCaseData = () => {
   try {
-    const stored = localStorage.getItem('currentEmergencyCase');
+    const stored = localStorage.getItem("currentEmergencyCase");
     return stored ? JSON.parse(stored) : null;
   } catch {
     return null;
@@ -17,9 +17,9 @@ const getCurrentCaseData = () => {
 
 const setCurrentCaseData = (caseData: any) => {
   try {
-    localStorage.setItem('currentEmergencyCase', JSON.stringify(caseData));
+    localStorage.setItem("currentEmergencyCase", JSON.stringify(caseData));
   } catch (error) {
-    console.error('Failed to store case data:', error);
+    console.error("Failed to store case data:", error);
   }
 };
 
@@ -28,17 +28,40 @@ export const useDashboard = () => {
   const [currentTime, setCurrentTime] = useState<string>("");
   const [batteryStatus, setBatteryStatus] = useState<string>("N/A");
   const [heartbeat, setHeartbeat] = useState<any>(null);
-  const [hubConnectionStatus, setHubConnectionStatus] = useState<string>("Disconnected");
-  
+  const [hubConnectionStatus, setHubConnectionStatus] =
+    useState<string>("Disconnected");
+
   // Current case data
   const [currentCaseData, setCurrentCaseDataState] = useState<any>(null);
 
-  // Load case data on mount
+  // Load case data on mount and listen for changes
   useEffect(() => {
     const caseData = getCurrentCaseData();
     if (caseData) {
       setCurrentCaseDataState(caseData);
     }
+
+    // Listen for localStorage changes
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "currentEmergencyCase") {
+        const newCaseData = e.newValue ? JSON.parse(e.newValue) : null;
+        setCurrentCaseDataState(newCaseData);
+      }
+    };
+
+    // Listen for custom events (for same-tab updates)
+    const handleCaseUpdate = () => {
+      const caseData = getCurrentCaseData();
+      setCurrentCaseDataState(caseData);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("emergencyCaseUpdated", handleCaseUpdate);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("emergencyCaseUpdated", handleCaseUpdate);
+    };
   }, []);
 
   // Import from existing hooks
@@ -135,7 +158,7 @@ export const useDashboard = () => {
     isSendingData: mainHook.isSending,
 
     // Case management
-    resetCase: mainHook.resetCase,
+    resetCase: mainHook.resetCaseAsync,
     isResettingCase: mainHook.isResetting,
 
     // Device management

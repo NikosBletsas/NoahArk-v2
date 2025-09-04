@@ -19,17 +19,21 @@ import {
   AlertCircle,
   Activity,
   X,
+  Battery,
+  BatteryLow,
 } from "lucide-react";
 
 import { useTheme } from "@/contexts/ThemeContext";
 import { SCREEN_NAMES } from "@/constants";
 import { useDashboard } from "@/hooks/useDashboard";
+import ConfirmationModal from "@/components/Modals/ConfirmationModal";
 
 interface DashboardTileProps {
   icon: React.ReactNode;
   label: string;
   onClick?: () => void;
   disabled?: boolean;
+  disabledReason?: string;
 }
 
 const DashboardTile: React.FC<DashboardTileProps> = ({
@@ -37,20 +41,36 @@ const DashboardTile: React.FC<DashboardTileProps> = ({
   label,
   onClick,
   disabled = false,
+  disabledReason,
 }) => {
   const { theme } = useTheme();
+  
+  const handleClick = () => {
+    if (disabled && disabledReason) {
+      // Show tooltip or alert with disabled reason
+      alert(disabledReason);
+      return;
+    }
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <div
-      onClick={disabled ? undefined : onClick}
+      onClick={handleClick}
       className={`${
         theme.card
       } backdrop-blur-lg rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 text-center cursor-pointer hover:scale-105 transition-all duration-200 shadow-lg border border-white/20 flex flex-col items-center justify-center aspect-square ${
         disabled ? "opacity-50 cursor-not-allowed hover:scale-100" : ""
       }`}
+      title={disabled ? disabledReason : undefined}
     >
       {icon}
       <h3
-        className={`font-semibold mt-2 text-xs sm:text-sm md:text-base lg:text-lg ${theme.textPrimary}`}
+        className={`font-semibold mt-2 text-xs sm:text-sm md:text-base lg:text-lg ${
+          disabled ? 'text-gray-400' : theme.textPrimary
+        }`}
       >
         {label}
       </h3>
@@ -66,9 +86,51 @@ const DashboardScreen: React.FC = () => {
   // State for new emergency case
   const [newEmergencyCase, setNewEmergencyCase] = useState<any>(null);
   const [showCaseSuccess, setShowCaseSuccess] = useState(false);
+  const [currentPatientId, setCurrentPatientId] = useState<string>("N/A");
+  const [hasActiveEmergencyCase, setHasActiveEmergencyCase] = useState<boolean>(false);
+  
+  // State for reset confirmation modal
+  const [showResetConfirmation, setShowResetConfirmation] = useState(false);
 
   // All dashboard logic is now contained in the hook
   const dashboard = useDashboard();
+
+  // Load patient ID and emergency case status from localStorage on mount and listen for changes
+  useEffect(() => {
+    const loadEmergencyCaseData = () => {
+      try {
+        const storedCase = localStorage.getItem("currentEmergencyCase");
+        if (storedCase) {
+          const caseData = JSON.parse(storedCase);
+          setCurrentPatientId(caseData?.patientId || "N/A");
+          setHasActiveEmergencyCase(true);
+        } else {
+          setCurrentPatientId("N/A");
+          setHasActiveEmergencyCase(false);
+        }
+      } catch (error) {
+        console.error("Failed to load emergency case data:", error);
+        setCurrentPatientId("N/A");
+        setHasActiveEmergencyCase(false);
+      }
+    };
+
+    // Load on mount
+    loadEmergencyCaseData();
+
+    // Listen for storage changes
+    const handleStorageChange = () => {
+      loadEmergencyCaseData();
+    };
+
+    window.addEventListener("emergencyCaseUpdated", handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("emergencyCaseUpdated", handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   // Check for new emergency case data from navigation
   useEffect(() => {
@@ -77,9 +139,25 @@ const DashboardScreen: React.FC = () => {
       setNewEmergencyCase(caseData);
       setShowCaseSuccess(true);
 
-      // Store case data in localStorage for persistence
+      // Store case data in localStorage for persistence with all patient info
       try {
-        localStorage.setItem("currentEmergencyCase", JSON.stringify(caseData));
+        const completeCase = {
+          ...caseData,
+          // Ensure patient ID is included
+          patientId: caseData.patientId,
+          patientName: caseData.patientName,
+          patientSurname: caseData.patientSurname,
+          caseId: caseData.caseId,
+          createdAt: caseData.createdAt || new Date().toISOString(),
+        };
+        localStorage.setItem(
+          "currentEmergencyCase",
+          JSON.stringify(completeCase)
+        );
+        setCurrentPatientId(caseData.patientId || "N/A");
+        setHasActiveEmergencyCase(true);
+        // Dispatch custom event to notify other components
+        window.dispatchEvent(new Event("emergencyCaseUpdated"));
       } catch (error) {
         console.error("Failed to store case data:", error);
       }
@@ -98,9 +176,11 @@ const DashboardScreen: React.FC = () => {
 
   const tiles = [
     {
-      icon: <Search className={`${iconSize} mx-auto ${theme.icon}`} />,
+      icon: <Search className={`${iconSize} mx-auto ${hasActiveEmergencyCase ? 'text-gray-400' : theme.icon}`} />,
       label: "Search Patient",
       screen: SCREEN_NAMES.PATIENT_SEARCH,
+      disabled: hasActiveEmergencyCase,
+      disabledReason: "Emergency case is active. Reset case to search for a new patient.",
     },
     {
       icon: <Heart className={`${iconSize} mx-auto text-red-500`} />,
@@ -174,11 +254,88 @@ const DashboardScreen: React.FC = () => {
   ];
 
   const handleTileClick = (tile: (typeof tiles)[0]) => {
+    if (tile.disabled) {
+      return; // Don't navigate if disabled
+    }
     if (tile.onClick) {
       tile.onClick();
     } else if (tile.screen) {
       navigate(`/${tile.screen}`);
     }
+  };
+
+  // Helper function to get battery icon and clean percentage
+  const getBatteryDisplay = () => {
+    const batteryStatus = dashboard.batteryStatus;
+
+    // Extract percentage from string (e.g., "85%" -> "85")
+    const percentageMatch = batteryStatus.match(/(\d+)/);
+    const percentage = percentageMatch ? parseInt(percentageMatch[1]) : null;
+
+    if (percentage === null || batteryStatus === "N/A") {
+      return {
+        icon: <Battery className="w-3 h-3 text-gray-400" />,
+        text: "N/A",
+      };
+    }
+
+    // Choose icon and color based on percentage
+    let icon;
+    let textColor = "";
+
+    if (percentage <= 20) {
+      icon = <BatteryLow className="w-3 h-3 text-red-400" />;
+      textColor = "text-red-400";
+    } else if (percentage <= 50) {
+      icon = <Battery className="w-3 h-3 text-yellow-400" />;
+      textColor = "text-yellow-400";
+    } else {
+      icon = <Battery className="w-3 h-3 text-green-400" />;
+      textColor = "text-green-400";
+    }
+
+    return {
+      icon,
+      text: `${percentage}%`,
+      textColor,
+    };
+  };
+
+  // Handle reset case function
+  const handleResetCase = async () => {
+    try {
+      // Call the API first
+      await dashboard.resetCase();
+      
+      // Only clear localStorage after successful API call
+      localStorage.removeItem("currentEmergencyCase");
+      setNewEmergencyCase(null);
+      setCurrentPatientId("N/A");
+      setHasActiveEmergencyCase(false);
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new Event("emergencyCaseUpdated"));
+    } catch (error) {
+      console.error("Failed to reset case:", error);
+      // Don't clear localStorage if API call failed
+    }
+  };
+
+  // DEBUG: Test function to create a fake emergency case
+  const handleTestEmergencyCase = () => {
+    const testCase = {
+      caseId: "TEST-123",
+      patientId: "PATIENT-456",
+      patientName: "John",
+      patientSurname: "Doe",
+      createdAt: new Date().toISOString(),
+    };
+    
+    console.log("Creating test emergency case:", testCase);
+    localStorage.setItem("currentEmergencyCase", JSON.stringify(testCase));
+    setNewEmergencyCase(testCase);
+    setCurrentPatientId(testCase.patientId);
+    setHasActiveEmergencyCase(true);
+    window.dispatchEvent(new Event("emergencyCaseUpdated"));
   };
 
   return (
@@ -209,7 +366,8 @@ const DashboardScreen: React.FC = () => {
                 Emergency Case Created Successfully!
               </p>
               <p className="text-sm opacity-90">
-                Case No: {newEmergencyCase.caseId} | Patient:{" "}
+                Case ID: {newEmergencyCase.caseId} | Patient ID:{" "}
+                {newEmergencyCase.patientId} | Patient:{" "}
                 {newEmergencyCase.patientName} {newEmergencyCase.patientSurname}
               </p>
             </div>
@@ -281,10 +439,24 @@ const DashboardScreen: React.FC = () => {
               <span>Patient ID</span>
               <span
                 className={
-                  newEmergencyCase ? "text-green-400 font-semibold" : ""
+                  currentPatientId !== "N/A"
+                    ? "text-green-400 font-semibold"
+                    : ""
                 }
               >
-                {newEmergencyCase?.patientId || dashboard.patientId}
+                {(() => {
+                  // Always get the latest patient ID from localStorage
+                  try {
+                    const storedCase = localStorage.getItem("currentEmergencyCase");
+                    if (storedCase) {
+                      const caseData = JSON.parse(storedCase);
+                      return caseData?.patientId || "N/A";
+                    }
+                  } catch (error) {
+                    console.error("Failed to parse stored case:", error);
+                  }
+                  return "N/A";
+                })()}
               </span>
             </div>
             <div className="flex justify-between">
@@ -323,17 +495,17 @@ const DashboardScreen: React.FC = () => {
               <span>Case No</span>
               <span
                 className={
-                  newEmergencyCase ? "text-green-400 font-semibold" : ""
+                  hasActiveEmergencyCase ? "text-green-400 font-semibold" : ""
                 }
               >
-                1
+                {hasActiveEmergencyCase ? "1" : "N/A"}
               </span>
             </div>
             <div className="flex justify-between">
               <span>Case ID</span>
               <span
                 className={
-                  newEmergencyCase ? "text-green-400 font-semibold" : ""
+                  hasActiveEmergencyCase ? "text-green-400 font-semibold" : ""
                 }
               >
                 {(() => {
@@ -364,7 +536,17 @@ const DashboardScreen: React.FC = () => {
                     <span>Error</span>
                   </span>
                 ) : (
-                  <span>{dashboard.batteryStatus}</span>
+                  (() => {
+                    const batteryDisplay = getBatteryDisplay();
+                    return (
+                      <span className="flex items-center space-x-1">
+                        {batteryDisplay.icon}
+                        <span className={batteryDisplay.textColor || ""}>
+                          {batteryDisplay.text}
+                        </span>
+                      </span>
+                    );
+                  })()
                 )}
               </span>
             </div>
@@ -389,6 +571,7 @@ const DashboardScreen: React.FC = () => {
               label={tile.label}
               onClick={() => handleTileClick(tile)}
               disabled={tile.disabled}
+              disabledReason={tile.disabledReason}
             />
           ))}
         </div>
@@ -413,7 +596,15 @@ const DashboardScreen: React.FC = () => {
           </button>
 
           <button
-            onClick={dashboard.resetCase}
+            onClick={() => {
+              // Show confirmation modal if there's an active case
+              if (hasActiveEmergencyCase) {
+                setShowResetConfirmation(true);
+              } else {
+                // If no active case, reset directly
+                handleResetCase();
+              }
+            }}
             disabled={dashboard.isResettingCase}
             className={`flex flex-col items-center ${theme.textOnAccent} hover:opacity-80 transition-opacity px-1 py-1 sm:px-2 md:px-3 disabled:opacity-50`}
           >
@@ -453,6 +644,31 @@ const DashboardScreen: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Reset Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showResetConfirmation}
+        onCancel={() => setShowResetConfirmation(false)}
+        onConfirm={() => {
+          setShowResetConfirmation(false);
+          handleResetCase();
+        }}
+        title="Reset Emergency Case"
+        message={`Are you sure you want to reset the current emergency case?
+
+This action will:
+• Clear all case data and measurements
+• Reset Patient ID: ${currentPatientId}
+• Allow you to search for a new patient
+• Disconnect any connected medical devices
+
+This action cannot be undone.`}
+        confirmText="Reset Case"
+        cancelText="Cancel"
+        theme={theme}
+        isMidnightTheme={isMidnightTheme}
+        isLoading={dashboard.isResettingCase}
+      />
     </div>
   );
 };

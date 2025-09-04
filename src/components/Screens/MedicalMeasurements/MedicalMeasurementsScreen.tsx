@@ -55,7 +55,16 @@ const MedicalMeasurementsScreen: React.FC = () => {
       <div className="p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 flex-grow">
         <div className={`${theme.card} backdrop-blur-lg rounded-xl sm:rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12`}>
           <div className={`bg-gradient-to-r ${theme.accent} ${theme.textOnAccent} p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg sm:rounded-xl mb-4 sm:mb-6 md:mb-8`}>
-            <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold">Choose Medical Device</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold">Choose Medical Device</h2>
+              <button
+                onClick={() => navigate(`/${SCREEN_NAMES.DEVICE_CONNECTIONS}`)}
+                className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-all duration-200 flex items-center space-x-2"
+              >
+                <MonitorDot className="w-4 h-4" />
+                <span className="text-sm font-medium">Device Connections</span>
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6 lg:gap-7">

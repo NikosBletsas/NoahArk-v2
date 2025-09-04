@@ -59,16 +59,19 @@ export const useEmergencyCase = () => {
 
       resetFormData();
 
+      const formData = getFormData();
+      const emergencyCaseData = {
+        caseId: caseId,
+        patientName: formData.name,
+        patientSurname: formData.surname,
+        patientId: formData.patientId,
+        createdAt: new Date().toISOString(),
+      };
+      
       // Navigate to dashboard with the new case information
       navigate(`/${SCREEN_NAMES.DASHBOARD}`, {
         state: {
-          newEmergencyCase: {
-            caseId: caseId,
-            patientName: getFormData().name,
-            patientSurname: getFormData().surname,
-            patientId: getFormData().patientId,
-            createdAt: new Date().toISOString(),
-          },
+          newEmergencyCase: emergencyCaseData,
         },
       });
     },
@@ -82,7 +85,18 @@ export const useEmergencyCase = () => {
   const submitEmergencyCase = () => {
     const formData = getFormData();
 
+    console.log("=== DEBUG: Emergency Case Submit ===");
+    console.log("Form data from store:", formData);
+    console.log("Patient ID:", formData.patientId);
+    console.log("Patient Name:", formData.name);
+    console.log("Patient Surname:", formData.surname);
+
     if (!formData.patientId || !formData.name || !formData.surname) {
+      console.error("Missing required fields:", {
+        patientId: formData.patientId,
+        name: formData.name,
+        surname: formData.surname
+      });
       toast.error("Please fill in required patient information");
       return;
     }

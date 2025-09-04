@@ -59,9 +59,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
         {/* Content */}
         <div className="p-6">
-          <p className={`${theme.textPrimary} text-base leading-relaxed mb-6`}>
+          <div className={`${theme.textPrimary} text-base leading-relaxed mb-6 whitespace-pre-line`}>
             {message}
-          </p>
+          </div>
 
           {/* Actions */}
           <div className="flex space-x-3 justify-end">

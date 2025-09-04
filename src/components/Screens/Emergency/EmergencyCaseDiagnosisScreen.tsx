@@ -7,6 +7,7 @@ import { DiagnosisStep } from "@/types";
 import { SCREEN_NAMES } from "@/constants";
 import { useEmergencyCase } from "@/hooks/useEmergencyCase";
 import { useEmergencyCaseStore } from "@/stores/emergencyCaseStore";
+import { NEmergencyCase } from "@/api/generated_api";
 import ConfirmationModal from "../../Modals/ConfirmationModal";
 
 import PatientInfoForm from "./diagnosisForms/PatientInfoForm";
@@ -54,6 +55,82 @@ const EmergencyCaseDiagnosisScreen: React.FC = () => {
   const [isCurrentFormModified, setIsCurrentFormModified] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
+  // Function to check if current section has any data
+  const checkSectionHasData = (sectionKey: string): boolean => {
+    const { formData } = useEmergencyCaseStore.getState();
+
+    switch (sectionKey) {
+      case "patientInfo":
+        return !!(
+          formData.patientId ||
+          formData.name ||
+          formData.surname ||
+          formData.fathersName ||
+          formData.gender ||
+          formData.erAge ||
+          formData.otherIdentifier
+        );
+
+      case "historyTraumaVitalsSkin":
+        return !!(
+          formData.erProselefsi ||
+          formData.erOros ||
+          formData.erAllo ||
+          formData.histSymptom ||
+          formData.histSmoker ||
+          formData.histAlergic ||
+          formData.histLoimodi ||
+          formData.trauma ||
+          formData.vitalTime ||
+          formData.vitalPulses ||
+          formData.vitalAP ||
+          formData.vitalInhale ||
+          formData.vitalSpo2 ||
+          formData.vitalT ||
+          formData.derma ||
+          formData.erComments
+        );
+
+      case "generalSigns":
+        return !!(formData.genikiSimeiologia || formData.genOther);
+
+      case "surgicalNeurologicSigns":
+        return !!(
+          formData.xeirourgikiSimeiologia || formData.neurologikiSimeiologia
+        );
+
+      case "neurologicSigns":
+        return !!(
+          formData.neuroParesi ||
+          formData.neuroHmipligia ||
+          formData.neuroSergApoleiaSineidisis ||
+          formData.neuroSergAnoiktoiOfthalmoi ||
+          formData.neuroSergKalyteriProforikiApantisi ||
+          formData.neuroSergKalyteriKinitikiApantisi ||
+          formData.neuroSergKoresMegethosDeksi ||
+          formData.neuroSergKoresMegethosAristero ||
+          formData.neuroSergKoresAntidrasiDeksi ||
+          formData.neuroSergKoresAntidrasiAristero ||
+          formData.neuroSergSynoloVathmwn
+        );
+
+      case "cardiorespPsychSigns":
+        return !!(
+          formData.cardioThorakikoAlgos ||
+          formData.cardioXaraktiras ||
+          formData.cardioEnarxi ||
+          formData.cardioDiarkeia ||
+          formData.cardioanapneustikiSimeiologia ||
+          formData.psychoDiathesi ||
+          formData.psychoSymperifora ||
+          formData.psychoSkepseis
+        );
+
+      default:
+        return false;
+    }
+  };
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -67,7 +144,6 @@ const EmergencyCaseDiagnosisScreen: React.FC = () => {
   const handleNext = () => {
     if (currentStepIndex < DIAGNOSIS_STEPS_CONFIG.length - 1) {
       setCurrentStepIndex(currentStepIndex + 1);
-      setIsCurrentFormModified(false);
     } else {
       // Final submit - show confirmation modal
       setShowConfirmModal(true);
@@ -94,7 +170,78 @@ const EmergencyCaseDiagnosisScreen: React.FC = () => {
   };
 
   const handleConfirmClearForm = () => {
-    resetFormData(); // Clear all form data
+    const { updateFormData } = useEmergencyCaseStore.getState();
+
+    // Clear only current section data
+    const clearData: Partial<NEmergencyCase> = {};
+
+    switch (currentStepConfig.key) {
+      case "historyTraumaVitalsSkin":
+        Object.assign(clearData, {
+          erProselefsi: "",
+          erOros: "",
+          erAllo: "",
+          histSymptom: "",
+          histSmoker: "",
+          histAlergic: "",
+          histLoimodi: "",
+          trauma: "",
+          vitalTime: "",
+          vitalPulses: "",
+          vitalAP: "",
+          vitalInhale: "",
+          vitalSpo2: "",
+          vitalT: "",
+          derma: "",
+          erComments: "",
+        });
+        break;
+
+      case "generalSigns":
+        Object.assign(clearData, {
+          genikiSimeiologia: "",
+          genOther: "",
+        });
+        break;
+
+      case "surgicalNeurologicSigns":
+        Object.assign(clearData, {
+          xeirourgikiSimeiologia: "",
+          neurologikiSimeiologia: "",
+        });
+        break;
+
+      case "neurologicSigns":
+        Object.assign(clearData, {
+          neuroParesi: "",
+          neuroHmipligia: "",
+          neuroSergApoleiaSineidisis: "",
+          neuroSergAnoiktoiOfthalmoi: "",
+          neuroSergKalyteriProforikiApantisi: "",
+          neuroSergKalyteriKinitikiApantisi: "",
+          neuroSergKoresMegethosDeksi: "",
+          neuroSergKoresMegethosAristero: "",
+          neuroSergKoresAntidrasiDeksi: "",
+          neuroSergKoresAntidrasiAristero: "",
+          neuroSergSynoloVathmwn: "",
+        });
+        break;
+
+      case "cardiorespPsychSigns":
+        Object.assign(clearData, {
+          cardioThorakikoAlgos: "",
+          cardioXaraktiras: "",
+          cardioEnarxi: "",
+          cardioDiarkeia: "",
+          cardioanapneustikiSimeiologia: "",
+          psychoDiathesi: "",
+          psychoSymperifora: "",
+          psychoSkepseis: "",
+        });
+        break;
+    }
+
+    updateFormData(clearData);
     setFormStepRenderKey((prevKey) => prevKey + 1);
     setIsCurrentFormModified(false);
   };
@@ -105,7 +252,6 @@ const EmergencyCaseDiagnosisScreen: React.FC = () => {
 
   const handleSidebarItemClick = (index: number) => {
     setCurrentStepIndex(index);
-    setIsCurrentFormModified(false);
     if (typeof window !== "undefined" && window.innerWidth < 768) {
       setIsMobileMenuOpen(false);
     }
@@ -331,15 +477,17 @@ const EmergencyCaseDiagnosisScreen: React.FC = () => {
                 {currentStepConfig.label}
               </h2>
 
-              <ClearButton
-                theme={theme}
-                isMidnightTheme={isMidnightTheme}
-                isVisible={isCurrentFormModified}
-                sectionName={currentStepConfig.label}
-                onClear={handleConfirmClearForm}
-                position="header"
-                size="xs"
-              />
+              {currentStepConfig.key !== "patientInfo" && (
+                <ClearButton
+                  theme={theme}
+                  isMidnightTheme={isMidnightTheme}
+                  isVisible={checkSectionHasData(currentStepConfig.key)}
+                  sectionName={currentStepConfig.label}
+                  onClear={handleConfirmClearForm}
+                  position="header"
+                  size="xs"
+                />
+              )}
             </div>
             <div className="p-3 sm:p-4 md:p-5 lg:p-6 flex-grow overflow-y-auto">
               <CurrentFormStep

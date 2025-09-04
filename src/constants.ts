@@ -48,6 +48,7 @@ export const SCREEN_NAMES = {
   PATIENT_SEARCH: 'patient-search',
   MEASUREMENTS: 'measurements',
   PATIENT_MONITOR: 'patient-monitor',
+  DEVICE_CONNECTIONS: 'device-connections',
   SYSTEM_OPERATIONS: 'system-operations',
   SPIROMETER: 'spirometer',
   ENDOSCOPE: 'endoscope',

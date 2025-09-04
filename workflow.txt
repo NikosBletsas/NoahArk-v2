@@ -1,0 +1,254 @@
+
+
+
+
+
+
+
+
+  
+Table of Contents
+General notes	1
+Implementation	1
+API security	1
+API convention	1
+Login Screen	2
+Workflow	2
+API	2
+Configuration	4
+Workflow	4
+API	4
+Main Screen	5
+Workflow	5
+Events	5
+API	5
+Appendix A - Events	1
+
+
+ 
+1	General notes
+1.1	Implementation
+Implementation of middleware is based on .NET Core 9 WebAPI. The middleware itself is a client for the e-Pokratis server using REST services. 
+1.2	API security
+The current version of NoAH API is supposed to run on the same machine as the UI (localhost). Therefore, there’s no security, tokens, etc. 
+1.3	API convention
+For abbreviation only the command and parameters are shown. The base url is:
+http://localhost:5000/api
+or whatever setting you might have in Visual Studio
+Use the notation of the screenshot to determine the verb type of the (GET / POST)
+
+ 
+2	Login Screen
+1.4. Workflow 
+Upon loading the login screen, NoAH must perform the following:
+-	Check if the user terminal has a valid license. If not, only configuration screen should be accessible to enter a license key
+If license is ok, user can login. Login can have three possible outcomes:
+-	Device does not have Internet connectivity and user is asked to proceed offline
+-	Authentication fails. User can only access configuration and diagnostics
+-	Authentication is successful. In this case, appropriate flag is set so that the other APIs can be called. 
+-	User can also login offline which basically set appropriate flags
+1.1.	API
+-	When the login screen is first displayed, you must call Init (GET)
+ 
+-	If OK, you must call Login
+ 
+You can also offline login:
+ 
+ 
+3	Configuration
+3.1	Workflow 
+Configuration is the only screen along with diagnostics that can be accessed without login. All the required properties are contained in a single JSON string. This API provides two methods, GetConfiguration and SetConfiguration. Configuration API does not require any form of initialization, login etc. 
+3.2	API 
+3.2.1	GetConfiguration
+ 
+3.2.2	SetConfiguration
+ 
+ 
+4	Main Screen
+4.1	Workflow 
+Main Screen hosts some of the core business logic of the application. It initializes variables and timers. It also utilizes events via SignalR to notify clients. Prior to using the Main (screen) API, you should have used the Login API to login or login offline. 
+The main functionality of Main API is:
+-	Fetch unfinished session data if any (Function Init) 
+-	Initialize shared models and variables (Function Init) 
+-	Start timers that check for (Function Init) :
+o	Power status change
+o	New medical files
+o	Appointment time – if an appointment is due
+-	Allow the user to add more files manually (Function AddMoreFiles)
+-	Allow the user to set the recovery session from the list presented to him (function SetRecoverySession) 
+-	Create a new emergency case (NewEmergenceCase)
+-	Get doctors’ availability slots (GetEfimeries)
+-	Scan documents (ScanDocument
+4.2	Events
+SignalR supports the events included in appendix A. The events are used to notify the client for async data updates and errors. 
+4.3	API 
+4.3.1	INIT
+ 
+Init command must be called once login is completed. It will return OK if no recovery session is available, else it will return list of recovery objects as JSON as shown below:
+ 
+
+4.3.2	SetRecoverySession
+ 
+Using the information from Init (in case of available recovery session), this method can be used to specify the recovery session using the session ID. In this case, the application is configured using the information about the specific case. 
+
+4.3.3	GetBatteryStatus
+ 
+GetBatteryStatus can be called synchronously from the client (battery status updates are also at timer events on SignalR channel. The JSON mentioned above contains a wealth of information and client app 
+ 
+4.3.4	AddMoreFiles
+ 
+AddMoreFiles is intended to allow to add any additional file for a recovery session or not. A list string with file path is provided and files are uploaded automatically using a timer which checks the designated files folder.
+4.3.5	NewEmergencyCase
+ 
+After calling Init (and unless recovery session is being used) a new case must be submitted in order to allow for measurement to take place. 
+The required JSON is the following:
+ 
+
+ 
+4.3.6	GetEfimeries 
+ 
+GetEfimeries returns the available shifts using the following JSON list:
+ 
+4.3.7	ScanDocument
+ 
+ScanDocument initiates the scanner and scans a document which is automatically added in the proper folder.
+4.3.8	SearchPatient
+ 
+SearchPatient returns the JSON object of the patient while the required search parameters are the name and the surname of the patient. All other properties can be null during post. 
+4.3.9	AddPatient
+ 
+Like SearchPatient, this POST method submits an entire Patient object. 
+ 
+4.3.10	SendData
+ 
+SendData is meant to send synchronously all files to the server. 
+4.3.11	ResetCase
+ 
+ResetCase re-initializes the application by resetting case properties. 
+ 
+5	Devices
+Devices controllers contains all the methods to obtain measurements from connected devices. 
+5.1	Workflow
+A new emergency case or recover session must be already active before calling any method of this controller. 
+5.2	API
+Naming convention in Devices follows the pattern: {Device}/{Operation}. 
+5.2.1	PatientMonitor/Init
+ 
+This method, which requires running the backed in elevated mode (admin), opens the port and prepares the parser to receive data from the patient monitor. Events as data acquisition progresses, are sent via SignalR (see Appendix A). 
+5.2.2	BloodPressure/GetDeviceData
+ 
+Get the Patient Blood Pressure Data and save them in the app session memory. 
+5.2.3	BloodPressure/SendData
+ 
+Send the blood pressure monitor data to the server
+5.2.4	TaidocBloodMulti/GetDeviceData
+ 
+Request Taidoc BloodMulti all the latest data. 
+5.2.5	TaidocTemperature/GetDeviceData
+ 
+Requests the latest temperature record from the TaidocTemperature monitor.
+ 
+6	Appendix A - Events
+6.1	Description
+Events are available via SignalR at the address: https://localhost:{port}/notificationhub
+The list of available events: 
+     /// <summary>  
+     /// Event triggered for appointment timer notifications.  
+     /// </summary>  
+         AppointmentTimer,
+
+         /// <summary>  
+         /// Event triggered when data is available to upload.  
+         /// </summary>  
+         DataAvailableToUpload,
+         
+/// <summary>  
+         /// Event triggered for battery status updates.  
+         /// </summary>  
+         BatteryStatus,            
+
+         /// <summary>  
+         /// Event triggered for scan start.  
+         /// </summary>  
+         ScanStart,
+            
+         /// <summary>  
+         /// Event triggered for scan end.  
+         /// </summary>  
+         ScanEnd,
+
+         /// <summary>  
+         /// Event triggered for scan error.  
+         /// </summary>  
+         ScanError,
+
+     /// <summary>               
+     /// Event triggered for heartbeat notifications.
+     /// </summary>  
+         HeartBeat, 
+
+     /// <summary>               
+     /// Event triggered for file upload notifications.
+     /// </summary>
+         FileUpload,
+
+     /// <summary>               
+     /// Event triggered for new consultation notifications.
+     /// </summary>
+         NewConsultation,
+
+     /// <summary>               
+     /// Event triggered for patient monitor data updates.
+     /// </summary>
+     PatientMonitorData,
+
+     /// <summary>
+     /// Event triggered for blood pressure monitor data updates.
+     /// </summary>
+     BloodPressureData,
+
+     /// <summary>
+     /// Event triggered for spirometry data updates.
+     /// </summary>
+     SpirometryData,
+
+     /// <summary>
+     /// Event triggered for temperature data updates.
+     /// </summary>  
+     TemperatureData,
+
+     /// <summary>               
+     /// Blood Glucose Data
+     /// </summary>
+         BGData
+ }
+ 
+6.2	Remarks for events
+6.2.1	NewConsultation
+NewConsultation function returns a string which is essentially a list of consultation objects in JSON. Here’s the data model:
+ 
+7	Appendix B - Workflow Examples
+Convention: the name of the controller is used with the name of the function
+7.1	Obtain data from Patient Monitor
+7.1.1	Preparation
+-	Backend should be running with elevated rights and patient monitor should be pingable. 
+7.1.2	Steps
+1.	LoginAPI->Init() in order to initialize the application
+2.	LoginAPI->Login 
+3.	Main->Init() to perform further checks and return possible remaining sessions
+4.	Main->SearchPatient   (search is based on ‘name’ or ‘surname’  so at least one of them should be completed at least partially with at least 4 characters). The result is a list of NPatient objects (see appendix C - section 8 - for sample)
+5.	A new emergency case must be created using the found patient. Once you have the NEmergencyCase ready (see appendix C), call the Main->NewEmergencyCase() to post it. You will receive a new case ID which you must display on the dashboard (and keep in memory in general)
+6.	Devices->PatientMonitor/Init() it will initiate the HTTP server of NoAH in order to be able to receive and process data from the patient monitor. The data from patient monitor are returned via event PatientMonitorData. Error messages are also sent using the same event so client code should discriminate between JSON and random string. The patient monitor data is shown in section 8.2
+7.	Client can also access the measurement by calling:
+Devices->GetPatientMonitorData 
+
+ 
+8	Appendix C - Data Models
+8.1	NPatient (with sample data)
+ 
+8.2	NEmergencyCase 
+ 
+
+8.3	NHmsData (returned data from Patient monitor)
+ 
+
